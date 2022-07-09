@@ -37,6 +37,12 @@ int main() {
   for (const auto &dof: my_node.dofs()) {
     std::cout << "Dof id " << dof.global_id() << " with value " << dof.value() << std::endl;
   }
+
+  std::shared_ptr<ffea::Matrix<double>> matrix = std::make_shared<ffea::CustomDenseMatrix<double>>(3, 3);
+
+
+
+  std::cout << (*matrix)(1, 1) << std::endl;
   
   return 0;
 }

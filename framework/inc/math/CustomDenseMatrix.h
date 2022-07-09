@@ -7,28 +7,32 @@
 
 namespace ffea {
 
-class CustomDenseMatrix : public Matrix
+template<typename T>
+class CustomDenseMatrix : public Matrix<T>
 {
  public:
   CustomDenseMatrix(size_t number_of_rows, size_t number_of_columns);
   virtual ~CustomDenseMatrix() override;
 
-  virtual double &operator()(size_t i, size_t j) override;
+  virtual T &operator()(size_t i, size_t j) override;
 
  private:
-  std::vector<double> data_;
+  std::vector<T> data_;
 };
 
-CustomDenseMatrix::CustomDenseMatrix(
+template<typename T>
+CustomDenseMatrix<T>::CustomDenseMatrix(
     size_t number_of_rows, size_t number_of_columns)
-  : Matrix(number_of_rows, number_of_columns),
+  : Matrix<T>(number_of_rows, number_of_columns),
     data_(number_of_rows * number_of_columns)
   {}
 
-CustomDenseMatrix::~CustomDenseMatrix() {}
+template<typename T>
+CustomDenseMatrix<T>::~CustomDenseMatrix() {}
 
-double &CustomDenseMatrix::operator()(size_t i, size_t j) {
-  return data_[i * number_of_rows() + j];
+template<typename T>
+T &CustomDenseMatrix<T>::operator()(size_t i, size_t j) {
+  return data_[i * Matrix<T>::number_of_rows() + j];
 }
 
 } // namespace ffea
