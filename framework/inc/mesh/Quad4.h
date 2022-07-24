@@ -1,19 +1,18 @@
-#ifndef FFEA_FRAMEWORK_INC_MESH_LINE2_H_
-#define FFEA_FRAMEWORK_INC_MESH_LINE2_H_
+#ifndef FFEA_FRAMEWORK_INC_MESH_QUAD4_H_
+#define FFEA_FRAMEWORK_INC_MESH_QUAD4_H_
 
 #include "./Element.h"
 
 namespace ffea {
 
-class Line2 : public Element
+class Quad4 : public Element
 {
  public:
-  Line2(const std::vector<Node*> &nodes);
-  virtual ~Line2();
+  Quad4(const std::vector<Node*> &nodes);
+  virtual ~Quad4();
 
   virtual Eigen::MatrixXd EvaluateJacobian(
     const Coordinates &local_coordinates) const override;
-  double ComputeLength() const;
   virtual Eigen::MatrixXd EvaluateShapeFunctions(
     const Coordinates &local_coordinates) const override;
   virtual Eigen::MatrixXd EvaluateShapeFunctionsDerivatives(
@@ -22,4 +21,4 @@ class Line2 : public Element
 
 } // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_INC_MESH_LINE2_H_
+#endif  // FFEA_FRAMEWORK_INC_MESH_QUAD4_H_

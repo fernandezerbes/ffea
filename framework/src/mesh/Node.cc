@@ -3,8 +3,9 @@
 namespace ffea
 {
 
-Node::Node(const Coordinates &coordinates, short number_of_dofs)
-  : coordinates_(coordinates),
+Node::Node(size_t id, const Coordinates &coordinates, short number_of_dofs)
+  : id_(id),
+    coordinates_(coordinates),
     dofs_(number_of_dofs)
   {}
 
@@ -13,6 +14,10 @@ Node::~Node() {}
 std::vector<DegreeOfFreedom> &Node::dofs()
 {
   return dofs_;
+}
+
+size_t Node::id() const {
+  return id_;
 }
 
 void Node::set_number_of_dofs(short number_of_dofs) {

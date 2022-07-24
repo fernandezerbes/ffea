@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <eigen3/Eigen/Dense>
+
 #include "./Coordinates.h"
 #include "./DegreeOfFreedom.h"
 #include "./Node.h"
@@ -15,18 +17,20 @@ class Element {
   Element(const std::vector<Node*> &nodes);
   virtual ~Element();
 
-  std::vector<Node*> &nodes();
+  const std::vector<Node*> &nodes() const;
   std::vector<Coordinates*> node_coordinates() const;
   std::vector<DegreeOfFreedom*> dofs() const;
-  virtual double EvaluateJacobianDet(
+  size_t number_of_nodes() const;
+  size_t number_of_dofs() const;
+  virtual Eigen::MatrixXd EvaluateJacobian(
+    const Coordinates &local_coordinates) const = 0;
+  virtual Eigen::MatrixXd EvaluateShapeFunctions(
+    const Coordinates &local_coordinates) const = 0;
+  virtual Eigen::MatrixXd EvaluateShapeFunctionsDerivatives(
     const Coordinates &local_coordinates) const = 0;
 
  protected:
   std::vector<Node*> nodes_;
-
- private:
-  virtual std::vector<double> EvaluateShapeFunctions(
-    const Coordinates &local_coordinates) const = 0;
 };
 
 }

@@ -8,7 +8,7 @@ Element::Element(const std::vector<Node*> &nodes) : nodes_(nodes) {}
 
 Element::~Element() {}
 
-std::vector<Node*> &Element::nodes() {
+const std::vector<Node*> &Element::nodes() const {
   return nodes_;
 }
 
@@ -34,6 +34,14 @@ std::vector<DegreeOfFreedom*> Element::dofs() const {
   }
 
   return dofs;
+}
+
+size_t Element::number_of_nodes() const {
+  return nodes_.size();
+}
+
+size_t Element::number_of_dofs() const {
+  return number_of_nodes() * nodes_[0]->number_of_dofs();
 }
 
 }

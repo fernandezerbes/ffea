@@ -7,9 +7,11 @@ Line2::Line2(const std::vector<Node*> &nodes) : Element(nodes) {}
 
 Line2::~Line2() {}
 
-double Line2::EvaluateJacobianDet(
+Eigen::MatrixXd Line2::EvaluateJacobian(
     const Coordinates &local_coordinates) const {
-  return ComputeLength();
+  Eigen::MatrixXd jacobian(1, 1);
+  jacobian(0, 0) = ComputeLength();
+  return jacobian;
 }
 
 double Line2::ComputeLength() const {
@@ -21,12 +23,21 @@ double Line2::ComputeLength() const {
   return length;
 }
 
-std::vector<double> Line2::EvaluateShapeFunctions(
+Eigen::MatrixXd Line2::EvaluateShapeFunctions(
     const Coordinates &local_coordinates) const {
   double xi = local_coordinates.get(0);
-  double N0 = xi;
-  double N1 = 1.0 - xi;
-  return {N0, N1};
+  Eigen::MatrixXd shape_functions(1, 2);
+  shape_functions(0, 0) = xi;
+  shape_functions(1, 0) = 1.0 - xi;
+  return shape_functions;
+}
+
+Eigen::MatrixXd Line2::EvaluateShapeFunctionsDerivatives(
+    const Coordinates &local_coordinates) const {
+    Eigen::MatrixXd shape_functions_derivatives(1, 2);
+    shape_functions_derivatives(0, 0) = 1.0;
+    shape_functions_derivatives(0, 1) = -1.0;
+  return shape_functions_derivatives;
 }
 
 } // namespace ffea
