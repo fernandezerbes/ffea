@@ -4,7 +4,8 @@
 
 namespace ffea {
 
-Line2::Line2(const std::vector<Node *> &nodes) : Element(nodes) {}
+Line2::Line2(const std::vector<Node *> &nodes)
+    : Element(nodes, std::make_unique<Linear1DShapeFunctions>()) {}
 
 Line2::~Line2() {}
 

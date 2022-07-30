@@ -2,6 +2,7 @@ add_library(ffea
             src/analysis/Analysis.cc
             src/assembly/Assembler.cc
             src/math/Utils.cc
+            src/math/shape_functions.cc
             src/mesh/Coordinates.cc
             src/mesh/Line2.cc
             src/mesh/Quad4.cc
