@@ -10,7 +10,7 @@
 #include "../mesh/integration_point.h"
 namespace ffea {
 
-using LoadFunction = std::function<Eigen::MatrixXd(const Eigen::MatrixXd &)>;
+using LoadFunction = std::function<std::vector<double>(const Coordinates &)>;
 
 class ElementProcessor {
  public:

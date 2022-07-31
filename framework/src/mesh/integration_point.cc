@@ -23,9 +23,9 @@ IntegrationPointsGroupPtr QuadratureRule1x2::GetIntegrationPoints() const {
       std::make_shared<std::vector<IntegrationPoint>>();
   integration_points->reserve(2);
   integration_points->push_back(
-      ffea::IntegrationPoint({-0.5773502691896257, 0.0, 0.0}, 1.0));
+      IntegrationPoint(Coordinates({-0.5773502691896257, 0.0, 0.0}), 1.0));
   integration_points->push_back(
-      ffea::IntegrationPoint({0.5773502691896257, 0.0, 0.0}, 1.0));
+      IntegrationPoint(Coordinates({0.5773502691896257, 0.0, 0.0}), 1.0));
   return integration_points;
 }
 
@@ -33,14 +33,14 @@ IntegrationPointsGroupPtr QuadratureRule2x2::GetIntegrationPoints() const {
   IntegrationPointsGroupPtr integration_points =
       std::make_shared<std::vector<IntegrationPoint>>();
   integration_points->reserve(4);
-  integration_points->push_back(ffea::IntegrationPoint(
-      {-0.5773502691896257, -0.5773502691896257, 0.0}, 1.0));
-  integration_points->push_back(ffea::IntegrationPoint(
-      {0.5773502691896257, -0.5773502691896257, 0.0}, 1.0));
-  integration_points->push_back(ffea::IntegrationPoint(
-      {-0.5773502691896257, 0.5773502691896257, 0.0}, 1.0));
-  integration_points->push_back(ffea::IntegrationPoint(
-      {0.5773502691896257, 0.5773502691896257, 0.0}, 1.0));
+  integration_points->push_back(IntegrationPoint(
+      Coordinates({-0.5773502691896257, -0.5773502691896257, 0.0}), 1.0));
+  integration_points->push_back(IntegrationPoint(
+      Coordinates({0.5773502691896257, -0.5773502691896257, 0.0}), 1.0));
+  integration_points->push_back(IntegrationPoint(
+      Coordinates({-0.5773502691896257, 0.5773502691896257, 0.0}), 1.0));
+  integration_points->push_back(IntegrationPoint(
+      Coordinates({0.5773502691896257, 0.5773502691896257, 0.0}), 1.0));
   return integration_points;
 }
 

@@ -67,7 +67,7 @@ void ElementProcessor::AddContributionToRhs(
   const auto& body_load = load_function(global_coordinates);
   for (size_t dimension_index = 0; dimension_index < element.dimension();
        dimension_index++) {
-    rhs += shape_functions.transpose() * body_load(0, dimension_index) *
+    rhs += shape_functions.transpose() * body_load[dimension_index] *
            jacobian.determinant() * integration_point.weight();
   }
 }

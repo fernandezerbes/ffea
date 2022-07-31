@@ -35,25 +35,25 @@ int main() {
 
   const size_t dimension = 2;
 
-  ffea::Coordinates point_0(0.0, 0.0, 0.0);
-  ffea::Coordinates point_1(1.0, 0.0, 0.0);
-  ffea::Coordinates point_2(2.0, 0.0, 0.0);
-  ffea::Coordinates point_3(3.0, 0.0, 0.0);
+  ffea::Coordinates point_0({0.0, 0.0, 0.0});
+  ffea::Coordinates point_1({1.0, 0.0, 0.0});
+  ffea::Coordinates point_2({2.0, 0.0, 0.0});
+  ffea::Coordinates point_3({3.0, 0.0, 0.0});
 
-  ffea::Coordinates point_4(0.0, 1.0, 0.0);
-  ffea::Coordinates point_5(1.0, 1.0, 0.0);
-  ffea::Coordinates point_6(2.0, 1.0, 0.0);
-  ffea::Coordinates point_7(3.0, 1.0, 0.0);
+  ffea::Coordinates point_4({0.0, 1.0, 0.0});
+  ffea::Coordinates point_5({1.0, 1.0, 0.0});
+  ffea::Coordinates point_6({2.0, 1.0, 0.0});
+  ffea::Coordinates point_7({3.0, 1.0, 0.0});
 
-  ffea::Coordinates point_8(0.0, 2.0, 0.0);
-  ffea::Coordinates point_9(1.0, 2.0, 0.0);
-  ffea::Coordinates point_10(2.0, 2.0, 0.0);
-  ffea::Coordinates point_11(3.0, 2.0, 0.0);
+  ffea::Coordinates point_8({0.0, 2.0, 0.0});
+  ffea::Coordinates point_9({1.0, 2.0, 0.0});
+  ffea::Coordinates point_10({2.0, 2.0, 0.0});
+  ffea::Coordinates point_11({3.0, 2.0, 0.0});
 
-  ffea::Coordinates point_12(0.0, 3.0, 0.0);
-  ffea::Coordinates point_13(1.0, 3.0, 0.0);
-  ffea::Coordinates point_14(2.0, 3.0, 0.0);
-  ffea::Coordinates point_15(3.0, 3.0, 0.0);
+  ffea::Coordinates point_12({0.0, 3.0, 0.0});
+  ffea::Coordinates point_13({1.0, 3.0, 0.0});
+  ffea::Coordinates point_14({2.0, 3.0, 0.0});
+  ffea::Coordinates point_15({3.0, 3.0, 0.0});
 
   size_t number_of_dofs_per_node = 2;
   std::vector<ffea::Node> nodes;

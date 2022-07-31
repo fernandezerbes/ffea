@@ -9,7 +9,7 @@ namespace ffea {
 class Coordinates {
  public:
   Coordinates();
-  Coordinates(double x, double y, double z);
+  Coordinates(const std::vector<double> &xyz);
   ~Coordinates();
 
   const std::vector<double> &get() const;

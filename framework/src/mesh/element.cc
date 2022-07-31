@@ -69,11 +69,23 @@ Eigen::MatrixXd Element::EvaluateJacobian(
   return shape_functions_derivatives * nodes_coordinates_values;
 }
 
-Eigen::MatrixXd Element::MapLocalToGlobal(
+Coordinates Element::MapLocalToGlobal(
     const Coordinates &local_coordinates) const {
   const auto &shape_functions =
       EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kZeroth);
-  return shape_functions * GetNodesCoordinatesValues();
+
+  std::vector<double> xyz(dimension_, 0.0);
+  for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
+    const auto &node = nodes_[node_index];
+    const auto &coordinates = node->coordinates();
+    for (size_t dimension_index = 0; dimension_index < dimension_;
+         dimension_index++) {
+      xyz[dimension_index] +=
+          shape_functions(0, node_index) * coordinates.get(dimension_index);
+    }
+  }
+
+  return Coordinates(xyz);
 }
 
 ElementFactory::ElementFactory(size_t dimension,

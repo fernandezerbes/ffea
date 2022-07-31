@@ -4,7 +4,7 @@ namespace ffea {
 
 Coordinates::Coordinates() {}
 
-Coordinates::Coordinates(double x, double y, double z) : xyz_({x, y, z}) {}
+Coordinates::Coordinates(const std::vector<double> &xyz) : xyz_(xyz) {}
 
 Coordinates::~Coordinates() {}
 

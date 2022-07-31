@@ -32,7 +32,7 @@ class Element {
       const Coordinates &local_coordinates,
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
-  Eigen::MatrixXd MapLocalToGlobal(const Coordinates &local_coordinates) const;
+  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
 
  protected:
   size_t dimension_;
