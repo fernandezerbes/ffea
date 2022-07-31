@@ -11,16 +11,16 @@ enum class DerivativeOrder { kZeroth, kFirst, kSecond };
 class ShapeFunctions {
  public:
   Eigen::MatrixXd Evaluate(const std::vector<double>& coordinates,
-                           DerivativeOrder derivative_order);
+                           DerivativeOrder derivative_order) const;
 
   virtual ~ShapeFunctions();
 
  private:
-  virtual Eigen::MatrixXd Evaluate(const std::vector<double>& coordinates) = 0;
+  virtual Eigen::MatrixXd Evaluate(const std::vector<double>& coordinates) const = 0;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) = 0;
+      const std::vector<double>& coordinates) const = 0;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) = 0;
+      const std::vector<double>& coordinates) const = 0;
 };
 
 class Linear1DShapeFunctions : public ShapeFunctions {
@@ -29,11 +29,11 @@ class Linear1DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) override;
+      const std::vector<double>& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) override;
+      const std::vector<double>& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) override;
+      const std::vector<double>& coordinates) const override;
 };
 
 class Linear2DShapeFunctions : public ShapeFunctions {
@@ -42,11 +42,11 @@ class Linear2DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) override;
+      const std::vector<double>& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) override;
+      const std::vector<double>& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) override;
+      const std::vector<double>& coordinates) const override;
 };
 
 }  // namespace ffea

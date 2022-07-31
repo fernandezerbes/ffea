@@ -1,21 +1,16 @@
 add_library(ffea
-            src/analysis/Analysis.cc
-            src/assembly/Assembler.cc
-            src/math/Utils.cc
+            src/analysis/analysis.cc
+            src/assembly/assembler.cc
+            src/math/utils.cc
             src/math/shape_functions.cc
-            src/mesh/Coordinates.cc
-            src/mesh/Line2.cc
-            src/mesh/Quad4.cc
-            src/mesh/DegreeOfFreedom.cc
-            src/mesh/Element.cc
-            src/mesh/IntegrationPoint.cc
-            src/mesh/Mesh.cc
-            src/mesh/Node.cc
-            src/mesh/NodeElement.cc
-            src/mesh/SurfaceElement.cc
-            src/mesh/VolumeElement.cc
-            src/processor/Operator.cc
-            src/processor/PhysicsProcessor.cc
+            src/mesh/coordinates.cc
+            src/mesh/degree_of_freedom.cc
+            src/mesh/element.cc
+            src/mesh/integration_point.cc
+            src/mesh/mesh.cc
+            src/mesh/node.cc
+            src/processor/operator.cc
+            src/processor/element_processor.cc
 )
 
 target_include_directories(ffea INTERFACE

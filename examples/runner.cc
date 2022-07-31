@@ -6,15 +6,14 @@
 #include <iostream>
 #include <memory>
 
-#include "../framework/inc/math/CustomDenseMatrix.h"
-#include "../framework/inc/math/Utils.h"
-#include "../framework/inc/mesh/Coordinates.h"
-#include "../framework/inc/mesh/DegreeOfFreedom.h"
-#include "../framework/inc/mesh/IntegrationPoint.h"
-#include "../framework/inc/mesh/Line2.h"
-#include "../framework/inc/mesh/Mesh.h"
-#include "../framework/inc/mesh/Node.h"
-#include "../framework/inc/mesh/Quad4.h"
+#include "../framework/inc/math/utils.h"
+#include "../framework/inc/math/shape_functions.h"
+#include "../framework/inc/mesh/coordinates.h"
+#include "../framework/inc/mesh/degree_of_freedom.h"
+#include "../framework/inc/mesh/element.h"
+#include "../framework/inc/mesh/integration_point.h"
+#include "../framework/inc/mesh/mesh.h"
+#include "../framework/inc/mesh/node.h"
 
 int main() {
   /*     0         1         2
@@ -33,6 +32,8 @@ int main() {
     0---------1---------2---------3
 
   */
+
+  const size_t dimension = 2;
 
   ffea::Coordinates point_0(0.0, 0.0, 0.0);
   ffea::Coordinates point_1(1.0, 0.0, 0.0);
@@ -54,7 +55,7 @@ int main() {
   ffea::Coordinates point_14(2.0, 3.0, 0.0);
   ffea::Coordinates point_15(3.0, 3.0, 0.0);
 
-  short int number_of_dofs_per_node = 2;
+  size_t number_of_dofs_per_node = 2;
   std::vector<ffea::Node> nodes;
   nodes.push_back(ffea::Node(0, point_0, number_of_dofs_per_node));
   nodes.push_back(ffea::Node(1, point_1, number_of_dofs_per_node));
@@ -73,47 +74,56 @@ int main() {
   nodes.push_back(ffea::Node(14, point_14, number_of_dofs_per_node));
   nodes.push_back(ffea::Node(15, point_15, number_of_dofs_per_node));
 
-  std::vector<ffea::Element*> dirichlet_boundary;
-  dirichlet_boundary.push_back(new ffea::Line2({&nodes[0], &nodes[1]}));
-  dirichlet_boundary.push_back(new ffea::Line2({&nodes[1], &nodes[2]}));
-  dirichlet_boundary.push_back(new ffea::Line2({&nodes[2], &nodes[3]}));
+  std::shared_ptr<ffea::ShapeFunctions> linear_1d_shape_functions =
+      std::make_shared<ffea::Linear1DShapeFunctions>();
+  std::shared_ptr<ffea::ShapeFunctions> linear_2d_shape_functions =
+      std::make_shared<ffea::Linear2DShapeFunctions>();
 
-  std::vector<ffea::Element*> neumann_boundary;
-  neumann_boundary.push_back(new ffea::Line2({&nodes[12], &nodes[13]}));
-  neumann_boundary.push_back(new ffea::Line2({&nodes[13], &nodes[14]}));
-  neumann_boundary.push_back(new ffea::Line2({&nodes[14], &nodes[15]}));
+  std::shared_ptr<ffea::IntegrationRule> integration_1x2_rule =
+      std::make_shared<ffea::Integration1x2Rule>();
+  std::shared_ptr<ffea::IntegrationRule> integration_2x2_rule =
+      std::make_shared<ffea::Integration2x2Rule>();
 
-  std::vector<ffea::Element*> body;
-  body.push_back(new ffea::Quad4({&nodes[0], &nodes[1], &nodes[5], &nodes[4]}));
-  body.push_back(new ffea::Quad4({&nodes[1], &nodes[2], &nodes[6], &nodes[5]}));
-  body.push_back(new ffea::Quad4({&nodes[2], &nodes[3], &nodes[7], &nodes[6]}));
-  body.push_back(new ffea::Quad4({&nodes[4], &nodes[5], &nodes[9], &nodes[8]}));
-  body.push_back(
-      new ffea::Quad4({&nodes[5], &nodes[6], &nodes[10], &nodes[9]}));
-  body.push_back(
-      new ffea::Quad4({&nodes[6], &nodes[7], &nodes[11], &nodes[10]}));
-  body.push_back(
-      new ffea::Quad4({&nodes[8], &nodes[9], &nodes[13], &nodes[12]}));
-  body.push_back(
-      new ffea::Quad4({&nodes[9], &nodes[10], &nodes[14], &nodes[13]}));
-  body.push_back(
-      new ffea::Quad4({&nodes[10], &nodes[11], &nodes[15], &nodes[14]}));
+  ffea::ElementFactory line2_factory(dimension, linear_1d_shape_functions,
+                                     integration_1x2_rule);
+  ffea::ElementFactory quad4_factory(dimension, linear_2d_shape_functions,
+                                     integration_2x2_rule);
 
-  std::vector<ffea::IntegrationPoint> quad_integration_points;
-  quad_integration_points.push_back(ffea::IntegrationPoint(
-      {-0.5773502691896257, -0.5773502691896257, 0.0}, 1.0));
-  quad_integration_points.push_back(ffea::IntegrationPoint(
-      {0.5773502691896257, -0.5773502691896257, 0.0}, 1.0));
-  quad_integration_points.push_back(ffea::IntegrationPoint(
-      {-0.5773502691896257, 0.5773502691896257, 0.0}, 1.0));
-  quad_integration_points.push_back(ffea::IntegrationPoint(
-      {0.5773502691896257, 0.5773502691896257, 0.0}, 1.0));
+  std::vector<ffea::Element> dirichlet_boundary;
+  dirichlet_boundary.push_back(
+      line2_factory.CreateElement({&nodes[0], &nodes[1]}));
+  dirichlet_boundary.push_back(
+      line2_factory.CreateElement({&nodes[1], &nodes[2]}));
+  dirichlet_boundary.push_back(
+      line2_factory.CreateElement({&nodes[2], &nodes[3]}));
 
-  std::vector<ffea::IntegrationPoint> line_integration_points;
-  line_integration_points.push_back(
-      ffea::IntegrationPoint({-0.5773502691896257, 0.0, 0.0}, 1.0));
-  line_integration_points.push_back(
-      ffea::IntegrationPoint({0.5773502691896257, 0.0, 0.0}, 1.0));
+  std::vector<ffea::Element> neumann_boundary;
+  neumann_boundary.push_back(
+      line2_factory.CreateElement({&nodes[12], &nodes[13]}));
+  neumann_boundary.push_back(
+      line2_factory.CreateElement({&nodes[13], &nodes[14]}));
+  neumann_boundary.push_back(
+      line2_factory.CreateElement({&nodes[14], &nodes[15]}));
+
+  std::vector<ffea::Element> body;
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[0], &nodes[1], &nodes[5], &nodes[4]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[1], &nodes[2], &nodes[6], &nodes[5]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[2], &nodes[3], &nodes[7], &nodes[6]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[4], &nodes[5], &nodes[9], &nodes[8]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[5], &nodes[6], &nodes[10], &nodes[9]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[6], &nodes[7], &nodes[11], &nodes[10]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[8], &nodes[9], &nodes[13], &nodes[12]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[9], &nodes[10], &nodes[14], &nodes[13]}));
+  body.push_back(quad4_factory.CreateElement(
+      {&nodes[10], &nodes[11], &nodes[15], &nodes[14]}));
 
   ffea::Mesh mesh(number_of_dofs_per_node, nodes);
   // mesh.RegisterElementGroup("dirichlet_boundary", dirichlet_boundary);
@@ -141,19 +151,17 @@ int main() {
   global_K.setZero();
   std::vector<Eigen::Triplet<double>> coefficients;
 
-
   // const auto& elements = mesh.GetElementGroup("body");
 
-  for (const auto& element : mesh.body_) {
-    size_t number_of_nodes = element->number_of_nodes();
-    size_t number_of_dofs = element->number_of_dofs();
+  for (auto& element : mesh.body_) {
+    size_t number_of_nodes = element.GetNumberOfNodes();
+    size_t number_of_dofs = element.GetNumberOfDofs();
     Eigen::MatrixXd element_K(number_of_dofs, number_of_dofs);
-    const auto& element_nodes_coordinates = element->node_coordinates();
-    for (const auto& integration_point : quad_integration_points) {
+    for (const auto& integration_point : *element.integration_points()) {
       const auto& local_coordinates = integration_point.local_coordinates();
-      const auto& jacobian = element->EvaluateJacobian(local_coordinates);
-      const auto& dN_local =
-          element->EvaluateShapeFunctionsDerivatives(local_coordinates);
+      const auto& jacobian = element.EvaluateJacobian(local_coordinates);
+      const auto& dN_local = element.EvaluateShapeFunctions(
+          local_coordinates, ffea::DerivativeOrder::kFirst);
       const auto& dN_global = jacobian.inverse() * dN_local;
       Eigen::MatrixXd B(3, number_of_dofs);
       for (size_t node_index = 0; node_index < number_of_nodes; node_index++) {
@@ -169,7 +177,7 @@ int main() {
     }
 
     // Scatter coefficients
-    auto nodes = element->nodes();
+    auto nodes = element.nodes();
     for (size_t i_node = 0; i_node < nodes.size(); i_node++) {
       auto number_of_dofs = nodes[i_node]->number_of_dofs();
       for (size_t j_node = 0; j_node < nodes.size(); j_node++) {
@@ -208,13 +216,13 @@ int main() {
     return load;
   };
 
-  for (const auto& element : mesh.neumann_boundary_) {
-    size_t number_of_dofs = element->number_of_dofs();
+  for (auto& element : mesh.neumann_boundary_) {
+    size_t number_of_dofs = element.GetNumberOfDofs();
     Eigen::VectorXd element_rhs(number_of_dofs);
 
     Eigen::VectorXd nodal_force_vector(number_of_dofs);  // {f1x, f1y, f2x, f2y}
-    auto nodes = element->nodes();
-    size_t number_of_nodes = element->number_of_nodes();
+    auto nodes = element.nodes();
+    size_t number_of_nodes = element.GetNumberOfNodes();
     for (size_t node_index = 0; node_index < number_of_nodes; node_index++) {
       auto& node = nodes[node_index];
       auto load_at_node = load_function(node->coordinates());
@@ -224,9 +232,10 @@ int main() {
       nodal_force_vector(second_dof_index) = load_at_node(1);
     }
 
-    for (const auto& integration_point : line_integration_points) {
+    for (const auto& integration_point : *element.integration_points()) {
       const auto& local_coordinates = integration_point.local_coordinates();
-      const auto& N = element->EvaluateShapeFunctions(local_coordinates);
+      const auto& N = element.EvaluateShapeFunctions(
+          local_coordinates, ffea::DerivativeOrder::kZeroth);
       for (size_t component_index = 0;
            component_index < number_of_dofs_per_node; component_index++) {
         Eigen::VectorXd f_component(number_of_dofs_per_node);
@@ -263,8 +272,8 @@ int main() {
   double boundary_value =
       0.0;  // This should be changed to accept a lambda with the components
 
-  for (const auto& element : mesh.dirichlet_boundary_) {
-    for (const auto& node : element->nodes()) {
+  for (auto& element : mesh.dirichlet_boundary_) {
+    for (const auto& node : element.nodes()) {
       auto node_id = node->id();
       for (size_t component_index = 0;
            component_index < number_of_dofs_per_node; component_index++) {

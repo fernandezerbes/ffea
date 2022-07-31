@@ -5,8 +5,8 @@
 #include <vector>
 #include <unordered_map>
 
-#include "./Element.h"
-#include "./Node.h"
+#include "./element.h"
+#include "./node.h"
 
 namespace ffea {
 
@@ -21,9 +21,9 @@ class Mesh
   // const std::vector<Element>& GetElementGroup(std::string group_name) const;
   long unsigned int number_of_dofs() const;
 
-  std::vector<Element*> dirichlet_boundary_;
-  std::vector<Element*> neumann_boundary_;
-  std::vector<Element*> body_;
+  std::vector<Element> dirichlet_boundary_;
+  std::vector<Element> neumann_boundary_;
+  std::vector<Element> body_;
 
  private:
   short int number_of_dofs_per_node_;

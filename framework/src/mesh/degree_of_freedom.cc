@@ -1,6 +1,6 @@
 #include <complex>
 #include <stdexcept>
-#include "../../inc/mesh/DegreeOfFreedom.h"
+#include "../../inc/mesh/degree_of_freedom.h"
 
 namespace ffea {
 

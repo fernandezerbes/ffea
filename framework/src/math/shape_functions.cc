@@ -4,8 +4,9 @@
 
 namespace ffea {
 
-Eigen::MatrixXd ShapeFunctions::Evaluate(const std::vector<double>& coordinates,
-                                         DerivativeOrder derivative_order) {
+Eigen::MatrixXd ShapeFunctions::Evaluate(
+    const std::vector<double>& coordinates,
+    DerivativeOrder derivative_order) const {
   switch (derivative_order) {
     case DerivativeOrder::kZeroth:
       return Evaluate(coordinates);
@@ -26,7 +27,7 @@ ShapeFunctions::~ShapeFunctions() {}
 Linear1DShapeFunctions::~Linear1DShapeFunctions() {}
 
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) {
+    const std::vector<double>& coordinates) const {
   double xi = coordinates[0];
   Eigen::MatrixXd result(1, 2);
   result(0, 0) = 0.5 * (1.0 - xi);
@@ -35,7 +36,7 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) {
+    const std::vector<double>& coordinates) const {
   Eigen::MatrixXd result(1, 2);
   result(0, 0) = 1.0;
   result(0, 1) = -1.0;
@@ -43,7 +44,7 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) {
+    const std::vector<double>& coordinates) const {
   Eigen::MatrixXd result(1, 2);
   result(0, 0) = 0.0;
   result(0, 1) = 0.0;
@@ -53,7 +54,7 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate2ndDerivative(
 Linear2DShapeFunctions::~Linear2DShapeFunctions() {}
 
 Eigen::MatrixXd Linear2DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) {
+    const std::vector<double>& coordinates) const {
   double xi = coordinates[0];
   double eta = coordinates[1];
   Eigen::MatrixXd result(1, 4);
@@ -65,7 +66,7 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd Linear2DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) {
+    const std::vector<double>& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
      dN1/deta  dN2/deta   dN3/deta  dN4/deta]
@@ -86,7 +87,7 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd Linear2DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) {
+    const std::vector<double>& coordinates) const {
   /*
     [d^2N1/dxi^2      d^2N2/dxi^2     d^2N3/dxi^2     d^2N4/dxi^2,
      d^2N1/deta^2     d^2N2/deta^2    d^2N3/deta^2    d^2N4/deta^2,
