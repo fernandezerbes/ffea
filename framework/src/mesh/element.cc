@@ -8,7 +8,7 @@ Element::Element(size_t dimension, const std::vector<Node *> &nodes,
     : dimension_(dimension),
       nodes_(nodes),
       shape_functions_(shape_functions),
-      integration_points_(integration_points_) {}
+      integration_points_(integration_points) {}
 
 Element::~Element() {}
 
@@ -76,9 +76,9 @@ Eigen::MatrixXd Element::MapLocalToGlobal(
   return shape_functions * GetNodesCoordinatesValues();
 }
 
-ElementFactory::ElementFactory(
-    size_t dimension, std::shared_ptr<ShapeFunctions> shape_functions,
-    std::shared_ptr<IntegrationRule> integration_rule)
+ElementFactory::ElementFactory(size_t dimension,
+                               std::shared_ptr<ShapeFunctions> shape_functions,
+                               std::shared_ptr<QuadratureRule> integration_rule)
     : dimension_(dimension),
       shape_functions_(shape_functions),
       integration_points_(nullptr) {

@@ -45,7 +45,7 @@ class ElementFactory {
  public:
   ElementFactory(size_t dimension,
                  std::shared_ptr<ShapeFunctions> shape_functions,
-                 std::shared_ptr<IntegrationRule> integration_rule);
+                 std::shared_ptr<QuadratureRule> integration_rule);
 
   Element CreateElement(const std::vector<Node *> &nodes) const;
 

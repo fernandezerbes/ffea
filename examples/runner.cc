@@ -79,10 +79,10 @@ int main() {
   std::shared_ptr<ffea::ShapeFunctions> linear_2d_shape_functions =
       std::make_shared<ffea::Linear2DShapeFunctions>();
 
-  std::shared_ptr<ffea::IntegrationRule> integration_1x2_rule =
-      std::make_shared<ffea::Integration1x2Rule>();
-  std::shared_ptr<ffea::IntegrationRule> integration_2x2_rule =
-      std::make_shared<ffea::Integration2x2Rule>();
+  std::shared_ptr<ffea::QuadratureRule> integration_1x2_rule =
+      std::make_shared<ffea::QuadratureRule1x2>();
+  std::shared_ptr<ffea::QuadratureRule> integration_2x2_rule =
+      std::make_shared<ffea::QuadratureRule2x2>();
 
   ffea::ElementFactory line2_factory(dimension, linear_1d_shape_functions,
                                      integration_1x2_rule);

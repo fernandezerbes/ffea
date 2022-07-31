@@ -25,17 +25,17 @@ class IntegrationPoint {
 using IntegrationPointsGroupPtr =
     std::shared_ptr<std::vector<IntegrationPoint>>;
 
-class IntegrationRule {
+class QuadratureRule {
  public:
   virtual IntegrationPointsGroupPtr GetIntegrationPoints() const = 0;
 };
 
-class Integration1x2Rule : public IntegrationRule {
+class QuadratureRule1x2 : public QuadratureRule {
  public:
   virtual IntegrationPointsGroupPtr GetIntegrationPoints() const override;
 };
 
-class Integration2x2Rule : public IntegrationRule {
+class QuadratureRule2x2 : public QuadratureRule {
  public:
   virtual IntegrationPointsGroupPtr GetIntegrationPoints() const override;
 };

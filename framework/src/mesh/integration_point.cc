@@ -18,7 +18,7 @@ const Coordinates &IntegrationPoint::local_coordinates() const {
 
 double IntegrationPoint::weight() const { return weight_; }
 
-IntegrationPointsGroupPtr Integration1x2Rule::GetIntegrationPoints() const {
+IntegrationPointsGroupPtr QuadratureRule1x2::GetIntegrationPoints() const {
   IntegrationPointsGroupPtr integration_points =
       std::make_shared<std::vector<IntegrationPoint>>();
   integration_points->reserve(2);
@@ -29,7 +29,7 @@ IntegrationPointsGroupPtr Integration1x2Rule::GetIntegrationPoints() const {
   return integration_points;
 }
 
-IntegrationPointsGroupPtr Integration2x2Rule::GetIntegrationPoints() const {
+IntegrationPointsGroupPtr QuadratureRule2x2::GetIntegrationPoints() const {
   IntegrationPointsGroupPtr integration_points =
       std::make_shared<std::vector<IntegrationPoint>>();
   integration_points->reserve(4);
