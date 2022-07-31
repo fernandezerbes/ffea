@@ -4,6 +4,8 @@ namespace ffea {
 ElementProcessor::ElementProcessor(Eigen::MatrixXd constitutive_model)
     : constitutive_model_(constitutive_model) {}
 
+ElementProcessor::~ElementProcessor() {}
+
 std::pair<Eigen::MatrixXd, Eigen::VectorXd>
 ElementProcessor::ProcessBodyElement(const Element& element,
                                      LoadFunction body_load_function) const {
@@ -15,8 +17,10 @@ ElementProcessor::ProcessBodyElement(const Element& element,
     const auto& jacobian = element.EvaluateJacobian(local_coordinates);
     AddContributionToStiffness(element, integration_point, jacobian,
                                element_stiffness);
-    AddContributionToRhs(element, integration_point, jacobian,
-                         body_load_function, element_rhs);
+    if (body_load_function) {
+      AddContributionToRhs(element, integration_point, jacobian,
+                           body_load_function, element_rhs);
+    }
   }
   return {element_stiffness, element_rhs};
 }
@@ -60,15 +64,22 @@ void ElementProcessor::AddContributionToRhs(
     const Element& element, const IntegrationPoint& integration_point,
     const Eigen::MatrixXd& jacobian, LoadFunction load_function,
     Eigen::VectorXd& rhs) const {
+  size_t spatial_dimensions = 2;  // TODO Change this
   const auto& local_coordinates = integration_point.local_coordinates();
   const auto& shape_functions = element.EvaluateShapeFunctions(
       local_coordinates, ffea::DerivativeOrder::kZeroth);
   const auto& global_coordinates = element.MapLocalToGlobal(local_coordinates);
   const auto& body_load = load_function(global_coordinates);
-  for (size_t dimension_index = 0; dimension_index < element.dimension();
+  for (size_t dimension_index = 0; dimension_index < spatial_dimensions;
        dimension_index++) {
-    rhs += shape_functions.transpose() * body_load[dimension_index] *
-           jacobian.determinant() * integration_point.weight();
+    const auto& load_components = shape_functions * body_load[dimension_index] *
+                                  jacobian.determinant() *
+                                  integration_point.weight();
+    for (size_t component_index = 0; component_index < spatial_dimensions;
+         component_index++) {
+      rhs(dimension_index + component_index * spatial_dimensions) +=
+          load_components(0, component_index);
+    }
   }
 }
 

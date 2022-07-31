@@ -18,7 +18,7 @@ class ElementProcessor {
   ~ElementProcessor();
 
   std::pair<Eigen::MatrixXd, Eigen::VectorXd> ProcessBodyElement(
-      const Element &element, LoadFunction body_load_function) const;
+      const Element &element, LoadFunction body_load_function = {}) const;
   Eigen::VectorXd ProcessBoundaryElement(
       const Element &element, LoadFunction boundary_load_function) const;
 

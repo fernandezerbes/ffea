@@ -21,10 +21,12 @@ IntegrationPointsGroupPtr Element::integration_points() const {
 }
 
 std::vector<int> Element::GetLocalToGlobalDofIndicesMap() const {
-  std::vector<int> indices_map(GetNumberOfDofs());
+  std::vector<int> indices_map;
+  indices_map.reserve(GetNumberOfDofs());
   for (const auto &node : nodes_) {
-    for (const auto &dof : node->dofs()) {
-      indices_map.push_back(dof.local_id());
+    size_t dofs_per_node = GetNumberOfDofsPerNode();
+    for (size_t dof_index = 0; dof_index < dofs_per_node; dof_index++) {
+      indices_map.push_back(dofs_per_node * node->id() + dof_index);
     }
   }
   return indices_map;
@@ -62,7 +64,7 @@ Eigen::MatrixXd Element::GetNodesCoordinatesValues() const {
 
 Eigen::MatrixXd Element::EvaluateJacobian(
     const Coordinates &local_coordinates) const {
-  Eigen::MatrixXd jacobian(2, 2);
+  Eigen::MatrixXd jacobian(dimension_, dimension_);
   const auto &shape_functions_derivatives =
       EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kFirst);
   const auto &nodes_coordinates_values = GetNodesCoordinatesValues();

@@ -6,14 +6,15 @@
 #include <iostream>
 #include <memory>
 
-#include "../framework/inc/math/utils.h"
 #include "../framework/inc/math/shape_functions.h"
+#include "../framework/inc/math/utils.h"
 #include "../framework/inc/mesh/coordinates.h"
 #include "../framework/inc/mesh/degree_of_freedom.h"
 #include "../framework/inc/mesh/element.h"
 #include "../framework/inc/mesh/integration_point.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/node.h"
+#include "../framework/inc/processor/element_processor.h"
 
 int main() {
   /*     0         1         2
@@ -33,7 +34,9 @@ int main() {
 
   */
 
-  const size_t dimension = 2;
+  const size_t parametric_dimensions_1d = 1;
+  const size_t parametric_dimensions_2d = 2;
+  const size_t spatial_dimensions = 2;
 
   ffea::Coordinates point_0({0.0, 0.0, 0.0});
   ffea::Coordinates point_1({1.0, 0.0, 0.0});
@@ -84,9 +87,9 @@ int main() {
   std::shared_ptr<ffea::QuadratureRule> integration_2x2_rule =
       std::make_shared<ffea::QuadratureRule2x2>();
 
-  ffea::ElementFactory line2_factory(dimension, linear_1d_shape_functions,
+  ffea::ElementFactory line2_factory(parametric_dimensions_1d, linear_1d_shape_functions,
                                      integration_1x2_rule);
-  ffea::ElementFactory quad4_factory(dimension, linear_2d_shape_functions,
+  ffea::ElementFactory quad4_factory(parametric_dimensions_2d, linear_2d_shape_functions,
                                      integration_2x2_rule);
 
   std::vector<ffea::Element> dirichlet_boundary;
@@ -137,12 +140,14 @@ int main() {
   double nu = 0.3;
   double E = 210e9;
   double factor = E / (1 - nu * nu);
-  Eigen::MatrixXd C(3, 3);
-  C(0, 0) = factor;
-  C(0, 1) = factor * nu;
-  C(1, 0) = C(0, 1);
-  C(1, 1) = factor;
-  C(2, 2) = (1 - nu) * factor;
+  Eigen::MatrixXd constitutive_matrix(3, 3);
+  constitutive_matrix(0, 0) = factor;
+  constitutive_matrix(0, 1) = factor * nu;
+  constitutive_matrix(1, 0) = constitutive_matrix(0, 1);
+  constitutive_matrix(1, 1) = factor;
+  constitutive_matrix(2, 2) = (1 - nu) * factor;
+
+  ffea::ElementProcessor element_processor(constitutive_matrix);
 
   // Stiffness matrix
   auto number_of_dofs = mesh.number_of_dofs();
@@ -151,51 +156,60 @@ int main() {
   global_K.setZero();
   std::vector<Eigen::Triplet<double>> coefficients;
 
+  // Load vector
+  Eigen::VectorXd global_rhs(mesh.number_of_dofs());
+  global_rhs.setZero();
+
+  auto load_function =
+      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+    std::vector<double> load{0.0, 1.0e8};
+    return load;
+  };
+
   // const auto& elements = mesh.GetElementGroup("body");
 
   for (auto& element : mesh.body_) {
-    size_t number_of_nodes = element.GetNumberOfNodes();
-    size_t number_of_dofs = element.GetNumberOfDofs();
-    Eigen::MatrixXd element_K(number_of_dofs, number_of_dofs);
-    for (const auto& integration_point : *element.integration_points()) {
-      const auto& local_coordinates = integration_point.local_coordinates();
-      const auto& jacobian = element.EvaluateJacobian(local_coordinates);
-      const auto& dN_local = element.EvaluateShapeFunctions(
-          local_coordinates, ffea::DerivativeOrder::kFirst);
-      const auto& dN_global = jacobian.inverse() * dN_local;
-      Eigen::MatrixXd B(3, number_of_dofs);
-      for (size_t node_index = 0; node_index < number_of_nodes; node_index++) {
-        auto first_dof_index = number_of_dofs_per_node * node_index;
-        auto second_dof_index = first_dof_index + 1;
-        B(0, first_dof_index) = dN_global(0, node_index);
-        B(1, second_dof_index) = dN_global(1, node_index);
-        B(2, first_dof_index) = dN_global(1, node_index);
-        B(2, second_dof_index) = dN_global(0, node_index);
-      }
-      element_K += B.transpose() * C * B * jacobian.determinant() *
-                   integration_point.weight();
-    }
+    const auto& system = element_processor.ProcessBodyElement(element);
+    const auto& element_K = system.first;
+    const auto& element_rhs = system.second;
+    
+    std::cout << element_K << std::endl;
+    std::cout << element_rhs << std::endl;
+
+
+    auto nodes = element.nodes();
+    const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
 
     // Scatter coefficients
-    auto nodes = element.nodes();
-    for (size_t i_node = 0; i_node < nodes.size(); i_node++) {
-      auto number_of_dofs = nodes[i_node]->number_of_dofs();
-      for (size_t j_node = 0; j_node < nodes.size(); j_node++) {
-        for (size_t i_dof = 0; i_dof < number_of_dofs; i_dof++) {
-          for (size_t j_dof = 0; j_dof < number_of_dofs; j_dof++) {
-            auto local_row_index = i_node * number_of_dofs_per_node + i_dof;
-            auto local_col_index = j_node * number_of_dofs_per_node + j_dof;
-            auto global_row_index =
-                number_of_dofs_per_node * nodes[i_node]->id() + i_dof;
-            auto global_col_index =
-                number_of_dofs_per_node * nodes[j_node]->id() + j_dof;
-
-            coefficients.push_back(Eigen::Triplet<double>(
-                global_row_index, global_col_index,
-                element_K(local_row_index, local_col_index)));
-            // Add body load contribution // add weights in integration
-          }
+    for (size_t node_index = 0; node_index < nodes.size(); node_index++) {
+      const auto& node_dofs = nodes[node_index]->dofs();
+      size_t i_dof_index = 0;
+      for (const auto& i_dof : node_dofs) {
+        size_t j_dof_index = 0;
+        for (const auto& j_dof : node_dofs) {
+          coefficients.push_back(Eigen::Triplet<double>(
+              dofs_map[i_dof_index], dofs_map[j_dof_index],
+              element_K(i_dof_index, j_dof_index)));
+          j_dof_index++;
         }
+        global_rhs(dofs_map[i_dof_index]) += element_rhs(i_dof_index);
+        i_dof_index++;
+      }
+    }
+  }
+
+  for (auto& element : mesh.neumann_boundary_) {
+    const auto& element_rhs =
+        element_processor.ProcessBoundaryElement(element, load_function);
+    auto nodes = element.nodes();
+    const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
+    // Scatter coefficients
+    for (size_t node_index = 0; node_index < nodes.size(); node_index++) {
+      const auto& node_dofs = nodes[node_index]->dofs();
+      size_t i_dof_index = 0;
+      for (const auto& i_dof : node_dofs) {
+        global_rhs(dofs_map[i_dof_index]) += element_rhs(i_dof_index);
+        i_dof_index++;
       }
     }
   }
@@ -204,67 +218,6 @@ int main() {
   global_K.makeCompressed();
 
   std::cout << "global_K\n" << global_K << std::endl;
-
-  // Load vector
-  Eigen::VectorXd global_rhs(mesh.number_of_dofs());
-  global_rhs.setZero();
-
-  auto load_function = [](const ffea::Coordinates& coordinates) {
-    Eigen::VectorXd load(2);
-    load(0) = 0.0;
-    load(1) = 1e8;
-    return load;
-  };
-
-  for (auto& element : mesh.neumann_boundary_) {
-    size_t number_of_dofs = element.GetNumberOfDofs();
-    Eigen::VectorXd element_rhs(number_of_dofs);
-
-    Eigen::VectorXd nodal_force_vector(number_of_dofs);  // {f1x, f1y, f2x, f2y}
-    auto nodes = element.nodes();
-    size_t number_of_nodes = element.GetNumberOfNodes();
-    for (size_t node_index = 0; node_index < number_of_nodes; node_index++) {
-      auto& node = nodes[node_index];
-      auto load_at_node = load_function(node->coordinates());
-      auto first_dof_index = number_of_dofs_per_node * node_index;
-      auto second_dof_index = first_dof_index + 1;
-      nodal_force_vector(first_dof_index) = load_at_node(0);
-      nodal_force_vector(second_dof_index) = load_at_node(1);
-    }
-
-    for (const auto& integration_point : *element.integration_points()) {
-      const auto& local_coordinates = integration_point.local_coordinates();
-      const auto& N = element.EvaluateShapeFunctions(
-          local_coordinates, ffea::DerivativeOrder::kZeroth);
-      for (size_t component_index = 0;
-           component_index < number_of_dofs_per_node; component_index++) {
-        Eigen::VectorXd f_component(number_of_dofs_per_node);
-        f_component(0) = nodal_force_vector(component_index);
-        f_component(1) =
-            nodal_force_vector(component_index + number_of_dofs_per_node);
-        double interpolated_force_component =
-            N(0, 0) * f_component(0) + N(0, 1) * f_component(1);
-        element_rhs(component_index) +=
-            N(0, 0) * interpolated_force_component * integration_point.weight();
-        element_rhs(component_index + number_of_dofs_per_node) +=
-            N(0, 1) * interpolated_force_component * integration_point.weight();
-      }
-    }
-
-    // Scatter
-    for (size_t i_node = 0; i_node < nodes.size(); i_node++) {
-      auto number_of_dofs = nodes[i_node]->number_of_dofs();
-      for (size_t i_dof = 0; i_dof < number_of_dofs; i_dof++) {
-        auto local_row_index = i_node * number_of_dofs_per_node + i_dof;
-        auto global_row_index =
-            number_of_dofs_per_node * nodes[i_node]->id() + i_dof;
-
-        global_rhs(global_row_index) += element_rhs(local_row_index);
-      }
-    }
-
-    element_rhs.setZero();
-  }
   std::cout << "Global rhs = " << global_rhs << std::endl;
 
   // Apply BCs by penalty
