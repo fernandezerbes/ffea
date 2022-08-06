@@ -8,13 +8,15 @@
 #include "../mesh/coordinates.h"
 #include "../mesh/element.h"
 #include "../mesh/integration_point.h"
+#include "./operator.h"
 namespace ffea {
 
 using LoadFunction = std::function<std::vector<double>(const Coordinates &)>;
 
 class ElementProcessor {
  public:
-  ElementProcessor(Eigen::MatrixXd constitutive_model);
+  ElementProcessor(const Eigen::MatrixXd &constitutive_model,
+                   const DifferentialOperator &differential_operator);
   ~ElementProcessor();
 
   std::pair<Eigen::MatrixXd, Eigen::VectorXd> ProcessBodyElement(
@@ -35,6 +37,7 @@ class ElementProcessor {
                                   Eigen::MatrixXd &stiffness) const;
 
   Eigen::MatrixXd constitutive_model_;
+  const DifferentialOperator &differential_operator_;
 };
 
 }  // namespace ffea

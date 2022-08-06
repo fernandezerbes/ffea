@@ -1,21 +1,27 @@
 #ifndef FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
 #define FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
 
-#include "../math/CustomDenseMatrix.h"
+#include <eigen3/Eigen/Dense>
 
-namespace ffea
-{
+namespace ffea {
 
-class StrainDisplacementOperator
-{
+class DifferentialOperator {
  public:
-  StrainDisplacementOperator();
-  ~StrainDisplacementOperator();
+  DifferentialOperator(size_t dofs_per_node);
+  virtual const Eigen::MatrixXd Compute(
+      const Eigen::MatrixXd &shape_function_derivatives) const = 0;
 
-  CustomDenseMatrix<double> get(
-    const CustomDenseMatrix<double> &shape_function_derivatives);
+ protected:
+  size_t dofs_per_node_;
 };
 
-} // namespace ffea
+class StrainDisplacementOperator2D : public DifferentialOperator {
+ public:
+  StrainDisplacementOperator2D();
+  virtual const Eigen::MatrixXd Compute(
+      const Eigen::MatrixXd &shape_function_derivatives) const override;
+};
 
-#endif // FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
+}  // namespace ffea
+
+#endif  // FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_

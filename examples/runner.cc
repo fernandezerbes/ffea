@@ -15,6 +15,7 @@
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/node.h"
 #include "../framework/inc/processor/element_processor.h"
+#include "../framework/inc/processor/operator.h"
 
 int main() {
   /*     0         1         2
@@ -152,7 +153,9 @@ int main() {
   std::cout << "\n\nConstitutive matrix: \n"
             << constitutive_matrix << std::endl;
 
-  ffea::ElementProcessor element_processor(constitutive_matrix);
+  auto differential_operator = ffea::StrainDisplacementOperator2D();
+  ffea::ElementProcessor element_processor(constitutive_matrix,
+                                           differential_operator);
 
   // Stiffness matrix
   auto number_of_dofs = mesh.number_of_dofs();
@@ -187,7 +190,9 @@ int main() {
       for (const auto& global_i_index : dofs_map) {
         size_t local_j_index = 0;
         for (const auto& global_j_index : dofs_map) {
-          // std::cout << "Mapping (" << local_i_index << ", " << local_j_index << ") to (" << global_i_index << ", " << global_j_index << ")" << std::endl;
+          // std::cout << "Mapping (" << local_i_index << ", " << local_j_index
+          // << ") to (" << global_i_index << ", " << global_j_index << ")" <<
+          // std::endl;
           global_K(global_i_index, global_j_index) +=
               element_K(local_i_index, local_j_index);
           // coefficients.push_back(
