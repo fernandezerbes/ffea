@@ -132,12 +132,12 @@ int main() {
       {&nodes[10], &nodes[11], &nodes[15], &nodes[14]}));
 
   ffea::Mesh mesh(number_of_dofs_per_node, nodes);
-  // mesh.RegisterElementGroup("dirichlet_boundary", dirichlet_boundary);
-  // mesh.RegisterElementGroup("neumann_boundary", neumann_boundary);
-  // mesh.RegisterElementGroup("body", body);
-  mesh.dirichlet_boundary_ = dirichlet_boundary;
-  mesh.neumann_boundary_ = neumann_boundary;
-  mesh.body_ = body;
+  mesh.RegisterElementGroup(ffea::ElementGroupType::kBodyElements, "body",
+                            body);
+  mesh.RegisterElementGroup(ffea::ElementGroupType::kDirichletBoundaryElements,
+                            "dirichlet_boundary", dirichlet_boundary);
+  mesh.RegisterElementGroup(ffea::ElementGroupType::kNeumannBoundaryElements,
+                            "neumann_boundary", neumann_boundary);
 
   // Constitutive matrix
   double nu = 0.0;
@@ -176,9 +176,14 @@ int main() {
     return load;
   };
 
-  // const auto& elements = mesh.GetElementGroup("body");
+  auto& body_elements =
+      mesh.GetElementGroup(ffea::ElementGroupType::kBodyElements, "body");
+  auto& dirichlet_elements = mesh.GetElementGroup(
+      ffea::ElementGroupType::kDirichletBoundaryElements, "dirichlet_boundary");
+  auto& neumann_elements = mesh.GetElementGroup(
+      ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
 
-  for (auto& element : mesh.body_) {
+  for (auto& element : body_elements) {
     const auto& system = element_processor.ProcessBodyElement(element);
     const auto& element_K = system.first;
     const auto& element_rhs = system.second;
@@ -210,7 +215,7 @@ int main() {
     }
   }
 
-  for (auto& element : mesh.neumann_boundary_) {
+  for (auto& element : neumann_elements) {
     const auto& element_rhs =
         element_processor.ProcessBoundaryElement(element, load_function);
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
@@ -233,7 +238,7 @@ int main() {
   double boundary_value =
       0.0;  // This should be changed to accept a lambda with the components
 
-  for (auto& element : mesh.dirichlet_boundary_) {
+  for (auto& element : dirichlet_elements) {
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
     for (const auto& global_i_index : dofs_map) {
       global_K.coeffRef(global_i_index, global_i_index) *= penalty;
