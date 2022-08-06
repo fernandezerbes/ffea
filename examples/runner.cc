@@ -87,9 +87,11 @@ int main() {
   std::shared_ptr<ffea::QuadratureRule> integration_2x2_rule =
       std::make_shared<ffea::QuadratureRule2x2>();
 
-  ffea::ElementFactory line2_factory(parametric_dimensions_1d, linear_1d_shape_functions,
+  ffea::ElementFactory line2_factory(parametric_dimensions_1d,
+                                     linear_1d_shape_functions,
                                      integration_1x2_rule);
-  ffea::ElementFactory quad4_factory(parametric_dimensions_2d, linear_2d_shape_functions,
+  ffea::ElementFactory quad4_factory(parametric_dimensions_2d,
+                                     linear_2d_shape_functions,
                                      integration_2x2_rule);
 
   std::vector<ffea::Element> dirichlet_boundary;
@@ -137,8 +139,8 @@ int main() {
   mesh.body_ = body;
 
   // Constitutive matrix
-  double nu = 0.3;
-  double E = 210e9;
+  double nu = 0.0;
+  double E = 1;
   double factor = E / (1 - nu * nu);
   Eigen::MatrixXd constitutive_matrix(3, 3);
   constitutive_matrix(0, 0) = factor;
@@ -147,13 +149,18 @@ int main() {
   constitutive_matrix(1, 1) = factor;
   constitutive_matrix(2, 2) = (1 - nu) * factor;
 
+  std::cout << "\n\nConstitutive matrix: \n"
+            << constitutive_matrix << std::endl;
+
   ffea::ElementProcessor element_processor(constitutive_matrix);
 
   // Stiffness matrix
   auto number_of_dofs = mesh.number_of_dofs();
-  Eigen::SparseMatrix<double, Eigen::RowMajor> global_K(number_of_dofs,
-                                                        number_of_dofs);
-  global_K.setZero();
+  // Eigen::SparseMatrix<double, Eigen::RowMajor> global_K(number_of_dofs,
+  //                                                       number_of_dofs);
+
+  Eigen::MatrixXd global_K(number_of_dofs, number_of_dofs);
+
   std::vector<Eigen::Triplet<double>> coefficients;
 
   // Load vector
@@ -162,7 +169,7 @@ int main() {
 
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{0.0, 1.0e8};
+    std::vector<double> load{0.0, 1.0};
     return load;
   };
 
@@ -172,28 +179,28 @@ int main() {
     const auto& system = element_processor.ProcessBodyElement(element);
     const auto& element_K = system.first;
     const auto& element_rhs = system.second;
-    
-    std::cout << element_K << std::endl;
-    std::cout << element_rhs << std::endl;
-
-
     auto nodes = element.nodes();
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
-
     // Scatter coefficients
     for (size_t node_index = 0; node_index < nodes.size(); node_index++) {
-      const auto& node_dofs = nodes[node_index]->dofs();
-      size_t i_dof_index = 0;
-      for (const auto& i_dof : node_dofs) {
-        size_t j_dof_index = 0;
-        for (const auto& j_dof : node_dofs) {
-          coefficients.push_back(Eigen::Triplet<double>(
-              dofs_map[i_dof_index], dofs_map[j_dof_index],
-              element_K(i_dof_index, j_dof_index)));
-          j_dof_index++;
+      size_t local_i_index = 0;
+      for (const auto& global_i_index : dofs_map) {
+        size_t local_j_index = 0;
+        for (const auto& global_j_index : dofs_map) {
+          // std::cout << "Mapping (" << local_i_index << ", " << local_j_index << ") to (" << global_i_index << ", " << global_j_index << ")" << std::endl;
+          global_K(global_i_index, global_j_index) +=
+              element_K(local_i_index, local_j_index);
+          // coefficients.push_back(
+          //     Eigen::Triplet<double>(global_i_index, global_j_index,
+          //                            element_K(local_i_index,
+          //                            local_j_index)));
+          local_j_index++;
         }
-        global_rhs(dofs_map[i_dof_index]) += element_rhs(i_dof_index);
-        i_dof_index++;
+        // std::cout << "\element_K\n" << element_K << std::endl;
+        // std::cout << "\nglobal_K\n" << global_K << std::endl;
+        // std::cout << "\nelement_K\n" << element_K << std::endl;
+        global_rhs(global_i_index) += element_rhs(local_i_index);
+        local_i_index++;
       }
     }
   }
@@ -201,56 +208,49 @@ int main() {
   for (auto& element : mesh.neumann_boundary_) {
     const auto& element_rhs =
         element_processor.ProcessBoundaryElement(element, load_function);
-    auto nodes = element.nodes();
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
     // Scatter coefficients
-    for (size_t node_index = 0; node_index < nodes.size(); node_index++) {
-      const auto& node_dofs = nodes[node_index]->dofs();
-      size_t i_dof_index = 0;
-      for (const auto& i_dof : node_dofs) {
-        global_rhs(dofs_map[i_dof_index]) += element_rhs(i_dof_index);
-        i_dof_index++;
-      }
+    for (size_t local_i_index = 0; local_i_index < dofs_map.size();
+         local_i_index++) {
+      size_t global_i_index = dofs_map[local_i_index];
+      global_rhs(global_i_index) += element_rhs(local_i_index);
     }
   }
 
-  global_K.setFromTriplets(coefficients.begin(), coefficients.end());
-  global_K.makeCompressed();
+  // global_K.setFromTriplets(coefficients.begin(), coefficients.end());
+  // global_K.makeCompressed();
 
-  std::cout << "global_K\n" << global_K << std::endl;
-  std::cout << "Global rhs = " << global_rhs << std::endl;
+  // std::cout << "global_K\n" << global_K << std::endl;
+  // std::cout << "Global rhs = " << global_rhs << std::endl;
 
   // Apply BCs by penalty
-  double penalty = 1e8;
+  double penalty = 1.0e4;
   double boundary_value =
       0.0;  // This should be changed to accept a lambda with the components
 
   for (auto& element : mesh.dirichlet_boundary_) {
-    for (const auto& node : element.nodes()) {
-      auto node_id = node->id();
-      for (size_t component_index = 0;
-           component_index < number_of_dofs_per_node; component_index++) {
-        auto dof_id = node_id * number_of_dofs_per_node + component_index;
-        global_K.coeffRef(dof_id, dof_id) *= penalty;
-        global_rhs(dof_id) = boundary_value * penalty;
-      }
+    const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
+    for (const auto& global_i_index : dofs_map) {
+      global_K.coeffRef(global_i_index, global_i_index) *= penalty;
+      global_rhs(global_i_index) = boundary_value * penalty;
     }
   }
 
-  std::cout << "Modified global_K\n" << global_K << std::endl;
+  // std::cout << "Modified global_K\n" << global_K << std::endl;
 
-  std::cout << "Modified global_rhs = " << global_rhs << std::endl;
+  // std::cout << "Modified global_rhs = " << global_rhs << std::endl;
 
-  Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> cg_solver;
+  Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
+  // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> cg_solver;
   cg_solver.compute(global_K);
   Eigen::VectorXd x(mesh.number_of_dofs());
   for (int i = 0; i < 100; i++) {
     x = cg_solver.solve(global_rhs);
   }
-  std::cout << "#iterations:     " << cg_solver.iterations() << std::endl;
-  std::cout << "estimated error: " << cg_solver.error() << std::endl;
+  // std::cout << "#iterations:     " << cg_solver.iterations() << std::endl;
+  // std::cout << "estimated error: " << cg_solver.error() << std::endl;
 
-  std::cout << "x = " << x << std::endl;
+  // std::cout << "x = " << x << std::endl;
 
   for (int i = 3; i >= 0; i--) {
     for (int j = 0; j < 4; j++) {

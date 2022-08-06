@@ -10,8 +10,8 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd>
 ElementProcessor::ProcessBodyElement(const Element& element,
                                      LoadFunction body_load_function) const {
   size_t number_of_dofs = element.GetNumberOfDofs();
-  Eigen::MatrixXd element_stiffness(number_of_dofs, number_of_dofs);
-  Eigen::VectorXd element_rhs(number_of_dofs);
+  Eigen::MatrixXd element_stiffness = Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
+  Eigen::VectorXd element_rhs = Eigen::VectorXd::Zero(number_of_dofs);
   for (const auto& integration_point : *element.integration_points()) {
     const auto& local_coordinates = integration_point.local_coordinates();
     const auto& jacobian = element.EvaluateJacobian(local_coordinates);
@@ -28,7 +28,7 @@ ElementProcessor::ProcessBodyElement(const Element& element,
 Eigen::VectorXd ElementProcessor::ProcessBoundaryElement(
     const Element& element, LoadFunction boundary_load) const {
   size_t number_of_dofs = element.GetNumberOfDofs();
-  Eigen::VectorXd element_rhs(number_of_dofs);
+  Eigen::VectorXd element_rhs = Eigen::VectorXd::Zero(number_of_dofs);
   for (const auto& integration_point : *element.integration_points()) {
     const auto& local_coordinates = integration_point.local_coordinates();
     const auto& jacobian = element.EvaluateJacobian(local_coordinates);
@@ -45,7 +45,7 @@ void ElementProcessor::AddContributionToStiffness(
   const auto& dN_local = element.EvaluateShapeFunctions(
       local_coordinates, ffea::DerivativeOrder::kFirst);
   const auto& dN_global = jacobian.inverse() * dN_local;
-  Eigen::MatrixXd B(3, element.GetNumberOfDofs());
+  Eigen::MatrixXd B = Eigen::MatrixXd::Zero(3, element.GetNumberOfDofs());
   size_t number_of_nodes = element.GetNumberOfNodes();
   size_t number_of_dofs_per_node = element.GetNumberOfDofsPerNode();
   for (size_t node_index = 0; node_index < number_of_nodes; node_index++) {
@@ -56,8 +56,9 @@ void ElementProcessor::AddContributionToStiffness(
     B(2, first_dof_index) = dN_global(1, node_index);
     B(2, second_dof_index) = dN_global(0, node_index);
   }
-  stiffness += B.transpose() * constitutive_model_ * B *
+  const auto& contribution = B.transpose() * constitutive_model_ * B *
                jacobian.determinant() * integration_point.weight();
+  stiffness += contribution;
 }
 
 void ElementProcessor::AddContributionToRhs(
