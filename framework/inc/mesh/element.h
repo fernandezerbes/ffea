@@ -26,28 +26,29 @@ class Element {
   virtual ~Element();
 
   size_t dimension() const;
-  size_t GetNumberOfNodes() const;
-  size_t GetNumberOfDofsPerNode() const;
-  size_t GetNumberOfDofs() const;
-  Eigen::MatrixXd GetNodesCoordinatesValues() const;
   std::vector<Node *> &nodes();
-  IntegrationPointsGroupPtr integration_points() const;
   std::vector<int> GetLocalToGlobalDofIndicesMap() const;
-  Eigen::MatrixXd EvaluateShapeFunctions(
-      const Coordinates &local_coordinates,
-      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
-  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
-  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
   Eigen::MatrixXd ComputeStiffness(
       const Eigen::MatrixXd &constitutive_model,
       const DifferentialOperator &differential_operator);
   Eigen::VectorXd ComputeRhs(ConditionFunction load);
 
- protected:
+ private:
   size_t dimension_;
   std::vector<Node *> nodes_;
   std::shared_ptr<ShapeFunctions> shape_functions_;
   IntegrationPointsGroupPtr integration_points_;
+
+  IntegrationPointsGroupPtr integration_points() const;
+  size_t GetNumberOfNodes() const;
+  size_t GetNumberOfDofsPerNode() const;
+  size_t GetNumberOfDofs() const;
+  Eigen::MatrixXd GetNodesCoordinatesValues() const;
+  Eigen::MatrixXd EvaluateShapeFunctions(
+      const Coordinates &local_coordinates,
+      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
+  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
+  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
 };
 
 class ElementFactory {
