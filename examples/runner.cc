@@ -14,6 +14,7 @@
 #include "../framework/inc/mesh/integration_point.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/node.h"
+#include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/processor/operator.h"
 
 int main() {
@@ -167,6 +168,13 @@ int main() {
   Eigen::VectorXd global_rhs(mesh.number_of_dofs());
   global_rhs.setZero();
 
+  auto& body_elements =
+      mesh.GetElementGroup(ffea::ElementGroupType::kBodyElements, "body");
+  auto& dirichlet_elements = mesh.GetElementGroup(
+      ffea::ElementGroupType::kDirichletBoundaryElements, "dirichlet_boundary");
+  auto& neumann_elements = mesh.GetElementGroup(
+      ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
+
   auto body_load =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
@@ -179,12 +187,11 @@ int main() {
     return load;
   };
 
-  auto& body_elements =
-      mesh.GetElementGroup(ffea::ElementGroupType::kBodyElements, "body");
-  auto& dirichlet_elements = mesh.GetElementGroup(
-      ffea::ElementGroupType::kDirichletBoundaryElements, "dirichlet_boundary");
-  auto& neumann_elements = mesh.GetElementGroup(
-      ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
+  std::shared_ptr<ffea::BoundaryCondition> load_on_top =
+      std::make_shared<ffea::NeumannBoundaryCondition>(neumann_elements,
+                                                       load_function);
+  std::vector<ffea::BoundaryCondition*> neumann_bcs;
+  neumann_bcs.push_back(load_on_top.get());
 
   for (auto& element : body_elements) {
     const auto& element_K =
@@ -218,15 +225,9 @@ int main() {
     }
   }
 
-  for (auto& element : neumann_elements) {
-    const auto& element_rhs = element.ComputeRhs(load_function);
-    const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
-    // Scatter coefficients
-    for (size_t local_i_index = 0; local_i_index < dofs_map.size();
-         local_i_index++) {
-      size_t global_i_index = dofs_map[local_i_index];
-      global_rhs(global_i_index) += element_rhs(local_i_index);
-    }
+  // Neumann BCs
+  for (auto& bc : neumann_bcs) {
+    bc->Apply(global_K, global_rhs);
   }
 
   // global_K.setFromTriplets(coefficients.begin(), coefficients.end());

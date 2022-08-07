@@ -15,8 +15,8 @@ class BoundaryCondition {
  public:
   BoundaryCondition(const std::vector<Element> &boundary_elements,
                     ConditionFunction boundary_function);
-  virtual void Apply(Eigen::MatrixXd &stiffnes_matrix,
-                     Eigen::VectorXd &rhs) = 0;
+  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+                     Eigen::VectorXd &global_rhs) = 0;
 
  protected:
   const std::vector<Element> &boundary_elements_;
@@ -28,30 +28,30 @@ class NeumannBoundaryCondition : public BoundaryCondition {
   NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
                            ConditionFunction boundary_function);
 
-  virtual void Apply(Eigen::MatrixXd &stiffnes_matrix,
-                     Eigen::VectorXd &rhs) override;
+  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+                     Eigen::VectorXd &global_rhs) override;
 };
 
 class EnforcementStrategy {
  public:
-  virtual void Apply(Eigen::MatrixXd &stiffnes_matrix,
-                     Eigen::VectorXd &rhs,
+  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+                     Eigen::VectorXd &global_rhs,
                      ConditionFunction boundary_function,
                      const std::vector<Element> &boundary_elements) = 0;
 };
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
-  virtual void Apply(Eigen::MatrixXd &stiffnes_matrix,
-                     Eigen::VectorXd &rhs,
+  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+                     Eigen::VectorXd &global_rhs,
                      ConditionFunction boundary_function,
                      const std::vector<Element> &boundary_elements) override;
 };
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
-  virtual void Apply(Eigen::MatrixXd &stiffnes_matrix,
-                     Eigen::VectorXd &rhs,
+  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+                     Eigen::VectorXd &global_rhs,
                      ConditionFunction boundary_function,
                      const std::vector<Element> &boundary_elements) override;
 };
@@ -63,8 +63,8 @@ class DirichletBoundaryCondition : public BoundaryCondition {
                              const std::vector<size_t> &directions_to_consider,
                              const EnforcementStrategy &enforcement_strategy);
 
-  virtual void Apply(Eigen::MatrixXd &stiffnes_matrix,
-                     Eigen::VectorXd &rhs) override;
+  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+                     Eigen::VectorXd &global_rhs) override;
 
  private:
   const std::vector<size_t> &directions_to_consider_;

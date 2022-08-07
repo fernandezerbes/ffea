@@ -92,7 +92,7 @@ Coordinates Element::MapLocalToGlobal(
 
 Eigen::MatrixXd Element::ComputeStiffness(
     const Eigen::MatrixXd &constitutive_model,
-    const DifferentialOperator &differential_operator) {
+    const DifferentialOperator &differential_operator) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::MatrixXd stiffness =
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
@@ -113,7 +113,7 @@ Eigen::MatrixXd Element::ComputeStiffness(
   return stiffness;
 }
 
-Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) {
+Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::VectorXd rhs = Eigen::VectorXd::Zero(number_of_dofs);
 

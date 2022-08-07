@@ -29,8 +29,8 @@ class Element {
   std::vector<int> GetLocalToGlobalDofIndicesMap() const;
   Eigen::MatrixXd ComputeStiffness(
       const Eigen::MatrixXd &constitutive_model,
-      const DifferentialOperator &differential_operator);
-  Eigen::VectorXd ComputeRhs(ConditionFunction load);
+      const DifferentialOperator &differential_operator) const;
+  Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
 
  private:
   size_t dimension_;
