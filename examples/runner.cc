@@ -5,6 +5,7 @@
 #include <eigen3/Eigen/Sparse>
 #include <iostream>
 #include <memory>
+#include <unordered_set>
 
 #include "../framework/inc/math/shape_functions.h"
 #include "../framework/inc/math/utils.h"
@@ -199,10 +200,11 @@ int main() {
 
   double penalty = 1.0e12;
   const auto& enforcement_strategy = ffea::PenaltyEnforcementStrategy(penalty);
-  std::vector<size_t> directions_to_consider = {0, 1};
+  std::unordered_set<size_t> directions_to_consider = {0, 1};
   std::shared_ptr<ffea::BoundaryCondition> fixed_bottom =
       std::make_shared<ffea::DirichletBoundaryCondition>(
-          dirichlet_elements, boundary_function, directions_to_consider, enforcement_strategy);
+          dirichlet_elements, boundary_function, directions_to_consider,
+          enforcement_strategy);
 
   std::vector<ffea::BoundaryCondition*> boundary_conditions;
   boundary_conditions.push_back(load_on_top.get());
@@ -246,7 +248,6 @@ int main() {
   for (auto& bc : boundary_conditions) {
     bc->Apply(global_K, global_rhs);
   }
-
 
   Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
   // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> cg_solver;

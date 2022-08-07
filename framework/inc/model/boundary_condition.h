@@ -4,6 +4,7 @@
 #include <eigen3/Eigen/Dense>
 #include <functional>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "../mesh/coordinates.h"
@@ -34,10 +35,11 @@ class NeumannBoundaryCondition : public BoundaryCondition {
 
 class EnforcementStrategy {
  public:
-  virtual void Apply(Eigen::MatrixXd &global_stiffness,
-                     Eigen::VectorXd &global_rhs,
-                     ConditionFunction boundary_function,
-                     const std::vector<Element> &boundary_elements) const = 0;
+  virtual void Apply(
+      Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
+      ConditionFunction boundary_function,
+      const std::vector<Element> &boundary_elements,
+      const std::unordered_set<size_t> &directions_to_consider) const = 0;
 };
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
@@ -45,7 +47,8 @@ class DirectEnforcementStrategy : public EnforcementStrategy {
   virtual void Apply(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
       ConditionFunction boundary_function,
-      const std::vector<Element> &boundary_elements) const override;
+      const std::vector<Element> &boundary_elements,
+      const std::unordered_set<size_t> &directions_to_consider) const override;
 };
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
@@ -54,7 +57,8 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
   virtual void Apply(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
       ConditionFunction boundary_function,
-      const std::vector<Element> &boundary_elements) const override;
+      const std::vector<Element> &boundary_elements,
+      const std::unordered_set<size_t> &directions_to_consider) const override;
 
  private:
   double penalty_;
@@ -62,16 +66,17 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
 
 class DirichletBoundaryCondition : public BoundaryCondition {
  public:
-  DirichletBoundaryCondition(const std::vector<Element> &boundary_elements,
-                             ConditionFunction boundary_function,
-                             const std::vector<size_t> &directions_to_consider,
-                             const EnforcementStrategy &enforcement_strategy);
+  DirichletBoundaryCondition(
+      const std::vector<Element> &boundary_elements,
+      ConditionFunction boundary_function,
+      const std::unordered_set<size_t> &directions_to_consider,
+      const EnforcementStrategy &enforcement_strategy);
 
   virtual void Apply(Eigen::MatrixXd &global_stiffness,
                      Eigen::VectorXd &global_rhs) const override;
 
  private:
-  const std::vector<size_t> &directions_to_consider_;
+  const std::unordered_set<size_t> &directions_to_consider_;
   const EnforcementStrategy &enforcement_strategy_;
 };
 

@@ -27,13 +27,23 @@ void NeumannBoundaryCondition::Apply(Eigen::MatrixXd &global_stiffness,
   }
 }
 
-// class DirectEnforcementStrategy : public EnforcementStrategy {
-//  public:
-//   virtual void Apply(Eigen::MatrixXd &global_stiffness, Eigen::VectorXd
-//   &global_rhs,
-//                      ConditionFunction boundary_function,
-//                      const std::vector<Element> &boundary_elements) override;
-// };
+// void DirectEnforcementStrategy::Apply(
+//     Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
+//     ConditionFunction boundary_function,
+//     const std::vector<Element> &boundary_elements) const {
+//   double boundary_value = 0.0;  // TODO This should be changed to accept a
+//                                 // lambda with the components
+
+//   for (auto &element : boundary_elements) {
+//     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
+//     for (const auto &global_i_index : dofs_map) {
+//       global_stiffness.coeffRef(global_i_index, global_i_index) *= penalty_;
+//       global_rhs(global_i_index) = boundary_value * penalty_;
+//     }
+//   }
+// }
+
+
 
 PenaltyEnforcementStrategy::PenaltyEnforcementStrategy(double penalty)
     : penalty_(penalty) {}
@@ -41,13 +51,19 @@ PenaltyEnforcementStrategy::PenaltyEnforcementStrategy(double penalty)
 void PenaltyEnforcementStrategy::Apply(
     Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
     ConditionFunction boundary_function,
-    const std::vector<Element> &boundary_elements) const {
+    const std::vector<Element> &boundary_elements,
+    const std::unordered_set<size_t> &directions_to_consider) const {
   double boundary_value = 0.0;  // TODO This should be changed to accept a
                                 // lambda with the components
 
   for (auto &element : boundary_elements) {
     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
-    for (const auto &global_i_index : dofs_map) {
+    for (size_t local_i_index = 0; local_i_index < dofs_map.size(); local_i_index++) {
+      size_t dof_direction = local_i_index % element.GetNumberOfDofsPerNode();
+      if (!directions_to_consider.contains(dof_direction)) {
+        continue;
+      }
+      const auto &global_i_index = dofs_map[local_i_index];
       global_stiffness.coeffRef(global_i_index, global_i_index) *= penalty_;
       global_rhs(global_i_index) = boundary_value * penalty_;
     }
@@ -57,7 +73,7 @@ void PenaltyEnforcementStrategy::Apply(
 DirichletBoundaryCondition::DirichletBoundaryCondition(
     const std::vector<Element> &boundary_elements,
     ConditionFunction boundary_function,
-    const std::vector<size_t> &directions_to_consider,
+    const std::unordered_set<size_t> &directions_to_consider,
     const EnforcementStrategy &enforcement_strategy)
     : BoundaryCondition(boundary_elements, boundary_function),
       directions_to_consider_(directions_to_consider),
@@ -66,7 +82,7 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
 void DirichletBoundaryCondition::Apply(Eigen::MatrixXd &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
   enforcement_strategy_.Apply(global_stiffness, global_rhs, boundary_function_,
-                              boundary_elements_);
+                              boundary_elements_, directions_to_consider_);
 }
 
 }  // namespace ffea
