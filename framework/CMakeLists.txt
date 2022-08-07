@@ -10,6 +10,7 @@ add_library(ffea
             src/mesh/mesh.cc
             src/mesh/node.cc
             src/model/boundary_condition.cc
+            src/model/model.cc
             src/processor/operator.cc
 )
 

@@ -16,6 +16,7 @@
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/node.h"
 #include "../framework/inc/model/boundary_condition.h"
+#include "../framework/inc/model/model.h"
 #include "../framework/inc/processor/operator.h"
 
 int main() {
@@ -36,6 +37,7 @@ int main() {
 
   */
 
+  // ********************** MESH **********************
   const size_t parametric_dimensions_1d = 1;
   const size_t parametric_dimensions_2d = 2;
   const size_t spatial_dimensions = 2;
@@ -140,7 +142,14 @@ int main() {
   mesh.RegisterElementGroup(ffea::ElementGroupType::kNeumannBoundaryElements,
                             "neumann_boundary", neumann_boundary);
 
-  // Constitutive matrix
+  auto& body_elements =
+      mesh.GetElementGroup(ffea::ElementGroupType::kBodyElements, "body");
+  auto& dirichlet_elements = mesh.GetElementGroup(
+      ffea::ElementGroupType::kDirichletBoundaryElements, "dirichlet_boundary");
+  auto& neumann_elements = mesh.GetElementGroup(
+      ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
+
+  // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.0;
   double E = 1;
   double factor = E / (1 - nu * nu);
@@ -151,31 +160,10 @@ int main() {
   constitutive_matrix(1, 1) = factor;
   constitutive_matrix(2, 2) = (1 - nu) * factor;
 
-  std::cout << "\n\nConstitutive matrix: \n"
-            << constitutive_matrix << std::endl;
-
+  // ********************** DIFFERENTIAL OPERATOR **********************
   auto differential_operator = ffea::StrainDisplacementOperator2D();
 
-  // Stiffness matrix
-  auto number_of_dofs = mesh.number_of_dofs();
-  // Eigen::SparseMatrix<double, Eigen::RowMajor> global_K(number_of_dofs,
-  //                                                       number_of_dofs);
-
-  Eigen::MatrixXd global_K(number_of_dofs, number_of_dofs);
-
-  std::vector<Eigen::Triplet<double>> coefficients;
-
-  Eigen::VectorXd global_rhs(mesh.number_of_dofs());
-  global_rhs.setZero();
-
-  auto& body_elements =
-      mesh.GetElementGroup(ffea::ElementGroupType::kBodyElements, "body");
-  auto& dirichlet_elements = mesh.GetElementGroup(
-      ffea::ElementGroupType::kDirichletBoundaryElements, "dirichlet_boundary");
-  auto& neumann_elements = mesh.GetElementGroup(
-      ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
-
-  // Boundary conditions
+  // ********************** BOUNDARY CONDITIONS **********************
   auto body_load =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
@@ -206,72 +194,22 @@ int main() {
           dirichlet_elements, boundary_function, directions_to_consider,
           enforcement_strategy);
 
-  // std::shared_ptr<ffea::BoundaryCondition> moving_top =
-  //     std::make_shared<ffea::DirichletBoundaryCondition>(
-  //         neumann_elements, load_function, directions_to_consider,
-  //         enforcement_strategy);
-
   std::vector<ffea::BoundaryCondition*> boundary_conditions;
   // TODO ensure that these are applied in the correct order
   boundary_conditions.push_back(load_on_top.get());
   boundary_conditions.push_back(fixed_bottom.get());
-  // boundary_conditions.push_back(moving_top.get());
 
-  // Computation
+  // ********************** MODEL **********************
+  ffea::Model model(mesh, constitutive_matrix, differential_operator,
+                    boundary_conditions, body_load);
 
-  for (auto& element : body_elements) {
-    const auto& element_K =
-        element.ComputeStiffness(constitutive_matrix, differential_operator);
-    const auto& element_rhs = element.ComputeRhs(body_load);
-    auto nodes = element.nodes();
-    const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
-    // Scatter coefficients
-    for (size_t node_index = 0; node_index < nodes.size(); node_index++) {
-      size_t local_i_index = 0;
-      for (const auto& global_i_index : dofs_map) {
-        size_t local_j_index = 0;
-        for (const auto& global_j_index : dofs_map) {
-          // std::cout << "Mapping (" << local_i_index << ", " << local_j_index
-          // << ") to (" << global_i_index << ", " << global_j_index << ")" <<
-          // std::endl;
-          global_K(global_i_index, global_j_index) +=
-              element_K(local_i_index, local_j_index);
-          // coefficients.push_back(
-          //     Eigen::Triplet<double>(global_i_index, global_j_index,
-          //                            element_K(local_i_index,
-          //                            local_j_index)));
-          local_j_index++;
-        }
-        // std::cout << "\element_K\n" << element_K << std::endl;
-        // std::cout << "\nglobal_K\n" << global_K << std::endl;
-        // std::cout << "\nelement_K\n" << element_K << std::endl;
-        global_rhs(global_i_index) += element_rhs(local_i_index);
-        local_i_index++;
-      }
-    }
-  }
-
-  // Enforce BCs
-  for (auto& bc : boundary_conditions) {
-    bc->Enforce(global_K, global_rhs);
-  }
-
-  Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
-  // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> cg_solver;
-  cg_solver.compute(global_K);
-  Eigen::VectorXd x(mesh.number_of_dofs());
-  for (int i = 0; i < 100; i++) {
-    x = cg_solver.solve(global_rhs);
-  }
-  // std::cout << "#iterations:     " << cg_solver.iterations() << std::endl;
-  // std::cout << "estimated error: " << cg_solver.error() << std::endl;
-
-  // std::cout << "x = " << x << std::endl;
+  // ********************** SOLUTION **********************
+  const auto& solution = model.solve();
 
   for (int i = 3; i >= 0; i--) {
     for (int j = 0; j < 4; j++) {
       auto index = (i * 4 + j) * number_of_dofs_per_node + 1;
-      std::cout << x(index) << "\t\t";
+      std::cout << solution(index) << "\t\t";
     }
     std::cout << std::endl;
   }
