@@ -206,9 +206,16 @@ int main() {
           dirichlet_elements, boundary_function, directions_to_consider,
           enforcement_strategy);
 
+  // std::shared_ptr<ffea::BoundaryCondition> moving_top =
+  //     std::make_shared<ffea::DirichletBoundaryCondition>(
+  //         neumann_elements, load_function, directions_to_consider,
+  //         enforcement_strategy);
+
   std::vector<ffea::BoundaryCondition*> boundary_conditions;
+  // TODO ensure that these are applied in the correct order
   boundary_conditions.push_back(load_on_top.get());
   boundary_conditions.push_back(fixed_bottom.get());
+  // boundary_conditions.push_back(moving_top.get());
 
   // Computation
 
@@ -244,9 +251,9 @@ int main() {
     }
   }
 
-  // Apply BCs
+  // Enforce BCs
   for (auto& bc : boundary_conditions) {
-    bc->Apply(global_K, global_rhs);
+    bc->Enforce(global_K, global_rhs);
   }
 
   Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;

@@ -32,6 +32,7 @@ class Element {
       const DifferentialOperator &differential_operator) const;
   Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
   size_t GetNumberOfDofsPerNode() const;
+  Coordinates &GetCoordinatesOfNode(size_t node_index) const;
 
  private:
   size_t dimension_;

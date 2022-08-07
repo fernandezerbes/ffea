@@ -16,7 +16,7 @@ class BoundaryCondition {
  public:
   BoundaryCondition(const std::vector<Element> &boundary_elements,
                     ConditionFunction boundary_function);
-  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+  virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                      Eigen::VectorXd &global_rhs) const = 0;
 
  protected:
@@ -29,13 +29,13 @@ class NeumannBoundaryCondition : public BoundaryCondition {
   NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
                            ConditionFunction boundary_function);
 
-  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+  virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                      Eigen::VectorXd &global_rhs) const override;
 };
 
 class EnforcementStrategy {
  public:
-  virtual void Apply(
+  virtual void Enforce(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
       ConditionFunction boundary_function,
       const std::vector<Element> &boundary_elements,
@@ -44,7 +44,7 @@ class EnforcementStrategy {
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
-  virtual void Apply(
+  virtual void Enforce(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
       ConditionFunction boundary_function,
       const std::vector<Element> &boundary_elements,
@@ -54,7 +54,7 @@ class DirectEnforcementStrategy : public EnforcementStrategy {
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
   PenaltyEnforcementStrategy(double penalty);
-  virtual void Apply(
+  virtual void Enforce(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
       ConditionFunction boundary_function,
       const std::vector<Element> &boundary_elements,
@@ -72,7 +72,7 @@ class DirichletBoundaryCondition : public BoundaryCondition {
       const std::unordered_set<size_t> &directions_to_consider,
       const EnforcementStrategy &enforcement_strategy);
 
-  virtual void Apply(Eigen::MatrixXd &global_stiffness,
+  virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                      Eigen::VectorXd &global_rhs) const override;
 
  private:

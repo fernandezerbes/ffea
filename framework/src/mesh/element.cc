@@ -142,6 +142,10 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
   return rhs;
 }
 
+Coordinates &Element::GetCoordinatesOfNode(size_t node_index) const {
+  return nodes_[node_index]->coordinates();
+}
+
 ElementFactory::ElementFactory(size_t dimension,
                                std::shared_ptr<ShapeFunctions> shape_functions,
                                std::shared_ptr<QuadratureRule> integration_rule)
