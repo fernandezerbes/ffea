@@ -10,7 +10,6 @@
 #include "./coordinates.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"
-#include "../model/boundary_condition.h"
 #include "./node.h"
 
 namespace ffea {
