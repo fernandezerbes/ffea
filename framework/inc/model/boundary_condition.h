@@ -21,7 +21,7 @@ class BoundaryCondition {
 
  protected:
   const std::vector<Element> &boundary_elements_;
-  const ConditionFunction boundary_function_;
+  ConditionFunction boundary_function_;
 };
 
 class NeumannBoundaryCondition : public BoundaryCondition {

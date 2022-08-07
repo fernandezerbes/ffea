@@ -8,7 +8,7 @@ namespace ffea {
 
 Analysis::Analysis(Model &model) : model_(model) {}
 
-Eigen::VectorXd Analysis::solve() {
+Eigen::VectorXd Analysis::Solve() {
   auto linear_system = Assembler::ProcessLinearSystem(
       model_.mesh, model_.constitutive_model, model_.differential_operator,
       model_.source);

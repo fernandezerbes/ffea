@@ -208,7 +208,7 @@ int main() {
   ffea::Analysis analysis(model);
 
   // ********************** SOLUTION **********************
-  const auto& solution = analysis.solve();
+  const auto& solution = analysis.Solve();
 
   for (int i = 3; i >= 0; i--) {
     for (int j = 0; j < 4; j++) {
