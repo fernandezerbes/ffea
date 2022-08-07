@@ -2,9 +2,7 @@
 
 namespace ffea {
 
-Assembler::Assembler(const Mesh &mesh,
-                     const ElementProcessor &element_processor)
-    : mesh_(mesh), element_processor_(element_processor) {}
+Assembler::Assembler(const Mesh &mesh) : mesh_(mesh) {}
 
 const std::pair<Eigen::MatrixXd, Eigen::VectorXd>
 Assembler::ProcessLinearSystem() const {}

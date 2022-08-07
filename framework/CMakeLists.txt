@@ -9,8 +9,8 @@ add_library(ffea
             src/mesh/integration_point.cc
             src/mesh/mesh.cc
             src/mesh/node.cc
+            src/model/boundary_condition.cc
             src/processor/operator.cc
-            src/processor/element_processor.cc
 )
 
 target_include_directories(ffea INTERFACE

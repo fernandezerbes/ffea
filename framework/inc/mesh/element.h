@@ -6,12 +6,17 @@
 #include <vector>
 
 #include "../math/shape_functions.h"
+#include "../processor/operator.h"
 #include "./coordinates.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"
+#include "../model/boundary_condition.h"
 #include "./node.h"
 
 namespace ffea {
+
+using ConditionFunction =
+    std::function<std::vector<double>(const Coordinates &)>;
 
 class Element {
  public:
@@ -33,6 +38,10 @@ class Element {
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
+  Eigen::MatrixXd ComputeStiffness(
+      const Eigen::MatrixXd &constitutive_model,
+      const DifferentialOperator &differential_operator);
+  Eigen::VectorXd ComputeRhs(ConditionFunction load);
 
  protected:
   size_t dimension_;

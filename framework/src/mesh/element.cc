@@ -90,6 +90,58 @@ Coordinates Element::MapLocalToGlobal(
   return Coordinates(xyz);
 }
 
+Eigen::MatrixXd Element::ComputeStiffness(
+    const Eigen::MatrixXd &constitutive_model,
+    const DifferentialOperator &differential_operator) {
+  size_t number_of_dofs = GetNumberOfDofs();
+  Eigen::MatrixXd stiffness =
+      Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
+
+  for (const auto &integration_point : *integration_points()) {
+    const auto &local_coordinates = integration_point.local_coordinates();
+    const auto &jacobian = EvaluateJacobian(local_coordinates);
+    const auto &dN_local = EvaluateShapeFunctions(
+        local_coordinates, ffea::DerivativeOrder::kFirst);
+    const auto &dN_global = jacobian.inverse() * dN_local;
+    Eigen::MatrixXd operator_matrix = differential_operator.Compute(dN_global);
+
+    stiffness += operator_matrix.transpose() * constitutive_model *
+                 operator_matrix * jacobian.determinant() *
+                 integration_point.weight();
+  }
+
+  return stiffness;
+}
+
+Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) {
+  size_t number_of_dofs = GetNumberOfDofs();
+  Eigen::VectorXd rhs = Eigen::VectorXd::Zero(number_of_dofs);
+
+  for (const auto &integration_point : *integration_points()) {
+    size_t spatial_dimensions = 2;  // TODO Change this
+    const auto &local_coordinates = integration_point.local_coordinates();
+    const auto &shape_functions = EvaluateShapeFunctions(
+        local_coordinates, ffea::DerivativeOrder::kZeroth);
+    const auto &global_coordinates = MapLocalToGlobal(local_coordinates);
+    const auto &body_load = load(global_coordinates);
+    const auto &jacobian = EvaluateJacobian(local_coordinates);
+    
+    for (size_t dimension_index = 0; dimension_index < spatial_dimensions;
+         dimension_index++) {
+      const auto &load_components =
+          shape_functions * body_load[dimension_index] *
+          jacobian.determinant() * integration_point.weight();
+      for (size_t component_index = 0; component_index < spatial_dimensions;
+           component_index++) {
+        rhs(dimension_index + component_index * spatial_dimensions) +=
+            load_components(0, component_index);
+      }
+    }
+  }
+
+  return rhs;
+}
+
 ElementFactory::ElementFactory(size_t dimension,
                                std::shared_ptr<ShapeFunctions> shape_functions,
                                std::shared_ptr<QuadratureRule> integration_rule)

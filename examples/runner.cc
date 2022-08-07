@@ -14,7 +14,6 @@
 #include "../framework/inc/mesh/integration_point.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/node.h"
-#include "../framework/inc/processor/element_processor.h"
 #include "../framework/inc/processor/operator.h"
 
 int main() {
@@ -154,8 +153,6 @@ int main() {
             << constitutive_matrix << std::endl;
 
   auto differential_operator = ffea::StrainDisplacementOperator2D();
-  ffea::ElementProcessor element_processor(constitutive_matrix,
-                                           differential_operator);
 
   // Stiffness matrix
   auto number_of_dofs = mesh.number_of_dofs();
@@ -169,6 +166,12 @@ int main() {
   // Load vector
   Eigen::VectorXd global_rhs(mesh.number_of_dofs());
   global_rhs.setZero();
+
+  auto body_load =
+      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+    std::vector<double> load{0.0, 0.0};
+    return load;
+  };
 
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
@@ -184,9 +187,9 @@ int main() {
       ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
 
   for (auto& element : body_elements) {
-    const auto& system = element_processor.ProcessBodyElement(element);
-    const auto& element_K = system.first;
-    const auto& element_rhs = system.second;
+    const auto& element_K =
+        element.ComputeStiffness(constitutive_matrix, differential_operator);
+    const auto& element_rhs = element.ComputeRhs(body_load);
     auto nodes = element.nodes();
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
     // Scatter coefficients
@@ -216,8 +219,7 @@ int main() {
   }
 
   for (auto& element : neumann_elements) {
-    const auto& element_rhs =
-        element_processor.ProcessBoundaryElement(element, load_function);
+    const auto& element_rhs = element.ComputeRhs(load_function);
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
     // Scatter coefficients
     for (size_t local_i_index = 0; local_i_index < dofs_map.size();
