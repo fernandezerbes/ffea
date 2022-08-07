@@ -164,7 +164,6 @@ int main() {
 
   std::vector<Eigen::Triplet<double>> coefficients;
 
-  // Load vector
   Eigen::VectorXd global_rhs(mesh.number_of_dofs());
   global_rhs.setZero();
 
@@ -175,6 +174,7 @@ int main() {
   auto& neumann_elements = mesh.GetElementGroup(
       ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
 
+  // Boundary conditions
   auto body_load =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
@@ -187,11 +187,28 @@ int main() {
     return load;
   };
 
+  auto boundary_function =
+      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+    std::vector<double> load{0.0, 0.0};
+    return load;
+  };
+
   std::shared_ptr<ffea::BoundaryCondition> load_on_top =
       std::make_shared<ffea::NeumannBoundaryCondition>(neumann_elements,
                                                        load_function);
-  std::vector<ffea::BoundaryCondition*> neumann_bcs;
-  neumann_bcs.push_back(load_on_top.get());
+
+  double penalty = 1.0e12;
+  const auto& enforcement_strategy = ffea::PenaltyEnforcementStrategy(penalty);
+  std::vector<size_t> directions_to_consider = {0, 1};
+  std::shared_ptr<ffea::BoundaryCondition> fixed_bottom =
+      std::make_shared<ffea::DirichletBoundaryCondition>(
+          dirichlet_elements, boundary_function, directions_to_consider, enforcement_strategy);
+
+  std::vector<ffea::BoundaryCondition*> boundary_conditions;
+  boundary_conditions.push_back(load_on_top.get());
+  boundary_conditions.push_back(fixed_bottom.get());
+
+  // Computation
 
   for (auto& element : body_elements) {
     const auto& element_K =
@@ -225,33 +242,11 @@ int main() {
     }
   }
 
-  // Neumann BCs
-  for (auto& bc : neumann_bcs) {
+  // Apply BCs
+  for (auto& bc : boundary_conditions) {
     bc->Apply(global_K, global_rhs);
   }
 
-  // global_K.setFromTriplets(coefficients.begin(), coefficients.end());
-  // global_K.makeCompressed();
-
-  // std::cout << "global_K\n" << global_K << std::endl;
-  // std::cout << "Global rhs = " << global_rhs << std::endl;
-
-  // Apply BCs by penalty
-  double penalty = 1.0e4;
-  double boundary_value =
-      0.0;  // This should be changed to accept a lambda with the components
-
-  for (auto& element : dirichlet_elements) {
-    const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
-    for (const auto& global_i_index : dofs_map) {
-      global_K.coeffRef(global_i_index, global_i_index) *= penalty;
-      global_rhs(global_i_index) = boundary_value * penalty;
-    }
-  }
-
-  // std::cout << "Modified global_K\n" << global_K << std::endl;
-
-  // std::cout << "Modified global_rhs = " << global_rhs << std::endl;
 
   Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
   // Eigen::ConjugateGradient<Eigen::SparseMatrix<double>> cg_solver;
