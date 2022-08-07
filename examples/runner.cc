@@ -18,6 +18,7 @@
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/processor/operator.h"
+#include "../framework/inc/analysis/analysis.h"
 
 int main() {
   /*     0         1         2
@@ -203,8 +204,11 @@ int main() {
   ffea::Model model(mesh, constitutive_matrix, differential_operator,
                     boundary_conditions, body_load);
 
+  // ********************** ANALYSIS **********************
+  ffea::Analysis analysis(model);
+
   // ********************** SOLUTION **********************
-  const auto& solution = model.solve();
+  const auto& solution = analysis.solve();
 
   for (int i = 3; i >= 0; i--) {
     for (int j = 0; j < 4; j++) {

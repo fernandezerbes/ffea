@@ -9,22 +9,18 @@
 #include "./boundary_condition.h"
 namespace ffea {
 
-class Model {
+struct Model {
  public:
   Model(Mesh &mesh, const Eigen::MatrixXd &constitutive_model,
         const DifferentialOperator &differential_operator,
         const std::vector<BoundaryCondition *> &boundary_conditions,
         ConditionFunction source);
 
-  Eigen::VectorXd solve() const;
-
- private:
-  Mesh &mesh_;
-  const Eigen::MatrixXd &constitutive_model_;
-  const DifferentialOperator &differential_operator_;
-  const std::vector<BoundaryCondition *> &boundary_conditions_;
-  ConditionFunction source_;
-  const Assembler &assembler_;
+  Mesh &mesh;
+  const Eigen::MatrixXd &constitutive_model;
+  const DifferentialOperator &differential_operator;
+  const std::vector<BoundaryCondition *> &boundary_conditions;
+  ConditionFunction source;
 };
 
 }  // namespace ffea
