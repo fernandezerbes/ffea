@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include <eigen3/Eigen/Dense>
+
 #include "./coordinates.h"
 #include "./degree_of_freedom.h"
 
@@ -18,6 +20,8 @@ class Node {
   Coordinates &coordinates();
   std::vector<DegreeOfFreedom> &dofs();
   size_t number_of_dofs() const;
+  void SetSolutionOnDofs(const Eigen::VectorXd &solution);
+  double GetSolutionOfDof(size_t local_dof_index) const;
 
  private:
   size_t id_;

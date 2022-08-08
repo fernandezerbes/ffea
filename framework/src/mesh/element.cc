@@ -125,7 +125,7 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
     const auto &global_coordinates = MapLocalToGlobal(local_coordinates);
     const auto &body_load = load(global_coordinates);
     const auto &jacobian = EvaluateJacobian(local_coordinates);
-    
+
     for (size_t dimension_index = 0; dimension_index < spatial_dimensions;
          dimension_index++) {
       const auto &load_components =
@@ -144,6 +144,39 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
 
 Coordinates &Element::GetCoordinatesOfNode(size_t node_index) const {
   return nodes_[node_index]->coordinates();
+}
+
+void Element::SetSolutionOnDofs(const Eigen::VectorXd &solution) {
+  for (auto &node : nodes_) {
+    node->SetSolutionOnDofs(solution);
+  }
+}
+
+Eigen::VectorXd Element::GetSolutionFromDofs() const {
+  Eigen::VectorXd solution = Eigen::VectorXd::Zero(GetNumberOfDofs());
+
+  for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
+    const auto &node = nodes_[node_index];
+    for (size_t component_index = 0; component_index < GetNumberOfDofsPerNode();
+         component_index++) {
+      size_t index = node_index * GetNumberOfDofsPerNode() + component_index;
+      solution(index) = node->GetSolutionOfDof(component_index);
+    }
+  }
+
+  return solution;
+}
+
+Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_index) const {
+  Eigen::VectorXd solution = Eigen::VectorXd::Zero(GetNumberOfNodes());
+
+  for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
+    const auto &node = nodes_[node_index];
+    size_t index = node_index * GetNumberOfDofsPerNode() + component_index;
+    solution(node_index) = node->GetSolutionOfDof(component_index);
+  }
+
+  return solution;
 }
 
 ElementFactory::ElementFactory(size_t dimension,

@@ -11,7 +11,9 @@ add_library(ffea
             src/mesh/node.cc
             src/model/boundary_condition.cc
             src/model/model.cc
+            src/fileio/output_writer.cc
             src/processor/operator.cc
+            src/postprocessor/postprocessor.cc
 )
 
 target_include_directories(ffea INTERFACE
@@ -20,7 +22,9 @@ target_include_directories(ffea INTERFACE
                            "${CMAKE_CURRENT_SOURCE_DIR}/inc/math"
                            "${CMAKE_CURRENT_SOURCE_DIR}/inc/mesh"
                            "${CMAKE_CURRENT_SOURCE_DIR}/inc/model"
+                           "${CMAKE_CURRENT_SOURCE_DIR}/inc/fileio"
                            "${CMAKE_CURRENT_SOURCE_DIR}/inc/processor"
+                           "${CMAKE_CURRENT_SOURCE_DIR}/inc/postprocessor"
 )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)

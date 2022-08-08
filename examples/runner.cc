@@ -7,6 +7,8 @@
 #include <memory>
 #include <unordered_set>
 
+#include "../framework/inc/analysis/analysis.h"
+#include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/math/shape_functions.h"
 #include "../framework/inc/math/utils.h"
 #include "../framework/inc/mesh/coordinates.h"
@@ -17,8 +19,8 @@
 #include "../framework/inc/mesh/node.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/model.h"
+#include "../framework/inc/postprocessor/postprocessor.h"
 #include "../framework/inc/processor/operator.h"
-#include "../framework/inc/analysis/analysis.h"
 
 int main() {
   /*     0         1         2
@@ -217,6 +219,19 @@ int main() {
     }
     std::cout << std::endl;
   }
+
+  // ********************** POSTPROCESSING **********************
+  for (auto &element: body_elements) {
+    element.SetSolutionOnDofs(solution);
+  }
+
+
+  std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
+      std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
+
+  ffea::OutputWriter writer(mesh);
+  writer.RegisterPostProcessor(*displacement_postprocessor);
+  writer.Write("ffea_output.vtk");
 
   return 0;
 }

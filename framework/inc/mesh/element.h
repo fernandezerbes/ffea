@@ -33,6 +33,9 @@ class Element {
   Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
   size_t GetNumberOfDofsPerNode() const;
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
+  void SetSolutionOnDofs(const Eigen::VectorXd &solution);
+  Eigen::VectorXd GetSolutionFromDofs() const;
+  Eigen::VectorXd GetSolutionFromDofs(size_t component_index) const;
 
  private:
   size_t dimension_;

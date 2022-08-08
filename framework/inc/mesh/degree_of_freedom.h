@@ -1,12 +1,12 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_DEGREEOFFREEDOM_H
 #define FFEA_FRAMEWORK_INC_MESH_DEGREEOFFREEDOM_H
 
+#include <eigen3/Eigen/Dense>
 #include <vector>
 
 namespace ffea {
 
-class DegreeOfFreedom
-{
+class DegreeOfFreedom {
  public:
   DegreeOfFreedom();
   DegreeOfFreedom(int local_id, short number_of_axiliary_values = 0);
@@ -16,9 +16,10 @@ class DegreeOfFreedom
   int global_id() const;
   double value() const;
   void set_value(double value);
+  void set_value(const Eigen::VectorXd &solution);
   double auxiliary_value(short index) const;
   void set_auxiliary_value(short index, double value);
-  
+
  private:
   double value_;
   std::vector<double> auxiliary_values_;
@@ -26,9 +27,8 @@ class DegreeOfFreedom
   int global_id_;
 
   void check_auxiliary_value(short index) const;
-
 };
 
-} // namespace ffea
+}  // namespace ffea
 
-#endif // FFEA_FRAMEWORK_INC_MESH_DEGREEOFFREEDOM_H
+#endif  // FFEA_FRAMEWORK_INC_MESH_DEGREEOFFREEDOM_H

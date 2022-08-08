@@ -2,11 +2,14 @@
 
 namespace ffea {
 
-Node::Node(size_t id, const Coordinates &coordinates,
-           short number_of_dofs)
-    : id_(id),
-      coordinates_(coordinates),
-      dofs_(number_of_dofs) {}
+Node::Node(size_t id, const Coordinates &coordinates, short number_of_dofs)
+    : id_(id), coordinates_(coordinates) {
+  dofs_.reserve(number_of_dofs);
+  for (size_t component_index = 0; component_index < number_of_dofs; component_index++) {
+    size_t dof_index = id * number_of_dofs + component_index;
+    dofs_[component_index] = DegreeOfFreedom(dof_index);
+  }
+}
 
 Node::~Node() {}
 
@@ -17,5 +20,16 @@ Coordinates &Node::coordinates() { return coordinates_; }
 std::vector<DegreeOfFreedom> &Node::dofs() { return dofs_; }
 
 size_t Node::number_of_dofs() const { return dofs_.size(); }
+
+void Node::SetSolutionOnDofs(const Eigen::VectorXd &solution) {
+  for (auto &dof : dofs_) {
+    auto value = solution(dof.local_id());
+    dof.set_value(value);
+  }
+}
+
+double Node::GetSolutionOfDof(size_t local_dof_index) const {
+  return dofs_[local_dof_index].value();
+}
 
 }  // namespace ffea
