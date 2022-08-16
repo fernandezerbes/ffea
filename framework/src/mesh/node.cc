@@ -3,11 +3,11 @@
 namespace ffea {
 
 Node::Node(size_t id, const Coordinates &coordinates, short number_of_dofs)
-    : id_(id), coordinates_(coordinates) {
-  dofs_.reserve(number_of_dofs);
-  for (size_t component_index = 0; component_index < number_of_dofs; component_index++) {
+    : id_(id), coordinates_(coordinates), dofs_() {
+  for (size_t component_index = 0; component_index < number_of_dofs;
+       component_index++) {
     size_t dof_index = id * number_of_dofs + component_index;
-    dofs_[component_index] = DegreeOfFreedom(dof_index);
+    dofs_.emplace_back(dof_index);
   }
 }
 
