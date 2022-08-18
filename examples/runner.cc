@@ -45,44 +45,31 @@ int main() {
   const size_t parametric_dimensions_2d = 2;
   const size_t spatial_dimensions = 2;
 
-  ffea::Coordinates point_0({0.0, 0.0, 0.0});
-  ffea::Coordinates point_1({1.0, 0.0, 0.0});
-  ffea::Coordinates point_2({2.0, 0.0, 0.0});
-  ffea::Coordinates point_3({3.0, 0.0, 0.0});
+  const size_t number_of_elements_in_x = 10;
+  const size_t number_of_elements_in_y = 40;
+  const size_t number_of_nodes_in_x = number_of_elements_in_x + 1;
+  const size_t number_of_nodes_in_y = number_of_elements_in_y + 1;
 
-  ffea::Coordinates point_4({0.0, 1.0, 0.0});
-  ffea::Coordinates point_5({1.0, 1.0, 0.0});
-  ffea::Coordinates point_6({2.0, 1.0, 0.0});
-  ffea::Coordinates point_7({3.0, 1.0, 0.0});
+  const double length_in_x = 1.0;
+  const double length_in_y = 10.0;
 
-  ffea::Coordinates point_8({0.0, 2.0, 0.0});
-  ffea::Coordinates point_9({1.0, 2.0, 0.0});
-  ffea::Coordinates point_10({2.0, 2.0, 0.0});
-  ffea::Coordinates point_11({3.0, 2.0, 0.0});
+  const double dx = length_in_x / number_of_elements_in_x;
+  const double dy = length_in_y / number_of_elements_in_y;
+  const double origin_x = 0.0;
+  const double origin_y = 0.0;
 
-  ffea::Coordinates point_12({0.0, 3.0, 0.0});
-  ffea::Coordinates point_13({1.0, 3.0, 0.0});
-  ffea::Coordinates point_14({2.0, 3.0, 0.0});
-  ffea::Coordinates point_15({3.0, 3.0, 0.0});
-
-  size_t number_of_dofs_per_node = 2;
+  const size_t number_of_dofs_per_node = 2;
   std::vector<ffea::Node> nodes;
-  nodes.push_back(ffea::Node(0, point_0, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(1, point_1, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(2, point_2, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(3, point_3, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(4, point_4, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(5, point_5, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(6, point_6, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(7, point_7, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(8, point_8, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(9, point_9, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(10, point_10, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(11, point_11, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(12, point_12, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(13, point_13, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(14, point_14, number_of_dofs_per_node));
-  nodes.push_back(ffea::Node(15, point_15, number_of_dofs_per_node));
+  nodes.reserve(number_of_nodes_in_x * number_of_nodes_in_y);
+  for (size_t j_node = 0; j_node < number_of_nodes_in_y; j_node++) {
+    for (size_t i_node = 0; i_node < number_of_nodes_in_x; i_node++) {
+      double x = origin_x + i_node * dx;
+      double y = origin_y + j_node * dy;
+      ffea::Coordinates point({x, y, 0.0});
+      size_t index = j_node * number_of_nodes_in_x + i_node;
+      nodes.emplace_back(index, point, number_of_dofs_per_node);
+    }
+  }
 
   std::shared_ptr<ffea::ShapeFunctions> linear_1d_shape_functions =
       std::make_shared<ffea::Linear1DShapeFunctions>();
@@ -101,41 +88,55 @@ int main() {
                                      linear_2d_shape_functions,
                                      integration_2x2_rule);
 
+  std::vector<ffea::Element> body;
+  body.reserve(number_of_elements_in_x * number_of_elements_in_y);
+
+  for (size_t j_element = 0; j_element < number_of_elements_in_y; j_element++) {
+    for (size_t i_element = 0; i_element < number_of_elements_in_x;
+         i_element++) {
+      size_t index = j_element * number_of_elements_in_x + i_element;
+      size_t first_node_index = index + j_element;
+      size_t second_node_index = first_node_index + 1;
+      size_t third_node_index =
+          second_node_index + number_of_nodes_in_x;  // counter-clockwise
+      size_t fourth_node_index =
+          first_node_index + number_of_nodes_in_x;  // counter-clockwise
+      body.push_back(quad4_factory.CreateElement(
+          {&nodes[first_node_index], &nodes[second_node_index],
+           &nodes[third_node_index], &nodes[fourth_node_index]}));
+      std::cout << "Element " << index << ", nodes " << first_node_index << " "
+                << second_node_index << " " << third_node_index << " "
+                << fourth_node_index << std::endl;
+    }
+  }
+
   std::vector<ffea::Element> dirichlet_boundary;
-  dirichlet_boundary.push_back(
-      line2_factory.CreateElement({&nodes[0], &nodes[1]}));
-  dirichlet_boundary.push_back(
-      line2_factory.CreateElement({&nodes[1], &nodes[2]}));
-  dirichlet_boundary.push_back(
-      line2_factory.CreateElement({&nodes[2], &nodes[3]}));
+  dirichlet_boundary.reserve(number_of_elements_in_x);
 
   std::vector<ffea::Element> neumann_boundary;
-  neumann_boundary.push_back(
-      line2_factory.CreateElement({&nodes[12], &nodes[13]}));
-  neumann_boundary.push_back(
-      line2_factory.CreateElement({&nodes[13], &nodes[14]}));
-  neumann_boundary.push_back(
-      line2_factory.CreateElement({&nodes[14], &nodes[15]}));
+  neumann_boundary.reserve(number_of_elements_in_x);
 
-  std::vector<ffea::Element> body;
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[0], &nodes[1], &nodes[5], &nodes[4]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[1], &nodes[2], &nodes[6], &nodes[5]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[2], &nodes[3], &nodes[7], &nodes[6]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[4], &nodes[5], &nodes[9], &nodes[8]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[5], &nodes[6], &nodes[10], &nodes[9]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[6], &nodes[7], &nodes[11], &nodes[10]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[8], &nodes[9], &nodes[13], &nodes[12]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[9], &nodes[10], &nodes[14], &nodes[13]}));
-  body.push_back(quad4_factory.CreateElement(
-      {&nodes[10], &nodes[11], &nodes[15], &nodes[14]}));
+  for (size_t i_element = 0; i_element < number_of_elements_in_x; i_element++) {
+    size_t index_bottom = i_element;
+    size_t first_node_index_bottom = index_bottom;
+    size_t second_node_index_bottom = first_node_index_bottom + 1;
+    std::cout << "Bottom element " << index_bottom << ", nodes "
+              << first_node_index_bottom << " " << second_node_index_bottom
+              << std::endl;
+    dirichlet_boundary.push_back(line2_factory.CreateElement(
+        {&nodes[first_node_index_bottom], &nodes[second_node_index_bottom]}));
+
+    size_t index_top =
+        i_element + (number_of_nodes_in_x * (number_of_nodes_in_y - 1));
+    size_t first_node_index_top = index_top;
+    size_t second_node_index_top = first_node_index_top + 1;
+
+    std::cout << "Top element " << index_top << ", nodes "
+              << first_node_index_top << " " << second_node_index_top
+              << std::endl;
+    neumann_boundary.push_back(line2_factory.CreateElement(
+        {&nodes[first_node_index_top], &nodes[second_node_index_top]}));
+  }
 
   ffea::Mesh mesh(number_of_dofs_per_node, nodes);
   mesh.RegisterElementGroup(ffea::ElementGroupType::kBodyElements, "body",
@@ -153,7 +154,7 @@ int main() {
       ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
 
   // ********************** CONSTITUTIVE MODEL **********************
-  double nu = 0.0;
+  double nu = 0.3;
   double E = 1;
   double factor = E / (1 - nu * nu);
   Eigen::MatrixXd constitutive_matrix(3, 3);
@@ -175,7 +176,7 @@ int main() {
 
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{1.0, 0.0};
+    std::vector<double> load{0.1, 0.0};
     return load;
   };
 
@@ -212,23 +213,23 @@ int main() {
   // ********************** SOLUTION **********************
   const auto& solution = analysis.Solve();
 
-  for (int i = 3; i >= 0; i--) {
-    for (int j = 0; j < 4; j++) {
-      auto index = (i * 4 + j) * number_of_dofs_per_node + 1;
-      std::cout << solution(index) << "\t\t";
-    }
-    std::cout << std::endl;
-  }
+  // for (int i = 3; i >= 0; i--) {
+  //   for (int j = 0; j < 4; j++) {
+  //     auto index = (i * 4 + j) * number_of_dofs_per_node + 1;
+  //     std::cout << solution(index) << "\t\t";
+  //   }
+  //   std::cout << std::endl;
+  // }
 
   // ********************** POSTPROCESSING **********************
-  for (auto &element: body_elements) {
+  for (auto& element : body_elements) {
     element.SetSolutionOnDofs(solution);
   }
-
 
   std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
       std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
 
+  std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
   writer.Write("ffea_output.vtk");
