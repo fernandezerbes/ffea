@@ -19,7 +19,7 @@ enum class ElementGroupType{
 
 class Mesh {
  public:
-  Mesh(short int number_of_dofs_per_node, const std::vector<Node>& nodes);
+  Mesh(short int number_of_dofs_per_node, std::vector<Node>& nodes);
   ~Mesh();
 
   void RegisterElementGroup(ElementGroupType group_type,
@@ -28,11 +28,12 @@ class Mesh {
   std::vector<Element>& GetElementGroup(
       ElementGroupType group_type,
       const std::string& group_name);
-  long unsigned int number_of_dofs() const;
+  size_t number_of_dofs() const;
+  size_t number_of_nodes() const;
+  std::vector<Node> &nodes_;
 
  private:
   short int number_of_dofs_per_node_;
-  std::vector<Node> nodes_;
   std::unordered_map<std::string, std::vector<Element>> bodies_;
   std::unordered_map<std::string, std::vector<Element>> dirichlet_boundaries_;
   std::unordered_map<std::string, std::vector<Element>> neumann_boundaries_;

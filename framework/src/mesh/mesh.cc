@@ -2,7 +2,7 @@
 
 namespace ffea {
 
-Mesh::Mesh(short int number_of_dofs_per_node, const std::vector<Node>& nodes)
+Mesh::Mesh(short int number_of_dofs_per_node, std::vector<Node>& nodes)
     : number_of_dofs_per_node_(number_of_dofs_per_node), nodes_(nodes) {}
 
 Mesh::~Mesh() {}
@@ -39,8 +39,12 @@ std::vector<Element>& Mesh::GetElementGroup(ElementGroupType group_type,
   }
 }
 
-long unsigned int Mesh::number_of_dofs() const {
-  return nodes_.size() * number_of_dofs_per_node_;
+size_t Mesh::number_of_dofs() const {
+  return number_of_nodes() * number_of_dofs_per_node_;
+}
+
+size_t Mesh::number_of_nodes() const {
+  return nodes_.size();
 }
 
 }  // namespace ffea

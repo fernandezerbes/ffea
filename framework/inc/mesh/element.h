@@ -31,6 +31,7 @@ class Element {
       const Eigen::MatrixXd &constitutive_model,
       const DifferentialOperator &differential_operator) const;
   Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
+  size_t GetNumberOfNodes() const;
   size_t GetNumberOfDofsPerNode() const;
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
   void SetSolutionOnDofs(const Eigen::VectorXd &solution);
@@ -42,9 +43,7 @@ class Element {
   std::vector<Node *> nodes_;
   std::shared_ptr<ShapeFunctions> shape_functions_;
   IntegrationPointsGroupPtr integration_points_;
-
   IntegrationPointsGroupPtr integration_points() const;
-  size_t GetNumberOfNodes() const;
   size_t GetNumberOfDofs() const;
   Eigen::MatrixXd GetNodesCoordinatesValues() const;
   Eigen::MatrixXd EvaluateShapeFunctions(
