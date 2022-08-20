@@ -24,6 +24,8 @@ class Mesh {
   void AddElement(ElementType element_type, const std::string& group_name,
                   const std::vector<size_t>& node_ids);
   std::vector<Element>& GetElementGroup(const std::string& group_name);
+  const std::vector<Element>& GetElementGroup(
+      const std::string& group_name) const;
   std::vector<Node>& nodes();
 
  private:

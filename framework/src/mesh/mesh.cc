@@ -14,6 +14,11 @@ std::vector<Element>& Mesh::GetElementGroup(const std::string& group_name) {
   return element_groups_.at(group_name);
 }
 
+const std::vector<Element>& Mesh::GetElementGroup(
+    const std::string& group_name) const {
+  return element_groups_.at(group_name);
+}
+
 std::vector<Node>& Mesh::nodes() {
   return nodes_;
 }  // TODO See how not to break encapsulation

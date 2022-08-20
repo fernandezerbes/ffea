@@ -45,8 +45,8 @@ int main() {
   const size_t parametric_dimensions_2d = 2;
   const size_t spatial_dimensions = 2;
 
-  const size_t number_of_elements_in_x = 10;
-  const size_t number_of_elements_in_y = 40;
+  const size_t number_of_elements_in_x = 5;
+  const size_t number_of_elements_in_y = 20;
   const size_t number_of_nodes_in_x = number_of_elements_in_x + 1;
   const size_t number_of_nodes_in_y = number_of_elements_in_y + 1;
 
@@ -105,8 +105,6 @@ int main() {
   }
 
   auto& body_elements = mesh.GetElementGroup(body_name);
-  auto& dirichlet_elements = mesh.GetElementGroup(dirichlet_boundary_name);
-  auto& neumann_elements = mesh.GetElementGroup(neumann_boundary_name);
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;
@@ -142,16 +140,16 @@ int main() {
   };
 
   std::shared_ptr<ffea::BoundaryCondition> load_on_top =
-      std::make_shared<ffea::NeumannBoundaryCondition>(neumann_elements,
-                                                       load_function);
+      std::make_shared<ffea::NeumannBoundaryCondition>(
+          mesh, neumann_boundary_name, load_function);
 
   double penalty = 1.0e12;
   const auto& enforcement_strategy = ffea::PenaltyEnforcementStrategy(penalty);
   std::unordered_set<size_t> directions_to_consider = {0, 1};
   std::shared_ptr<ffea::BoundaryCondition> fixed_bottom =
       std::make_shared<ffea::DirichletBoundaryCondition>(
-          dirichlet_elements, boundary_function, directions_to_consider,
-          enforcement_strategy);
+          mesh, dirichlet_boundary_name, boundary_function,
+          directions_to_consider, enforcement_strategy);
 
   std::vector<ffea::BoundaryCondition*> boundary_conditions;
   // TODO ensure that these are applied in the correct order

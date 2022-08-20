@@ -9,15 +9,16 @@
 
 #include "../mesh/coordinates.h"
 #include "../mesh/element.h"
+#include "../mesh/mesh.h"
 
 namespace ffea {
 
 class BoundaryCondition {
  public:
-  BoundaryCondition(const std::vector<Element> &boundary_elements,
+  BoundaryCondition(const Mesh &mesh, const std::string &boundary_name,
                     ConditionFunction boundary_function);
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
-                     Eigen::VectorXd &global_rhs) const = 0;
+                       Eigen::VectorXd &global_rhs) const = 0;
 
  protected:
   const std::vector<Element> &boundary_elements_;
@@ -26,11 +27,11 @@ class BoundaryCondition {
 
 class NeumannBoundaryCondition : public BoundaryCondition {
  public:
-  NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
+  NeumannBoundaryCondition(const Mesh &mesh, const std::string &boundary_name,
                            ConditionFunction boundary_function);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
-                     Eigen::VectorXd &global_rhs) const override;
+                       Eigen::VectorXd &global_rhs) const override;
 };
 
 class EnforcementStrategy {
@@ -67,13 +68,13 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
 class DirichletBoundaryCondition : public BoundaryCondition {
  public:
   DirichletBoundaryCondition(
-      const std::vector<Element> &boundary_elements,
+      const Mesh &mesh, const std::string &boundary_name,
       ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,
       const EnforcementStrategy &enforcement_strategy);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
-                     Eigen::VectorXd &global_rhs) const override;
+                       Eigen::VectorXd &global_rhs) const override;
 
  private:
   const std::unordered_set<size_t> &directions_to_consider_;
