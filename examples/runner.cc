@@ -41,6 +41,24 @@ int main() {
 
   */
 
+  // TODO Create mesh parser and mesh builder from parser
+  // TODO Refactor quadrature
+  // TODO Add shape functions for other elements (take from Felippa book)
+  // TODO Add class for constitutive model
+  // TODO Make member variables private in model
+  // TODO Review responsibilities in model and analysis
+  // TODO Review dimensions (local, global) and where we need to store them
+  // TODO Remove dependency of Eigen
+  // TODO Add caching of differential operator, shape functions, etc.
+  // TODO Review element factories to see if something better can be done
+  // TODO Create analysis builders
+  // TODO Review function signatures and check constness, encapsulation, etc
+  // TODO Add unit-tests
+  // TODO Add smoke-tests
+  // TODO Add capabilities for geometric non-linearities (non linear analysis, NR Solver, etc)
+  // TODO Add multithreading
+  // TODO Add MPI
+
   // ********************** MESH **********************
   const size_t number_of_elements_in_x = 20;
   const size_t number_of_elements_in_y = 20;
