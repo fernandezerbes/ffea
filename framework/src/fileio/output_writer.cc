@@ -29,7 +29,7 @@ void OutputWriter::Write(const std::string& filename) {
          << coordinates.get(2) << std::endl;
   }
 
-  auto& body_elements = mesh_.GetElementGroup("body");
+  auto& body_elements = mesh_.GetElementGroup("surface");
 
   size_t integers_per_element = 5;
   size_t cell_list_size = body_elements.size() * integers_per_element;

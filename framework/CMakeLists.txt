@@ -9,6 +9,7 @@ add_library(ffea
             src/mesh/element_factory.cc
             src/mesh/integration_point.cc
             src/mesh/mesh.cc
+            src/mesh/mesh_builder.cc
             src/mesh/node.cc
             src/model/boundary_condition.cc
             src/model/model.cc

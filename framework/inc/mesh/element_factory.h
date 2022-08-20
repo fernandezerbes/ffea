@@ -38,14 +38,13 @@ enum class ElementType {
 class ElementFactory {
  public:
   ElementFactory(ElementType element_type);
-
   Element CreateElement(const std::vector<Node *> &nodes) const;
 
  private:
   size_t dimension_;
   // TODO I don't like that the factory owns the shape functions and quadrature
-  std::unique_ptr<ShapeFunctions> shape_functions_;
-  std::unique_ptr<Quadrature> quadrature_;
+  std::shared_ptr<ShapeFunctions> shape_functions_;
+  std::shared_ptr<Quadrature> quadrature_;
 };
 
 }  // namespace ffea

@@ -11,7 +11,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Assembler::ProcessLinearSystem(
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
   Eigen::VectorXd global_rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
-  auto& body_elements = mesh.GetElementGroup("body");
+  auto& body_elements = mesh.GetElementGroup("surface");
 
   // Compute stiffness
   for (auto& element : body_elements) {

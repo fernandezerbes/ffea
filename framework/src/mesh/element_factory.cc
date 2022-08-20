@@ -7,15 +7,15 @@ ElementFactory::ElementFactory(ElementType element_type)
   switch (element_type) {
     case ElementType::kTwoNodeLine:
       dimension_ = 1;
-      shape_functions_ = std::make_unique<Linear1DShapeFunctions>();
-      quadrature_ = std::make_unique<QuadratureRule1x2>();
+      shape_functions_ = std::make_shared<Linear1DShapeFunctions>();
+      quadrature_ = std::make_shared<QuadratureRule1x2>();
       break;
     case ElementType::kThreeNodeTria:
       break;
     case ElementType::kFourNodeQuad:
       dimension_ = 2;
-      shape_functions_ = std::make_unique<Linear2DShapeFunctions>();
-      quadrature_ = std::make_unique<QuadratureRule2x2>();
+      shape_functions_ = std::make_shared<Linear2DShapeFunctions>();
+      quadrature_ = std::make_shared<QuadratureRule2x2>();
       break;
     case ElementType::kFourNodeTetra:
       break;
