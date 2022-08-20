@@ -9,24 +9,24 @@ namespace ffea {
 class DegreeOfFreedom {
  public:
   DegreeOfFreedom();
-  DegreeOfFreedom(int local_id, short number_of_axiliary_values = 0);
+  DegreeOfFreedom(size_t local_id, size_t number_of_axiliary_values = 0);
   ~DegreeOfFreedom();
 
-  int local_id() const;
-  int global_id() const;
+  size_t local_id() const;
+  size_t global_id() const;
   double value() const;
   void set_value(double value);
   void set_value(const Eigen::VectorXd &solution);
-  double auxiliary_value(short index) const;
-  void set_auxiliary_value(short index, double value);
+  double auxiliary_value(size_t index) const;
+  void set_auxiliary_value(size_t index, double value);
 
  private:
   double value_;
   std::vector<double> auxiliary_values_;
-  int local_id_;
-  int global_id_;
+  size_t local_id_;
+  size_t global_id_;
 
-  void check_auxiliary_value(short index) const;
+  void check_auxiliary_value(size_t index) const;
 };
 
 }  // namespace ffea

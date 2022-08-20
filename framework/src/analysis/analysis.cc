@@ -23,7 +23,7 @@ Eigen::VectorXd Analysis::Solve() {
   Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
   cg_solver.compute(global_stiffness);
   Eigen::VectorXd solution;
-  // for (int i = 0; i < 100; i++) {
+  // for (size_t i = 0; i < 100; i++) {
   solution = cg_solver.solve(global_rhs);
   // }
 

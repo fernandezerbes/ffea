@@ -3,7 +3,7 @@
 namespace ffea {
 
 Element::Element(size_t dimension, const std::vector<Node *> &nodes,
-                 std::shared_ptr<ShapeFunctions> shape_functions,
+                 const ShapeFunctions &shape_functions,
                  IntegrationPointsGroupPtr integration_points)
     : dimension_(dimension),
       nodes_(nodes),
@@ -20,8 +20,8 @@ IntegrationPointsGroupPtr Element::integration_points() const {
   return integration_points_;
 }
 
-std::vector<int> Element::GetLocalToGlobalDofIndicesMap() const {
-  std::vector<int> indices_map;
+std::vector<size_t> Element::GetLocalToGlobalDofIndicesMap() const {
+  std::vector<size_t> indices_map;
   indices_map.reserve(GetNumberOfDofs());
   for (const auto &node : nodes_) {
     size_t dofs_per_node = GetNumberOfDofsPerNode();
@@ -45,7 +45,7 @@ size_t Element::GetNumberOfDofs() const {
 Eigen::MatrixXd Element::EvaluateShapeFunctions(
     const Coordinates &local_coordinates,
     DerivativeOrder derivative_order) const {
-  return shape_functions_->Evaluate(local_coordinates.get(), derivative_order);
+  return shape_functions_.Evaluate(local_coordinates.get(), derivative_order);
 }
 
 Eigen::MatrixXd Element::GetNodesCoordinatesValues() const {
@@ -177,20 +177,6 @@ Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_index) const {
   }
 
   return solution;
-}
-
-ElementFactory::ElementFactory(size_t dimension,
-                               std::shared_ptr<ShapeFunctions> shape_functions,
-                               std::shared_ptr<QuadratureRule> integration_rule)
-    : dimension_(dimension),
-      shape_functions_(shape_functions),
-      integration_points_(nullptr) {
-  integration_points_ = integration_rule->GetIntegrationPoints();
-}
-
-Element ElementFactory::CreateElement(const std::vector<Node *> &nodes) const {
-  return ffea::Element(dimension_, nodes, shape_functions_,
-                       integration_points_);
 }
 
 }  // namespace ffea

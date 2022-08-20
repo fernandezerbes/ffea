@@ -59,38 +59,17 @@ int main() {
   const double origin_y = 0.0;
 
   const size_t number_of_dofs_per_node = 2;
-  std::vector<ffea::Node> nodes;
-  nodes.reserve(number_of_nodes_in_x * number_of_nodes_in_y);
+  ffea::Mesh mesh(number_of_dofs_per_node);
+
   for (size_t j_node = 0; j_node < number_of_nodes_in_y; j_node++) {
     for (size_t i_node = 0; i_node < number_of_nodes_in_x; i_node++) {
       double x = origin_x + i_node * dx;
       double y = origin_y + j_node * dy;
-      ffea::Coordinates point({x, y, 0.0});
-      size_t index = j_node * number_of_nodes_in_x + i_node;
-      nodes.emplace_back(index, point, number_of_dofs_per_node);
+      mesh.AddNode({x, y, 0.0});
     }
   }
 
-  std::shared_ptr<ffea::ShapeFunctions> linear_1d_shape_functions =
-      std::make_shared<ffea::Linear1DShapeFunctions>();
-  std::shared_ptr<ffea::ShapeFunctions> linear_2d_shape_functions =
-      std::make_shared<ffea::Linear2DShapeFunctions>();
-
-  std::shared_ptr<ffea::QuadratureRule> integration_1x2_rule =
-      std::make_shared<ffea::QuadratureRule1x2>();
-  std::shared_ptr<ffea::QuadratureRule> integration_2x2_rule =
-      std::make_shared<ffea::QuadratureRule2x2>();
-
-  ffea::ElementFactory line2_factory(parametric_dimensions_1d,
-                                     linear_1d_shape_functions,
-                                     integration_1x2_rule);
-  ffea::ElementFactory quad4_factory(parametric_dimensions_2d,
-                                     linear_2d_shape_functions,
-                                     integration_2x2_rule);
-
-  std::vector<ffea::Element> body;
-  body.reserve(number_of_elements_in_x * number_of_elements_in_y);
-
+  const std::string body_name = "body";
   for (size_t j_element = 0; j_element < number_of_elements_in_y; j_element++) {
     for (size_t i_element = 0; i_element < number_of_elements_in_x;
          i_element++) {
@@ -101,57 +80,33 @@ int main() {
           second_node_index + number_of_nodes_in_x;  // counter-clockwise
       size_t fourth_node_index =
           first_node_index + number_of_nodes_in_x;  // counter-clockwise
-      body.push_back(quad4_factory.CreateElement(
-          {&nodes[first_node_index], &nodes[second_node_index],
-           &nodes[third_node_index], &nodes[fourth_node_index]}));
-      std::cout << "Element " << index << ", nodes " << first_node_index << " "
-                << second_node_index << " " << third_node_index << " "
-                << fourth_node_index << std::endl;
+      mesh.AddElement(ffea::ElementType::kFourNodeQuad, body_name,
+                      {first_node_index, second_node_index, third_node_index,
+                       fourth_node_index});
     }
   }
 
-  std::vector<ffea::Element> dirichlet_boundary;
-  dirichlet_boundary.reserve(number_of_elements_in_x);
-
-  std::vector<ffea::Element> neumann_boundary;
-  neumann_boundary.reserve(number_of_elements_in_x);
+  const std::string dirichlet_boundary_name = "dirichlet_boundary";
+  const std::string neumann_boundary_name = "neumann_boundary";
 
   for (size_t i_element = 0; i_element < number_of_elements_in_x; i_element++) {
     size_t index_bottom = i_element;
     size_t first_node_index_bottom = index_bottom;
     size_t second_node_index_bottom = first_node_index_bottom + 1;
-    std::cout << "Bottom element " << index_bottom << ", nodes "
-              << first_node_index_bottom << " " << second_node_index_bottom
-              << std::endl;
-    dirichlet_boundary.push_back(line2_factory.CreateElement(
-        {&nodes[first_node_index_bottom], &nodes[second_node_index_bottom]}));
+    mesh.AddElement(ffea::ElementType::kTwoNodeLine, dirichlet_boundary_name,
+                    {first_node_index_bottom, second_node_index_bottom});
 
     size_t index_top =
         i_element + (number_of_nodes_in_x * (number_of_nodes_in_y - 1));
     size_t first_node_index_top = index_top;
     size_t second_node_index_top = first_node_index_top + 1;
-
-    std::cout << "Top element " << index_top << ", nodes "
-              << first_node_index_top << " " << second_node_index_top
-              << std::endl;
-    neumann_boundary.push_back(line2_factory.CreateElement(
-        {&nodes[first_node_index_top], &nodes[second_node_index_top]}));
+    mesh.AddElement(ffea::ElementType::kTwoNodeLine, neumann_boundary_name,
+                    {first_node_index_top, second_node_index_top});
   }
 
-  ffea::Mesh mesh(number_of_dofs_per_node, nodes);
-  mesh.RegisterElementGroup(ffea::ElementGroupType::kBodyElements, "body",
-                            body);
-  mesh.RegisterElementGroup(ffea::ElementGroupType::kDirichletBoundaryElements,
-                            "dirichlet_boundary", dirichlet_boundary);
-  mesh.RegisterElementGroup(ffea::ElementGroupType::kNeumannBoundaryElements,
-                            "neumann_boundary", neumann_boundary);
-
-  auto& body_elements =
-      mesh.GetElementGroup(ffea::ElementGroupType::kBodyElements, "body");
-  auto& dirichlet_elements = mesh.GetElementGroup(
-      ffea::ElementGroupType::kDirichletBoundaryElements, "dirichlet_boundary");
-  auto& neumann_elements = mesh.GetElementGroup(
-      ffea::ElementGroupType::kNeumannBoundaryElements, "neumann_boundary");
+  auto& body_elements = mesh.GetElementGroup(body_name);
+  auto& dirichlet_elements = mesh.GetElementGroup(dirichlet_boundary_name);
+  auto& neumann_elements = mesh.GetElementGroup(neumann_boundary_name);
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;

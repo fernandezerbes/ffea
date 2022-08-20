@@ -23,14 +23,13 @@ void OutputWriter::Write(const std::string& filename) {
   file << "POINTS " << mesh_.number_of_nodes() << " "
        << "double " << std::endl;
 
-  for (auto& node : mesh_.nodes_) {
+  for (auto& node : mesh_.nodes()) {
     const auto& coordinates = node.coordinates();
     file << coordinates.get(0) << "\t" << coordinates.get(1) << "\t"
          << coordinates.get(2) << std::endl;
   }
 
-  auto& body_elements =
-      mesh_.GetElementGroup(ElementGroupType::kBodyElements, "body");
+  auto& body_elements = mesh_.GetElementGroup("body");
 
   size_t integers_per_element = 5;
   size_t cell_list_size = body_elements.size() * integers_per_element;
@@ -47,7 +46,7 @@ void OutputWriter::Write(const std::string& filename) {
   }
 
   file << "CELL_TYPES " << body_elements.size() << std::endl;
-  int cell_type = 9;
+  size_t cell_type = 9;
 
   for (size_t i = 0; i < body_elements.size(); i++) {
     file << cell_type << std::endl;
@@ -57,8 +56,7 @@ void OutputWriter::Write(const std::string& filename) {
   file << "VECTORS displacements double" << std::endl;
   // file << "LOOKUP_TABLE default" << std::endl;
 
-
-  for (auto& node : mesh_.nodes_) {
+  for (auto& node : mesh_.nodes()) {
     file << node.GetSolutionOfDof(0) << "\t" << node.GetSolutionOfDof(1)
          << "\t0" << std::endl;
   }

@@ -13,7 +13,7 @@ namespace ffea {
 class Node {
  public:
   Node(size_t id, const Coordinates &coordinates,
-       short number_of_dofs = 0);
+       size_t number_of_dofs = 0);
   ~Node();
 
   size_t id() const;

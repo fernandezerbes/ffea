@@ -2,7 +2,7 @@
 
 namespace ffea {
 
-Node::Node(size_t id, const Coordinates &coordinates, short number_of_dofs)
+Node::Node(size_t id, const Coordinates &coordinates, size_t number_of_dofs)
     : id_(id), coordinates_(coordinates), dofs_() {
   for (size_t component_index = 0; component_index < number_of_dofs;
        component_index++) {

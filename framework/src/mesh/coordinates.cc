@@ -10,7 +10,7 @@ Coordinates::~Coordinates() {}
 
 const std::vector<double> &Coordinates::get() const { return xyz_; }
 
-double Coordinates::get(short index) const { return xyz_[index]; }
+double Coordinates::get(size_t index) const { return xyz_[index]; }
 
 void Coordinates::set(double x, double y, double z) {
   set(0, x);
@@ -20,7 +20,7 @@ void Coordinates::set(double x, double y, double z) {
 
 void Coordinates::set(const std::vector<double> &xyz) { xyz_ = xyz; }
 
-void Coordinates::set(short index, double value) { xyz_[index] = value; }
+void Coordinates::set(size_t index, double value) { xyz_[index] = value; }
 
 std::ostream &operator<<(std::ostream &os, const Coordinates &xyz) {
   os << "(x, y, z) = (" << xyz.get(0) << ", " << xyz.get(1) << ", "

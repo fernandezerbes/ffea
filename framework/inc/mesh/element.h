@@ -20,13 +20,13 @@ using ConditionFunction =
 class Element {
  public:
   Element(size_t dimension, const std::vector<Node *> &nodes,
-          std::shared_ptr<ShapeFunctions> shape_functions,
+          const ShapeFunctions &shape_functions,
           IntegrationPointsGroupPtr integration_points);
   virtual ~Element();
 
   size_t dimension() const;
   std::vector<Node *> &nodes();
-  std::vector<int> GetLocalToGlobalDofIndicesMap() const;
+  std::vector<size_t> GetLocalToGlobalDofIndicesMap() const;
   Eigen::MatrixXd ComputeStiffness(
       const Eigen::MatrixXd &constitutive_model,
       const DifferentialOperator &differential_operator) const;
@@ -41,7 +41,7 @@ class Element {
  private:
   size_t dimension_;
   std::vector<Node *> nodes_;
-  std::shared_ptr<ShapeFunctions> shape_functions_;
+  const ShapeFunctions &shape_functions_;
   IntegrationPointsGroupPtr integration_points_;
   IntegrationPointsGroupPtr integration_points() const;
   size_t GetNumberOfDofs() const;
@@ -51,20 +51,6 @@ class Element {
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
-};
-
-class ElementFactory {
- public:
-  ElementFactory(size_t dimension,
-                 std::shared_ptr<ShapeFunctions> shape_functions,
-                 std::shared_ptr<QuadratureRule> integration_rule);
-
-  Element CreateElement(const std::vector<Node *> &nodes) const;
-
- private:
-  size_t dimension_;
-  std::shared_ptr<ShapeFunctions> shape_functions_;
-  IntegrationPointsGroupPtr integration_points_;
 };
 
 }  // namespace ffea

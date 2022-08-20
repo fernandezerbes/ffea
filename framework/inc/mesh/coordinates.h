@@ -13,10 +13,10 @@ class Coordinates {
   ~Coordinates();
 
   const std::vector<double> &get() const;
-  double get(short index) const;
+  double get(size_t index) const;
   void set(double x, double y, double z);
   void set(const std::vector<double> &xyz);
-  void set(short index, double value);
+  void set(size_t index, double value);
 
  private:
   std::vector<double> xyz_;
