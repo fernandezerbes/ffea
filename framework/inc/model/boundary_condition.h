@@ -54,7 +54,7 @@ class DirectEnforcementStrategy : public EnforcementStrategy {
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
-  PenaltyEnforcementStrategy(double penalty);
+  PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
       ConditionFunction boundary_function,

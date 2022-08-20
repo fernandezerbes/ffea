@@ -45,8 +45,8 @@ int main() {
   const size_t number_of_elements_in_x = 20;
   const size_t number_of_elements_in_y = 20;
   const size_t number_of_dofs_per_node = 2;
-  const double length_in_x = 3.0;
-  const double length_in_y = 1.0;
+  const double length_in_x = 1.0;
+  const double length_in_y = 3.0;
   ffea::CartesianMeshBuilder mesh_builder(length_in_x, length_in_y,
                                           number_of_elements_in_x,
                                           number_of_elements_in_y);
@@ -67,45 +67,32 @@ int main() {
   // ********************** DIFFERENTIAL OPERATOR **********************
   auto differential_operator = ffea::StrainDisplacementOperator2D();
 
-  // ********************** BOUNDARY CONDITIONS **********************
+  // ********************** MODEL **********************
   auto body_load =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };
 
+  ffea::Model model(mesh, constitutive_matrix, differential_operator,
+                    body_load);
+
+  // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 1.0};
     return load;
   };
+  model.AddNeumannBoundaryCondition("top_edge", load_function);
 
   auto boundary_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
-    return load;
+    return load;\
   };
-
-  std::shared_ptr<ffea::BoundaryCondition> load_on_top =
-      std::make_shared<ffea::NeumannBoundaryCondition>(
-          mesh, "top_edge", load_function);
-
-  double penalty = 1.0e12;
-  const auto& enforcement_strategy = ffea::PenaltyEnforcementStrategy(penalty);
   std::unordered_set<size_t> directions_to_consider = {0, 1};
-  std::shared_ptr<ffea::BoundaryCondition> fixed_bottom =
-      std::make_shared<ffea::DirichletBoundaryCondition>(
-          mesh, "bottom_edge", boundary_function,
-          directions_to_consider, enforcement_strategy);
-
-  std::vector<ffea::BoundaryCondition*> boundary_conditions;
-  // TODO ensure that these are applied in the correct order
-  boundary_conditions.push_back(load_on_top.get());
-  boundary_conditions.push_back(fixed_bottom.get());
-
-  // ********************** MODEL **********************
-  ffea::Model model(mesh, constitutive_matrix, differential_operator,
-                    boundary_conditions, body_load);
+  model.AddDirichletBoundaryCondition("bottom_edge", boundary_function,
+                                      directions_to_consider);
 
   // ********************** ANALYSIS **********************
   ffea::Analysis analysis(model);

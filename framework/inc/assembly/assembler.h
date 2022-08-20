@@ -2,11 +2,12 @@
 #define FFEA_FRAMEWORK_INC_ASSEMBLY_ASSEMBLER_H_
 
 #include <utility>
+#include <memory>
 
 #include "../mesh/mesh.h"
+#include "../model/boundary_condition.h"
 #include "../model/model.h"
 #include "../processor/operator.h"
-#include "../model/boundary_condition.h"
 
 namespace ffea {
 
@@ -18,7 +19,8 @@ class Assembler {
       ConditionFunction source);
   static void EnforceBoundaryConditions(
       Eigen::MatrixXd& global_stiffness, Eigen::VectorXd& global_rhs,
-      const std::vector<BoundaryCondition*>& boundary_conditions);
+      const std::vector<std::unique_ptr<BoundaryCondition>>&
+          boundary_conditions);
   static void ScatterSolution(const Eigen::VectorXd& solution);
 };
 

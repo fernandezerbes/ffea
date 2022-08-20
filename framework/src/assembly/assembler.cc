@@ -42,7 +42,8 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Assembler::ProcessLinearSystem(
 
 void Assembler::EnforceBoundaryConditions(
     Eigen::MatrixXd& global_stiffness, Eigen::VectorXd& global_rhs,
-    const std::vector<BoundaryCondition*>& boundary_conditions) {
+    const std::vector<std::unique_ptr<BoundaryCondition>>&
+        boundary_conditions) {
   for (auto& bc : boundary_conditions) {
     bc->Enforce(global_stiffness, global_rhs);
   }
