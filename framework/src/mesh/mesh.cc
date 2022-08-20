@@ -65,4 +65,10 @@ size_t Mesh::number_of_dofs() const {
 
 size_t Mesh::number_of_nodes() const { return nodes_.size(); }
 
+void Mesh::SetSolutionOnDofs(const Eigen::VectorXd& solution) {
+  for (auto& element : GetElementGroup("surface")) {
+    element.SetSolutionOnDofs(solution);
+  }
+}
+
 }  // namespace ffea

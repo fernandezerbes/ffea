@@ -27,6 +27,7 @@ class Mesh {
   const std::vector<Element>& GetElementGroup(
       const std::string& group_name) const;
   std::vector<Node>& nodes();
+  void SetSolutionOnDofs(const Eigen::VectorXd &solution);
 
  private:
   const ElementFactory& GetElementFactory(ElementType element_type);

@@ -8,7 +8,7 @@ namespace ffea {
 
 Analysis::Analysis(Model &model) : model_(model) {}
 
-Eigen::VectorXd Analysis::Solve() {
+void Analysis::Solve() {
   std::cout << "Processing linear system..." << std::endl;
   auto linear_system = Assembler::ProcessLinearSystem(
       model_.mesh, model_.constitutive_model, model_.differential_operator,
@@ -23,11 +23,9 @@ Eigen::VectorXd Analysis::Solve() {
   Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
   cg_solver.compute(global_stiffness);
   Eigen::VectorXd solution;
-  // for (size_t i = 0; i < 100; i++) {
   solution = cg_solver.solve(global_rhs);
-  // }
 
-  return solution;
+  model_.ProjectSolutionOnMesh(solution);
 }
 
 }  // namespace ffea

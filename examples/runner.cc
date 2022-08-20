@@ -45,15 +45,13 @@ int main() {
   const size_t number_of_elements_in_x = 20;
   const size_t number_of_elements_in_y = 20;
   const size_t number_of_dofs_per_node = 2;
-  const double length_in_x = 1.0;
+  const double length_in_x = 3.0;
   const double length_in_y = 1.0;
   ffea::CartesianMeshBuilder mesh_builder(length_in_x, length_in_y,
                                           number_of_elements_in_x,
                                           number_of_elements_in_y);
 
   auto mesh = mesh_builder.Build(number_of_dofs_per_node);
-
-  auto& body_elements = mesh.GetElementGroup("surface");
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;
@@ -78,7 +76,7 @@ int main() {
 
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{0.1, 0.0};
+    std::vector<double> load{0.0, 1.0};
     return load;
   };
 
@@ -111,15 +109,9 @@ int main() {
 
   // ********************** ANALYSIS **********************
   ffea::Analysis analysis(model);
-
-  // ********************** SOLUTION **********************
-  const auto& solution = analysis.Solve();
+  analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  for (auto& element : body_elements) {
-    element.SetSolutionOnDofs(solution);
-  }
-
   std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
       std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
 

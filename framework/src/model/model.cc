@@ -12,4 +12,8 @@ Model::Model(Mesh& mesh, const Eigen::MatrixXd& constitutive_model,
       boundary_conditions(boundary_conditions),
       source(source) {}
 
+void Model::ProjectSolutionOnMesh(const Eigen::VectorXd& solution) {
+  mesh.SetSolutionOnDofs(solution);
+}
+
 }  // namespace ffea

@@ -16,6 +16,8 @@ struct Model {
         const std::vector<BoundaryCondition *> &boundary_conditions,
         ConditionFunction source);
 
+  void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
+
   Mesh &mesh;
   const Eigen::MatrixXd &constitutive_model;
   const DifferentialOperator &differential_operator;

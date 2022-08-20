@@ -11,7 +11,7 @@ class Analysis {
  public:
   Analysis(Model &model);
 
-  Eigen::VectorXd Solve();
+  void Solve();
 
  private:
   Model &model_;
