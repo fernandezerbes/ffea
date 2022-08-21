@@ -35,25 +35,48 @@ void MeshData::AddElement(size_t element_type, size_t element_group_id,
 
 void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::string line;
-  while (!file.eof()) {
-    file >> line;
-    auto parser = SectionParserFactory::CreateSectionParser(line);
-    parser->Parse(file, mesh_data);
+  while (std::getline(file, line)) {
+    // file >> line;
     std::cout << line << std::endl;
+    auto parser = SectionParserFactory::CreateSectionParser(line);
+    if (parser != nullptr) {
+      parser->Parse(file, mesh_data);
+    }
   }
 }
 
 std::string MeshParser::GetSectionName() {}
 
-void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {}
+void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+  std::cout << "Parsing with GroupNamesParser" << std::endl;
+  std::string line;
+  while (line != "$EndPhysicalNames") {
+    std::getline(file, line);
+    std::cout << line << std::endl;
+  }
+}
 
 std::string GroupNamesParser::GetSectionName() {}
 
-void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {}
+void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+  std::cout << "Parsing with NodesParser" << std::endl;
+  std::string line;
+  while (line != "$EndNodes") {
+    std::getline(file, line);
+    std::cout << line << std::endl;
+  }
+}
 
 std::string NodesParser::GetSectionName() {}
 
-void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {}
+void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+  std::cout << "Parsing with ElementsParser" << std::endl;
+  std::string line;
+  while (line != "$EndElements") {
+    std::getline(file, line);
+    std::cout << line << std::endl;
+  }
+}
 
 std::string ElementsParser::GetSectionName() {}
 
@@ -65,10 +88,13 @@ std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(
     return std::make_unique<NodesParser>();
   } else if (section_name == "$Elements") {
     return std::make_unique<ElementsParser>();
-  } else {
-    throw std::logic_error("Section " + section_name +
-                           " not implementd in parser.");
   }
+  //  else {
+  //   return nullptr;
+  //   // throw std::logic_error("Section '" + section_name +
+  //   //                        "' not implementd in parser.");
+  // }
+  return nullptr;
 }
 
 }  // namespace ffea
