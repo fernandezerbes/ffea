@@ -1,7 +1,11 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_MESHBUILDER_H_
 #define FFEA_FRAMEWORK_INC_MESH_MESHBUILDER_H_
 
+#include <string>
+#include <fstream>
+
 #include "./mesh.h"
+#include "../fileio/mesh_parser.h"
 
 namespace ffea {
 
@@ -12,6 +16,21 @@ class MeshBuilder {
  protected:
   virtual void AddNodes(Mesh &mesh) = 0;
   virtual void AddElements(Mesh &mesh) = 0;
+};
+
+class MeshFromFileBuilder : public MeshBuilder {
+ public:
+  MeshFromFileBuilder(const std::string &file_path);
+  ~MeshFromFileBuilder();
+
+ protected:
+  virtual void AddNodes(Mesh &mesh) override;
+  virtual void AddElements(Mesh &mesh) override;
+
+ private:
+  std::ifstream file_stream_;
+  MeshParser parser_;
+  MeshData mesh_data_;
 };
 
 class CartesianMeshBuilder : public MeshBuilder {

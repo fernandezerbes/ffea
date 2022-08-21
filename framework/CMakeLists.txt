@@ -14,6 +14,7 @@ add_library(ffea
             src/model/boundary_condition.cc
             src/model/model.cc
             src/fileio/output_writer.cc
+            src/fileio/mesh_parser.cc
             src/processor/operator.cc
             src/postprocessor/postprocessor.cc
 )

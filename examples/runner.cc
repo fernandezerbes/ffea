@@ -55,7 +55,8 @@ int main() {
   // TODO Review function signatures and check constness, encapsulation, etc
   // TODO Add unit-tests
   // TODO Add smoke-tests
-  // TODO Add capabilities for geometric non-linearities (non linear analysis, NR Solver, etc)
+  // TODO Add capabilities for geometric non-linearities (non linear analysis,
+  // NR Solver, etc)
   // TODO Add multithreading
   // TODO Add MPI
 
@@ -70,6 +71,9 @@ int main() {
                                           number_of_elements_in_y);
 
   auto mesh = mesh_builder.Build(number_of_dofs_per_node);
+
+  ffea::MeshFromFileBuilder mesh_builder_from_file("t1.msh");
+  auto mesh2 = mesh_builder_from_file.Build(number_of_dofs_per_node);
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;
@@ -106,7 +110,7 @@ int main() {
   auto boundary_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
-    return load;\
+    return load;
   };
   std::unordered_set<size_t> directions_to_consider = {0, 1};
   model.AddDirichletBoundaryCondition("bottom_edge", boundary_function,

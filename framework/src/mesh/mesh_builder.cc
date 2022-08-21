@@ -3,11 +3,24 @@
 namespace ffea {
 
 Mesh MeshBuilder::Build(size_t number_of_dofs_per_node) {
-  Mesh mesh(2);
+  Mesh mesh(number_of_dofs_per_node);
   AddNodes(mesh);
   AddElements(mesh);
   return mesh;
 }
+
+MeshFromFileBuilder::MeshFromFileBuilder(const std::string &file_path)
+    : file_stream_(), parser_(), mesh_data_() {
+  file_stream_.open(file_path);
+}
+
+MeshFromFileBuilder::~MeshFromFileBuilder() { file_stream_.close(); }
+
+void MeshFromFileBuilder::AddNodes(Mesh &mesh) {
+  parser_.Parse(file_stream_, mesh_data_);
+}
+
+void MeshFromFileBuilder::AddElements(Mesh &mesh) {}
 
 CartesianMeshBuilder::CartesianMeshBuilder(double x_length, double y_length,
                                            size_t elements_in_x,
