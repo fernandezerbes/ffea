@@ -1,8 +1,7 @@
 #include "../../inc/fileio/mesh_parser.h"
 
 #include <iostream>
-#include <stdexcept>
-
+#include <sstream>
 namespace ffea {
 
 NodeData::NodeData(size_t id, const std::array<double, 3> &coords)
@@ -45,40 +44,87 @@ void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   }
 }
 
-std::string MeshParser::GetSectionName() {}
-
 void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::cout << "Parsing with GroupNamesParser" << std::endl;
-  std::string line;
-  while (line != "$EndPhysicalNames") {
-    std::getline(file, line);
-    std::cout << line << std::endl;
+
+  size_t number_of_groups;
+  file >> number_of_groups;
+
+  size_t dimension;
+  size_t physical_tag;
+  std::string name;
+  for (size_t group_index = 0; group_index < number_of_groups; group_index++) {
+    file >> dimension >> physical_tag >> name;
+    mesh_data.AddElementGroup(name);
   }
 }
-
-std::string GroupNamesParser::GetSectionName() {}
 
 void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::cout << "Parsing with NodesParser" << std::endl;
-  std::string line;
-  while (line != "$EndNodes") {
-    std::getline(file, line);
-    std::cout << line << std::endl;
+  size_t number_of_entity_blocks;
+  size_t number_of_nodes;
+  size_t minimum_node_tag;
+  size_t maximum_node_tag;
+  file >> number_of_entity_blocks >> number_of_nodes >> minimum_node_tag >>
+      maximum_node_tag;
+
+  size_t entity_dimension;
+  size_t entity_tag;
+  size_t parametric;
+  size_t number_of_nodes_in_block;
+  for (size_t entity_block_index = 0;
+       entity_block_index < number_of_entity_blocks; entity_block_index++) {
+    file >> entity_dimension >> entity_tag >> parametric >>
+        number_of_nodes_in_block;
+
+    size_t node_tag;
+    size_t node_id;
+    double x;
+    double y;
+    double z;
+    for (size_t node_index = 0; node_index < number_of_nodes_in_block;
+         node_index++) {
+      file >> node_tag >> x >> y >> z;
+      node_id = node_tag - 1;  // Gmsh is 1-based, ffea is 0-based
+      mesh_data.AddNode(node_id, {x, y, z});
+    }
   }
 }
-
-std::string NodesParser::GetSectionName() {}
 
 void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::cout << "Parsing with ElementsParser" << std::endl;
-  std::string line;
-  while (line != "$EndElements") {
-    std::getline(file, line);
-    std::cout << line << std::endl;
+  size_t number_of_entity_blocks;
+  size_t number_of_elements;
+  size_t minimum_element_tag;
+  size_t maximum_element_tag;
+  file >> number_of_entity_blocks >> number_of_elements >>
+      minimum_element_tag >> maximum_element_tag;
+
+  size_t entity_dimension;
+  size_t entity_tag;  // entity_tag is the tag of the physical entity
+  size_t element_type;
+  size_t number_of_elements_in_block;
+  for (size_t entity_block_index = 0;
+       entity_block_index < number_of_entity_blocks; entity_block_index++) {
+    file >> entity_dimension >> entity_tag >> element_type >>
+        number_of_elements_in_block;
+
+    size_t element_tag;
+    size_t node_tag;
+    std::vector<size_t> node_ids;
+    std::string line;
+    for (size_t element_index = 0; element_index < number_of_elements_in_block;
+         element_index++) {
+      std::getline(file, line);
+      std::istringstream ss(line);
+      ss >> element_tag;
+      while (ss >> node_tag) {
+        node_ids.push_back(node_tag - 1);  // Gmsh is 1-based, ffea is 0-based
+        mesh_data.AddElement(element_type, entity_tag, node_ids);
+      }
+    }
   }
 }
-
-std::string ElementsParser::GetSectionName() {}
 
 std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(
     const std::string &section_name) {
@@ -89,11 +135,6 @@ std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(
   } else if (section_name == "$Elements") {
     return std::make_unique<ElementsParser>();
   }
-  //  else {
-  //   return nullptr;
-  //   // throw std::logic_error("Section '" + section_name +
-  //   //                        "' not implementd in parser.");
-  // }
   return nullptr;
 }
 

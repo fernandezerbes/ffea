@@ -45,41 +45,26 @@ class MeshData {
 class Parser {
  public:
   virtual void Parse(std::ifstream &file, MeshData &mesh_data) = 0;
-
- protected:
-  virtual std::string GetSectionName() = 0;
 };
 
 class MeshParser : public Parser {
  public:
   virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
-
- protected:
-  virtual std::string GetSectionName() override;
 };
 
 class GroupNamesParser : public Parser {
  public:
   virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
-
- protected:
-  virtual std::string GetSectionName() override;
 };
 
 class NodesParser : public Parser {
  public:
   virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
-
- protected:
-  virtual std::string GetSectionName() override;
 };
 
 class ElementsParser : public Parser {
  public:
   virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
-
- protected:
-  virtual std::string GetSectionName() override;
 };
 
 class SectionParserFactory {

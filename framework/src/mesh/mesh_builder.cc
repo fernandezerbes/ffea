@@ -12,13 +12,13 @@ Mesh MeshBuilder::Build(size_t number_of_dofs_per_node) {
 MeshFromFileBuilder::MeshFromFileBuilder(const std::string &file_path)
     : file_stream_(), parser_(), mesh_data_() {
   file_stream_.open(file_path);
+  parser_.Parse(file_stream_, mesh_data_);
+  std::cout << "Finished parsing" << std::endl;
 }
 
 MeshFromFileBuilder::~MeshFromFileBuilder() { file_stream_.close(); }
 
-void MeshFromFileBuilder::AddNodes(Mesh &mesh) {
-  parser_.Parse(file_stream_, mesh_data_);
-}
+void MeshFromFileBuilder::AddNodes(Mesh &mesh) {}
 
 void MeshFromFileBuilder::AddElements(Mesh &mesh) {}
 
