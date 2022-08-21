@@ -1,5 +1,6 @@
 #include "../../inc/fileio/mesh_parser.h"
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 namespace ffea {
@@ -35,8 +36,6 @@ void MeshData::AddElement(size_t element_type, size_t element_group_id,
 void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::string line;
   while (std::getline(file, line)) {
-    // file >> line;
-    std::cout << line << std::endl;
     auto parser = SectionParserFactory::CreateSectionParser(line);
     if (parser != nullptr) {
       parser->Parse(file, mesh_data);
@@ -45,8 +44,6 @@ void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
 }
 
 void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
-  std::cout << "Parsing with GroupNamesParser" << std::endl;
-
   size_t number_of_groups;
   file >> number_of_groups;
 
@@ -55,12 +52,12 @@ void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::string name;
   for (size_t group_index = 0; group_index < number_of_groups; group_index++) {
     file >> dimension >> physical_tag >> name;
+    name.erase(std::remove(name.begin(), name.end(), '"'), name.end());
     mesh_data.AddElementGroup(name);
   }
 }
 
 void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
-  std::cout << "Parsing with NodesParser" << std::endl;
   size_t number_of_entity_blocks;
   size_t number_of_nodes;
   size_t minimum_node_tag;
@@ -78,22 +75,27 @@ void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
         number_of_nodes_in_block;
 
     size_t node_tag;
-    size_t node_id;
+    std::vector<size_t> node_ids;
+    node_ids.reserve(number_of_nodes_in_block);
+    for (size_t node_index = 0; node_index < number_of_nodes_in_block;
+         node_index++) {
+      file >> node_tag;
+      node_ids.push_back(node_tag - 1);
+    }
+
     double x;
     double y;
     double z;
     for (size_t node_index = 0; node_index < number_of_nodes_in_block;
          node_index++) {
-      file >> node_tag >> x >> y >> z;
-      node_id = node_tag - 1;  // Gmsh is 1-based, ffea is 0-based
-      mesh_data.AddNode(node_id, {x, y, z});
+      file >> x >> y >> z;
+      mesh_data.AddNode(node_ids[node_index], {x, y, z});
     }
   }
 }
 
 void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {
-  std::cout << "Parsing with ElementsParser" << std::endl;
-  size_t number_of_entity_blocks;
+  size_t number_of_entity_blocks;  // One entity block per physical group
   size_t number_of_elements;
   size_t minimum_element_tag;
   size_t maximum_element_tag;
@@ -109,19 +111,25 @@ void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {
     file >> entity_dimension >> entity_tag >> element_type >>
         number_of_elements_in_block;
 
-    size_t element_tag;
     size_t node_tag;
+    size_t element_tag;
     std::vector<size_t> node_ids;
     std::string line;
     for (size_t element_index = 0; element_index < number_of_elements_in_block;
          element_index++) {
+      node_ids.clear();
       std::getline(file, line);
+      // TODO Make this better, don't know why getline is returning an empty
+      // string
+      if (line == "") {
+        std::getline(file, line);
+      }
       std::istringstream ss(line);
       ss >> element_tag;
       while (ss >> node_tag) {
         node_ids.push_back(node_tag - 1);  // Gmsh is 1-based, ffea is 0-based
-        mesh_data.AddElement(element_type, entity_tag, node_ids);
       }
+      mesh_data.AddElement(element_type, entity_block_index, node_ids);
     }
   }
 }

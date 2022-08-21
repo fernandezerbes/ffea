@@ -13,14 +13,25 @@ MeshFromFileBuilder::MeshFromFileBuilder(const std::string &file_path)
     : file_stream_(), parser_(), mesh_data_() {
   file_stream_.open(file_path);
   parser_.Parse(file_stream_, mesh_data_);
-  std::cout << "Finished parsing" << std::endl;
 }
 
 MeshFromFileBuilder::~MeshFromFileBuilder() { file_stream_.close(); }
 
-void MeshFromFileBuilder::AddNodes(Mesh &mesh) {}
+void MeshFromFileBuilder::AddNodes(Mesh &mesh) {
+  for (const auto &node : mesh_data_.nodes) {
+    mesh.AddNode(node.coords);
+  }
+}
 
-void MeshFromFileBuilder::AddElements(Mesh &mesh) {}
+void MeshFromFileBuilder::AddElements(Mesh &mesh) {
+  for (const auto &element_group : mesh_data_.element_groups) {
+    for (const auto &element : element_group.elements) {
+      // Use mapping for gmsh elements instead of doing ElementType(element.type - 1)
+      mesh.AddElement(ElementType(element.type - 1), element_group.name,
+                      element.node_ids);
+    }
+  }
+}
 
 CartesianMeshBuilder::CartesianMeshBuilder(double x_length, double y_length,
                                            size_t elements_in_x,
@@ -65,8 +76,8 @@ void CartesianMeshBuilder::AddElements(Mesh &mesh) {
     }
   }
 
-  std::string bottom_edge = "bottom_edge";
-  std::string top_edge = "top_edge";
+  std::string bottom_edge = "dirichlet";
+  std::string top_edge = "neumann";
 
   for (size_t i_element = 0; i_element < elements_in_x_; i_element++) {
     size_t index_bottom = i_element;

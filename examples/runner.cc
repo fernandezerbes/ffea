@@ -41,7 +41,6 @@ int main() {
 
   */
 
-  // TODO Create mesh parser and mesh builder from parser
   // TODO Refactor quadrature
   // TODO Add shape functions for other elements (take from Felippa book)
   // TODO Add class for constitutive model
@@ -66,14 +65,15 @@ int main() {
   const size_t number_of_dofs_per_node = 2;
   const double length_in_x = 1.0;
   const double length_in_y = 3.0;
-  ffea::CartesianMeshBuilder mesh_builder(length_in_x, length_in_y,
-                                          number_of_elements_in_x,
-                                          number_of_elements_in_y);
+  // ffea::CartesianMeshBuilder mesh_builder(length_in_x, length_in_y,
+  //                                         number_of_elements_in_x,
+  //                                         number_of_elements_in_y);
 
-  auto mesh = mesh_builder.Build(number_of_dofs_per_node);
+  // auto mesh = mesh_builder.Build(number_of_dofs_per_node);
 
-  ffea::MeshFromFileBuilder mesh_builder_from_file("t1.msh");
-  auto mesh2 = mesh_builder_from_file.Build(number_of_dofs_per_node);
+  // ffea::MeshFromFileBuilder mesh_builder_from_file("rectangle.msh");
+  ffea::MeshFromFileBuilder mesh_builder_from_file("LShapedStructure.msh");
+  auto mesh = mesh_builder_from_file.Build(number_of_dofs_per_node);
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;
@@ -105,7 +105,7 @@ int main() {
     std::vector<double> load{0.0, 1.0};
     return load;
   };
-  model.AddNeumannBoundaryCondition("top_edge", load_function);
+  model.AddNeumannBoundaryCondition("neumann", load_function);
 
   auto boundary_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
@@ -113,7 +113,7 @@ int main() {
     return load;
   };
   std::unordered_set<size_t> directions_to_consider = {0, 1};
-  model.AddDirichletBoundaryCondition("bottom_edge", boundary_function,
+  model.AddDirichletBoundaryCondition("dirichlet", boundary_function,
                                       directions_to_consider);
 
   // ********************** ANALYSIS **********************
