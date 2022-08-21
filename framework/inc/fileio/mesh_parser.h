@@ -3,12 +3,13 @@
 
 #include <array>
 #include <fstream>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 namespace ffea {
-
+// TODO Check constness of these member functions on all classes
 struct NodeData {
   NodeData(size_t id, const std::array<double, 3> &coords);
   size_t id;
@@ -35,8 +36,8 @@ class MeshData {
   void AddElement(size_t element_type, size_t element_group_id,
                   const std::vector<size_t> &node_ids);
 
-// TODO Make private
-//  private: 
+  // TODO Make private
+  //  private:
   std::vector<NodeData> nodes;
   std::vector<ElementGroup> element_groups;
 };
@@ -49,15 +50,42 @@ class Parser {
   virtual std::string GetSectionName() = 0;
 };
 
-class MeshParser : Parser {
+class MeshParser : public Parser {
  public:
   virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
 
  protected:
   virtual std::string GetSectionName() override;
+};
 
- private:
-  MeshData mesh_data_;
+class GroupNamesParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
+
+ protected:
+  virtual std::string GetSectionName() override;
+};
+
+class NodesParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
+
+ protected:
+  virtual std::string GetSectionName() override;
+};
+
+class ElementsParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, MeshData &mesh_data) override;
+
+ protected:
+  virtual std::string GetSectionName() override;
+};
+
+class SectionParserFactory {
+ public:
+  static std::unique_ptr<Parser> CreateSectionParser(
+      const std::string &section_name);
 };
 
 }  // namespace ffea

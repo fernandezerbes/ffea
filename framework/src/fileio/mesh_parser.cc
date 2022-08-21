@@ -1,6 +1,7 @@
 #include "../../inc/fileio/mesh_parser.h"
 
 #include <iostream>
+#include <stdexcept>
 
 namespace ffea {
 
@@ -36,10 +37,38 @@ void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   std::string line;
   while (!file.eof()) {
     file >> line;
+    auto parser = SectionParserFactory::CreateSectionParser(line);
+    parser->Parse(file, mesh_data);
     std::cout << line << std::endl;
   }
 }
 
 std::string MeshParser::GetSectionName() {}
+
+void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {}
+
+std::string GroupNamesParser::GetSectionName() {}
+
+void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {}
+
+std::string NodesParser::GetSectionName() {}
+
+void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {}
+
+std::string ElementsParser::GetSectionName() {}
+
+std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(
+    const std::string &section_name) {
+  if (section_name == "$PhysicalNames") {
+    return std::make_unique<GroupNamesParser>();
+  } else if (section_name == "$Nodes") {
+    return std::make_unique<NodesParser>();
+  } else if (section_name == "$Elements") {
+    return std::make_unique<ElementsParser>();
+  } else {
+    throw std::logic_error("Section " + section_name +
+                           " not implementd in parser.");
+  }
+}
 
 }  // namespace ffea
