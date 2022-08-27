@@ -26,6 +26,8 @@ std::vector<size_t> Element::GetLocalToGlobalDofIndicesMap() const {
   for (const auto &node : nodes_) {
     size_t dofs_per_node = GetNumberOfDofsPerNode();
     for (size_t dof_index = 0; dof_index < dofs_per_node; dof_index++) {
+      // TODO This will be problematic with meshes that have nodes with
+      // different number of dofs_per_node
       indices_map.push_back(dofs_per_node * node->id() + dof_index);
     }
   }
@@ -72,21 +74,22 @@ Eigen::MatrixXd Element::EvaluateJacobian(
 }
 
 Coordinates Element::MapLocalToGlobal(
-    const Coordinates &local_coordinates) const {
-  const auto &shape_functions =
-      EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kZeroth);
-
+    const Coordinates &local_coordinates,
+    const Eigen::MatrixXd &shape_functions) const {
+  // TODO Maybe this should be always 3: std::array<double, 3>
   std::vector<double> xyz(dimension_, 0.0);
   for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
     const auto &node = nodes_[node_index];
     const auto &coordinates = node->coordinates();
+    // TODO Dimension index will be always less than 3
+    // Maybe we can always use the three dimensions
     for (size_t dimension_index = 0; dimension_index < dimension_;
          dimension_index++) {
       xyz[dimension_index] +=
           shape_functions(0, node_index) * coordinates.get(dimension_index);
     }
   }
-
+  // TODO this can be avoided if we create the coordinates before
   return Coordinates(xyz);
 }
 
@@ -99,6 +102,7 @@ Eigen::MatrixXd Element::ComputeStiffness(
 
   for (const auto &integration_point : *integration_points()) {
     const auto &local_coordinates = integration_point.local_coordinates();
+    // Jacobian can be evaluated outside, to be shared with ComputeRhs
     const auto &jacobian = EvaluateJacobian(local_coordinates);
     const auto &dN_local = EvaluateShapeFunctions(
         local_coordinates, ffea::DerivativeOrder::kFirst);
@@ -118,23 +122,26 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
   Eigen::VectorXd rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
   for (const auto &integration_point : *integration_points()) {
-    size_t spatial_dimensions = 2;  // TODO Change this
     const auto &local_coordinates = integration_point.local_coordinates();
     const auto &shape_functions = EvaluateShapeFunctions(
         local_coordinates, ffea::DerivativeOrder::kZeroth);
-    const auto &global_coordinates = MapLocalToGlobal(local_coordinates);
+    const auto &global_coordinates =
+        MapLocalToGlobal(local_coordinates, shape_functions);
     const auto &body_load = load(global_coordinates);
     const auto &jacobian = EvaluateJacobian(local_coordinates);
 
-    for (size_t dimension_index = 0; dimension_index < spatial_dimensions;
-         dimension_index++) {
-      const auto &load_components =
-          shape_functions * body_load[dimension_index] *
+    auto number_of_load_components = GetNumberOfDofsPerNode();
+    for (size_t load_component_index = 0;
+         load_component_index < number_of_load_components;
+         load_component_index++) {
+      const auto &load_component_contribution =
+          shape_functions * body_load[load_component_index] *
           jacobian.determinant() * integration_point.weight();
-      for (size_t component_index = 0; component_index < spatial_dimensions;
-           component_index++) {
-        rhs(dimension_index + component_index * spatial_dimensions) +=
-            load_components(0, component_index);
+      for (size_t node_index = 0; node_index < GetNumberOfNodes();
+           node_index++) {
+        auto dof_index =
+            node_index * number_of_load_components + load_component_index;
+        rhs(dof_index) += load_component_contribution(0, node_index);
       }
     }
   }
