@@ -73,8 +73,8 @@ void PenaltyEnforcementStrategy::Enforce(
       const auto &node_coordinates = element.GetCoordinatesOfNode(node_index);
       auto boundary_values = boundary_function(node_coordinates);
       const auto &global_i_index = dofs_map[local_i_index];
-      global_stiffness.coeffRef(global_i_index, global_i_index) *= penalty_;
-      global_rhs(global_i_index) = boundary_values[dof_direction] * penalty_;
+      global_stiffness.coeffRef(global_i_index, global_i_index) += penalty_;
+      global_rhs(global_i_index) += boundary_values[dof_direction] * penalty_;
     }
   }
 }
