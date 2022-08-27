@@ -7,12 +7,12 @@ namespace ffea {
 
 class DifferentialOperator {
  public:
-  DifferentialOperator(size_t dofs_per_node);
+  DifferentialOperator(size_t physical_dimension);
   virtual const Eigen::MatrixXd Compute(
       const Eigen::MatrixXd &shape_function_derivatives) const = 0;
 
  protected:
-  size_t dofs_per_node_;
+  size_t physical_dimension_;
 };
 
 class StrainDisplacementOperator2D : public DifferentialOperator {
