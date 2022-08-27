@@ -38,8 +38,8 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
     const std::vector<double>& coordinates) const {
   Eigen::MatrixXd result(1, 2);
-  result(0, 0) = 1.0;
-  result(0, 1) = -1.0;
+  result(0, 0) = -0.5;
+  result(0, 1) = 0.5;
   return result;
 }
 
