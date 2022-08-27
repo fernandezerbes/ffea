@@ -41,12 +41,16 @@ int main() {
 
   */
 
-  // TODO Refactor quadrature
+  // TODO Review dimensions (local, global) and where we need to store them
+  // TODO Fix bug of the wrong (rotated) results
   // TODO Add shape functions for other elements (take from Felippa book)
+  // TODO Add triangular, tethraedral, and hexahedral elements
+  // TODO Add 3D example
+  // TODO Apply bridge pattern for geometry and element (shape functions part of elements?)
+  // TODO Refactor quadrature
   // TODO Add class for constitutive model
   // TODO Make member variables private in model
   // TODO Review responsibilities in model and analysis
-  // TODO Review dimensions (local, global) and where we need to store them
   // TODO Remove dependency of Eigen
   // TODO Add caching of differential operator, shape functions, etc.
   // TODO Review element factories to see if something better can be done
@@ -60,20 +64,18 @@ int main() {
   // TODO Add MPI
 
   // ********************** MESH **********************
-  const size_t number_of_elements_in_x = 20;
-  const size_t number_of_elements_in_y = 20;
-  const size_t number_of_dofs_per_node = 2;
+  const size_t number_of_elements_in_x = 1;
+  const size_t number_of_elements_in_y = 1;
+  const size_t dofs_per_node = 2;
   const double length_in_x = 1.0;
   const double length_in_y = 3.0;
   // ffea::CartesianMeshBuilder mesh_builder(length_in_x, length_in_y,
   //                                         number_of_elements_in_x,
   //                                         number_of_elements_in_y);
+  // ffea::MeshFromFileBuilder mesh_builder("rectangle.msh");
+  ffea::MeshFromFileBuilder mesh_builder("LShapedStructure.msh");
 
-  // auto mesh = mesh_builder.Build(number_of_dofs_per_node);
-
-  // ffea::MeshFromFileBuilder mesh_builder_from_file("rectangle.msh");
-  ffea::MeshFromFileBuilder mesh_builder_from_file("LShapedStructure.msh");
-  auto mesh = mesh_builder_from_file.Build(number_of_dofs_per_node);
+  auto mesh = mesh_builder.Build(dofs_per_node);
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;

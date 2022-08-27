@@ -66,7 +66,6 @@ Eigen::MatrixXd Element::GetNodesCoordinatesValues() const {
 
 Eigen::MatrixXd Element::EvaluateJacobian(
     const Coordinates &local_coordinates) const {
-  Eigen::MatrixXd jacobian(dimension_, dimension_);
   const auto &shape_functions_derivatives =
       EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kFirst);
   const auto &nodes_coordinates_values = GetNodesCoordinatesValues();
