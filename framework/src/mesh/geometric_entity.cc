@@ -41,14 +41,6 @@ Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
   return shape_functions_derivatives * nodes_coordinates_values;
 }
 
-Eigen::MatrixXd GeometricEntity::EvaluateDifferentialDomain(
-    const Coordinates &local_coordinates) const {
-  // const auto &shape_functions_derivatives =
-  //     EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kFirst);
-  // const auto &nodes_coordinates_values = GetNodesCoordinatesValues();
-  // return shape_functions_derivatives * nodes_coordinates_values;
-}
-
 Coordinates GeometricEntity::MapLocalToGlobal(
     const Coordinates &local_coordinates,
     const Eigen::MatrixXd &shape_functions) const {
@@ -73,6 +65,54 @@ Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
   return nodes_[node_index]->coordinates();
 }
 
+TwoNodeLine2D::TwoNodeLine2D(const std::vector<Node *> &nodes)
+    : GeometricEntity(2, nodes, Linear1DShapeFunctions()) {}
 
+TwoNodeLine2D::~TwoNodeLine2D() {}
+
+Eigen::VectorXd TwoNodeLine2D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {
+  Eigen::MatrixXd jacobian =
+      GeometricEntity::EvaluateJacobian(local_coordinates);
+  // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]   
+  Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
+  normal(0) = jacobian(1, 2);
+  normal(1) = -jacobian(1, 1);
+  return normal;
+}
+
+TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
+    : GeometricEntity(3, nodes, Linear1DShapeFunctions()) {}
+
+TwoNodeLine3D::~TwoNodeLine3D() {}
+
+Eigen::VectorXd TwoNodeLine3D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {}
+
+FourNodeQuad2D::FourNodeQuad2D(const std::vector<Node *> &nodes)
+    : GeometricEntity(2, nodes, Linear2DShapeFunctions()) {}
+
+FourNodeQuad2D::~FourNodeQuad2D() {}
+
+Eigen::VectorXd FourNodeQuad2D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {}
+
+FourNodeQuad3D::FourNodeQuad3D(const std::vector<Node *> &nodes)
+    : GeometricEntity(3, nodes, Linear2DShapeFunctions()) {}
+
+FourNodeQuad3D::~FourNodeQuad3D() {}
+
+Eigen::VectorXd FourNodeQuad3D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {
+  Eigen::MatrixXd jacobian =
+      GeometricEntity::EvaluateJacobian(local_coordinates);
+  // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
+  //                          dx/deta, dy/deta, dz/deta]
+  Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
+  normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
+  normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
+  normal(2) = jacobian(0, 0) * jacobian(1, 2) - jacobian(0, 1) * jacobian(1, 0);
+  return normal;
+}
 
 }  // namespace ffea
