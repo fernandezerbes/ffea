@@ -11,6 +11,28 @@
 
 namespace ffea {
 
+enum class GeometricEntityType {
+  kTwoNodeLine,
+  kThreeNodeTria,
+  kFourNodeQuad,
+  kFourNodeTetra,
+  kEightNodeHex,
+  kSixNodePrism,
+  kFiveNodePiramid,
+  kThreeNodeLine,
+  kSixNodeTria,
+  kNineNodeQuad,
+  kTenNodeTetra,
+  kTwentySevenNodeHex,
+  kEighteenNodePrism,
+  kFourteenNodePiramid,
+  kOneNodePoint,
+  kEightNodeQuad,
+  kTwentyNodeHex,
+  kFifteenNodePrism,
+  kThirteenNodePiramid
+};
+
 class GeometricEntity {
  public:
   GeometricEntity(size_t dimension, const std::vector<Node *> &nodes,
@@ -19,23 +41,22 @@ class GeometricEntity {
 
   size_t dimension() const;
   size_t GetNumberOfNodes() const;
+  std::vector<size_t> GetNodesIds() const;
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const = 0;
-
- protected:
+  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
   Eigen::MatrixXd EvaluateShapeFunctions(
       const Coordinates &local_coordinates,
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
-  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
+  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
+                               const Eigen::MatrixXd &shape_functions) const;
 
  private:
   size_t dimension_;
   std::vector<Node *> nodes_;
   const ShapeFunctions &shape_functions_;
   Eigen::MatrixXd GetNodesCoordinatesValues() const;
-  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
-                               const Eigen::MatrixXd &shape_functions) const;
 };
 
 class TwoNodeLine2D : public GeometricEntity {

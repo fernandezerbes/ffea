@@ -13,6 +13,15 @@ size_t GeometricEntity::dimension() const { return dimension_; }
 
 size_t GeometricEntity::GetNumberOfNodes() const { return nodes_.size(); }
 
+std::vector<size_t> GeometricEntity::GetNodesIds() const {
+  std::vector<size_t> nodes_ids;
+  nodes_ids.reserve(GetNumberOfNodes());
+  for (const auto & node: nodes_) {
+    nodes_ids.push_back(node->id());
+  }
+  return nodes_ids;
+}
+
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
     const Coordinates &local_coordinates,
     DerivativeOrder derivative_order) const {
@@ -74,7 +83,7 @@ Eigen::VectorXd TwoNodeLine2D::EvaluateNormal(
     const Coordinates &local_coordinates) const {
   Eigen::MatrixXd jacobian =
       GeometricEntity::EvaluateJacobian(local_coordinates);
-  // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]   
+  // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
   normal(0) = jacobian(1, 2);
   normal(1) = -jacobian(1, 1);

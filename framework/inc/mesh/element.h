@@ -5,10 +5,10 @@
 #include <memory>
 #include <vector>
 
-#include "../math/shape_functions.h"
 #include "../processor/operator.h"
 #include "./coordinates.h"
 #include "./degree_of_freedom.h"
+#include "./geometric_entity.h"
 #include "./integration_point.h"
 #include "./node.h"
 
@@ -19,39 +19,28 @@ using ConditionFunction =
 
 class Element {
  public:
-  Element(size_t dimension, const std::vector<Node *> &nodes,
-          const ShapeFunctions &shape_functions,
-          IntegrationPointsGroupPtr integration_points);
+  Element(GeometricEntity &geometric_entity,
+          const std::vector<DegreeOfFreedom *> &dofs,
+          const Quadrature &quadrature);
   virtual ~Element();
 
-  size_t dimension() const;
-  std::vector<Node *> &nodes();
   std::vector<size_t> GetLocalToGlobalDofIndicesMap() const;
+  size_t GetNumberOfDofs() const;
+  size_t GetNumberOfNodes() const;
+  size_t GetNumberOfDofsPerNode() const;
+  Coordinates &GetCoordinatesOfNode(size_t node_index) const;
   Eigen::MatrixXd ComputeStiffness(
       const Eigen::MatrixXd &constitutive_model,
       const DifferentialOperator &differential_operator) const;
   Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
-  size_t GetNumberOfNodes() const;
-  size_t GetNumberOfDofsPerNode() const;
-  Coordinates &GetCoordinatesOfNode(size_t node_index) const;
   void SetSolutionOnDofs(const Eigen::VectorXd &solution);
-  Eigen::VectorXd GetSolutionFromDofs() const;
   Eigen::VectorXd GetSolutionFromDofs(size_t component_index) const;
 
  private:
-  size_t dimension_;
-  std::vector<Node *> nodes_;
-  const ShapeFunctions &shape_functions_;
-  IntegrationPointsGroupPtr integration_points_;
+  GeometricEntity &geometric_entity_;
+  std::vector<DegreeOfFreedom *> dofs_;
+  const Quadrature &quadrature_;
   IntegrationPointsGroupPtr integration_points() const;
-  size_t GetNumberOfDofs() const;
-  Eigen::MatrixXd GetNodesCoordinatesValues() const;
-  Eigen::MatrixXd EvaluateShapeFunctions(
-      const Coordinates &local_coordinates,
-      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
-  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
-  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
-                               const Eigen::MatrixXd &shape_functions) const;
 };
 
 }  // namespace ffea

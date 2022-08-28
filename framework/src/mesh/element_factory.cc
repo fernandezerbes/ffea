@@ -2,63 +2,14 @@
 
 namespace ffea {
 
-ElementFactory::ElementFactory(ElementType element_type)
-    : shape_functions_(), quadrature_() {
-  switch (element_type) {
-    case ElementType::kTwoNodeLine:
-      dimension_ = 1;
-      shape_functions_ = std::make_shared<Linear1DShapeFunctions>();
-      quadrature_ = std::make_shared<QuadratureRule1x2>();
-      break;
-    case ElementType::kThreeNodeTria:
-      break;
-    case ElementType::kFourNodeQuad:
-      dimension_ = 2;
-      shape_functions_ = std::make_shared<Linear2DShapeFunctions>();
-      quadrature_ = std::make_shared<QuadratureRule2x2>();
-      break;
-    case ElementType::kFourNodeTetra:
-      break;
-    case ElementType::kEightNodeHex:
-      break;
-    case ElementType::kSixNodePrism:
-      break;
-    case ElementType::kFiveNodePiramid:
-      break;
-    case ElementType::kThreeNodeLine:
-      break;
-    case ElementType::kSixNodeTria:
-      break;
-    case ElementType::kNineNodeQuad:
-      break;
-    case ElementType::kTenNodeTetra:
-      break;
-    case ElementType::kTwentySevenNodeHex:
-      break;
-    case ElementType::kEighteenNodePrism:
-      break;
-    case ElementType::kFourteenNodePiramid:
-      break;
-    case ElementType::kOneNodePoint:
-      break;
-    case ElementType::kEightNodeQuad:
-      break;
-    case ElementType::kTwentyNodeHex:
-      break;
-    case ElementType::kFifteenNodePrism:
-      break;
-    case ElementType::kThirteenNodePiramid:
-      break;
-    default:
-      break;
-  }
-}
+ElementFactory::ElementFactory(const Quadrature &quadrature)
+    : quadrature_(quadrature) {}
 
-Element ElementFactory::CreateElement(const std::vector<Node *> &nodes) const {
-  return Element(
-      dimension_, nodes, *shape_functions_,
-      quadrature_->GetIntegrationPoints()); 
-      // TODO See how to modify the integration points, maybe with a factory
+Element ElementFactory::CreateElement(
+    GeometricEntity &geometric_entity,
+    const std::vector<DegreeOfFreedom *> &dofs) const
+{
+  return Element(geometric_entity, dofs, quadrature_);
 }
 
 }  // namespace ffea

@@ -18,11 +18,11 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Assembler::ProcessLinearSystem(
     const auto& element_K =
         element.ComputeStiffness(constitutive_model, differential_operator);
     const auto& element_rhs = element.ComputeRhs(source);
-    auto nodes = element.nodes();
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
 
     // Scatter coefficients
-    for (size_t node_index = 0; node_index < nodes.size(); node_index++) {
+    for (size_t node_index = 0; node_index < element.GetNumberOfNodes();
+         node_index++) {
       size_t local_i_index = 0;
       for (const auto& global_i_index : dofs_map) {
         size_t local_j_index = 0;

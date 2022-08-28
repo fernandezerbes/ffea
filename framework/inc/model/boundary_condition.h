@@ -17,6 +17,7 @@ class BoundaryCondition {
  public:
   BoundaryCondition(const Mesh &mesh, const std::string &boundary_name,
                     ConditionFunction boundary_function);
+  virtual ~BoundaryCondition();
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const = 0;
 

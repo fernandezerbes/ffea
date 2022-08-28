@@ -8,6 +8,8 @@ BoundaryCondition::BoundaryCondition(const Mesh &mesh,
     : boundary_elements_(mesh.GetElementGroup(boundary_name)),
       boundary_function_(boundary_function) {}
 
+BoundaryCondition::~BoundaryCondition() {}
+
 NeumannBoundaryCondition::NeumannBoundaryCondition(
     const Mesh &mesh, const std::string &boundary_name,
     ConditionFunction boundary_function)

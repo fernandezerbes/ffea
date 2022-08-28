@@ -2,11 +2,11 @@
 
 namespace ffea {
 
-Mesh::Mesh(size_t number_of_dofs_per_node)
-    : number_of_dofs_per_node_(number_of_dofs_per_node),
-      nodes_(),
-      element_groups_(),
-      cached_element_factories_() {}
+Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
+    : geometry_(geometry),
+      dofs_per_node_(dofs_per_node),
+      dofs_(),
+      element_groups_() {}
 
 Mesh::~Mesh() {}
 
@@ -19,37 +19,20 @@ const std::vector<Element>& Mesh::GetElementGroup(
   return element_groups_.at(group_name);
 }
 
-std::vector<Node>& Mesh::nodes() {
-  return nodes_;
-}  // TODO See how not to break encapsulation
+void Mesh::AddElement(const std::string& group_name,
+                      GeometricEntity& geometric_entity,
+                      const ElementFactory& factory) {
+  std::vector<DegreeOfFreedom*> element_dofs;
+  element_dofs.reserve(geometric_entity.GetNumberOfNodes() * dofs_per_node_);
 
-const ElementFactory& Mesh::GetElementFactory(ElementType element_type) {
-  // TODO Simplify with cached_element_factories_.try_emplace
-  if (!cached_element_factories_.contains(element_type)) {
-    cached_element_factories_.insert({element_type, element_type});
+  for (size_t node_id : geometric_entity.GetNodesIds()) {
+    for (size_t component_index = 0; component_index < dofs_per_node_;
+         component_index++) {
+      element_dofs.push_back(&dofs_[GetDofId(node_id, component_index)]);
+    }
   }
 
-  return cached_element_factories_.at(element_type);
-}
-
-void Mesh::AddNode(const std::array<double, 3>& xyz) {
-  size_t id = number_of_nodes();
-  // TODO Improve this std::vector<double>(xyz.begin(), xyz.end())
-  nodes_.emplace_back(id, std::vector<double>(xyz.begin(), xyz.end()),
-                      number_of_dofs_per_node_);
-}
-
-void Mesh::AddElement(ElementType element_type, const std::string& group_name,
-                      const std::vector<size_t>& node_ids) {
-  const auto& element_factory = GetElementFactory(element_type);
-  std::vector<Node*> element_nodes;
-
-  // TODO See if this can be improved with a span, view or something like that
-  element_nodes.reserve(node_ids.size());
-  for (size_t id : node_ids) {
-    element_nodes.push_back(&nodes_[id]);
-  }
-  auto element = element_factory.CreateElement(element_nodes);
+  auto element = factory.CreateElement(geometric_entity, element_dofs);
 
   if (element_groups_.contains(group_name)) {
     element_groups_.at(group_name).push_back(element);
@@ -59,16 +42,18 @@ void Mesh::AddElement(ElementType element_type, const std::string& group_name,
   }
 }
 
-size_t Mesh::number_of_dofs() const {
-  return number_of_nodes() * number_of_dofs_per_node_;
-}
+size_t Mesh::number_of_dofs() const { return dofs_.size(); }
 
-size_t Mesh::number_of_nodes() const { return nodes_.size(); }
+size_t Mesh::number_of_nodes() const { return geometry_.number_of_nodes(); }
 
 void Mesh::SetSolutionOnDofs(const Eigen::VectorXd& solution) {
   for (auto& element : GetElementGroup("surface")) {
     element.SetSolutionOnDofs(solution);
   }
+}
+
+size_t Mesh::GetDofId(size_t node_id, size_t component_index) const {
+  return node_id * dofs_per_node_ + component_index;
 }
 
 }  // namespace ffea
