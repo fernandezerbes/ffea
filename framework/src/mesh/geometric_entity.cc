@@ -76,6 +76,8 @@ Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
   return nodes_[node_index]->coordinates();
 }
 
+const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }
+
 TwoNodeLine2D::TwoNodeLine2D(const std::vector<Node *> &nodes)
     : GeometricEntity(2, nodes, std::make_unique<Linear1DShapeFunctions>()) {}
 

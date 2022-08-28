@@ -51,6 +51,7 @@ class GeometricEntity {
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
                                const Eigen::MatrixXd &shape_functions) const;
+  const std::vector<Node *> &nodes() const;
 
  private:
   size_t dimension_;

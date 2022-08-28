@@ -30,6 +30,10 @@ class Mesh {
   const std::vector<Element>& GetElementGroup(
       const std::string& group_name) const;
   void SetSolutionOnDofs(const Eigen::VectorXd& solution);
+  double GetSolutionAtDof(size_t dof_id) const;
+  const std::vector<Node> &nodes() const;
+  const std::vector<DegreeOfFreedom> &dofs() const;
+  size_t dofs_per_node() const;
 
  private:
   Geometry& geometry_;

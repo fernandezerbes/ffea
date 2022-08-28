@@ -70,4 +70,14 @@ size_t Mesh::GetDofId(size_t node_id, size_t component_index) const {
   return node_id * dofs_per_node_ + component_index;
 }
 
+const std::vector<Node>& Mesh::nodes() const { return geometry_.nodes(); }
+
+const std::vector<DegreeOfFreedom>& Mesh::dofs() const { return dofs_; }
+
+size_t Mesh::dofs_per_node() const { return dofs_per_node_; }
+
+double Mesh::GetSolutionAtDof(size_t dof_id) const {
+  return dofs_[dof_id].value();
+}
+
 }  // namespace ffea

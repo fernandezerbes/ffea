@@ -6,13 +6,13 @@ Geometry::Geometry() : nodes_(), geometric_entities_groups_() {}
 
 Geometry::~Geometry() {}
 
-std::vector<std::shared_ptr<GeometricEntity>>& Geometry::GetGeometricEntityGroup(
-    const std::string& group_name) {
+std::vector<std::shared_ptr<GeometricEntity>>&
+Geometry::GetGeometricEntityGroup(const std::string& group_name) {
   return geometric_entities_groups_.at(group_name);
 }
 
-const std::vector<std::shared_ptr<GeometricEntity>>& Geometry::GetGeometricEntityGroup(
-    const std::string& group_name) const {
+const std::vector<std::shared_ptr<GeometricEntity>>&
+Geometry::GetGeometricEntityGroup(const std::string& group_name) const {
   return geometric_entities_groups_.at(group_name);
 }
 
@@ -44,5 +44,7 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
 }
 
 size_t Geometry::number_of_nodes() const { return nodes_.size(); }
+
+const std::vector<Node>& Geometry::nodes() const { return nodes_; }
 
 }  // namespace ffea

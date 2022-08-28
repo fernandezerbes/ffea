@@ -17,6 +17,7 @@ class Node {
 
   size_t id() const;
   Coordinates &coordinates();
+  const Coordinates &coordinates() const;
 
  private:
   size_t id_;

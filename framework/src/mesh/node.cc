@@ -11,4 +11,6 @@ size_t Node::id() const { return id_; }
 
 Coordinates &Node::coordinates() { return coordinates_; }
 
+const Coordinates &Node::coordinates() const { return coordinates_; }
+
 }  // namespace ffea

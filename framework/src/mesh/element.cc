@@ -110,4 +110,8 @@ Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_index) const {
   return solution;
 }
 
+const std::vector<Node *> &Element::nodes() const {
+  return geometric_entity_.nodes();
+}
+
 }  // namespace ffea
