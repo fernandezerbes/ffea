@@ -42,11 +42,6 @@ int main() {
 
   */
 
-  // TODO See how to split between elements for conditions or body (if needed at
-  // all)
-  // TODO Apply bridge pattern for geometry and element (shape functions part of
-  // elements?)
-  // TODO Review dimensions (local, global) and where we need to store them
   // TODO Add shape functions for other elements (take from Felippa book)
   // TODO Add triangular, tethraedral, and hexahedral elements
   // TODO Add 3D example
@@ -90,8 +85,6 @@ int main() {
   ffea::ElementFactory line_factory(rule1x2);
   ffea::ElementFactory quad_factory(rule2x2);
 
-  auto ip = rule1x2.GetIntegrationPoints();
-
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(surface_group_name, quad_factory);
   mesh_builder.RegisterElementFactory(neumann_group_name, line_factory);
@@ -127,7 +120,7 @@ int main() {
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{0.0, 1.0};
+    std::vector<double> load{1.0, 0.0};
     return load;
   };
   model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
