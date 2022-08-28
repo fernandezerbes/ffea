@@ -7,6 +7,7 @@ add_library(ffea
             src/mesh/degree_of_freedom.cc
             src/mesh/element.cc
             src/mesh/element_factory.cc
+            src/mesh/geometric_entity.cc
             src/mesh/integration_point.cc
             src/mesh/mesh.cc
             src/mesh/mesh_builder.cc
