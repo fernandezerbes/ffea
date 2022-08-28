@@ -17,6 +17,7 @@
 #include "../framework/inc/mesh/geometry_builder.h"
 #include "../framework/inc/mesh/integration_point.h"
 #include "../framework/inc/mesh/mesh.h"
+#include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/mesh/node.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/model.h"
@@ -68,9 +69,12 @@ int main() {
   // ********************** MESH **********************
   const size_t number_of_elements_in_x = 1;
   const size_t number_of_elements_in_y = 1;
-  const size_t dofs_per_node = 2;
+  const size_t number_of_fields = 2;
   const double length_in_x = 1.0;
   const double length_in_y = 3.0;
+  const std::string dirichlet_group_name = "dirichlet";
+  const std::string neumann_group_name = "neumann";
+  const std::string surface_group_name = "surface";
 
   ffea::GeometricEntityFactory2D geometric_entity_factory;
   ffea::GeometryFromFileBuilder geometry_builder("LShapedStructure.msh",
@@ -80,59 +84,75 @@ int main() {
 
   std::cout << geometry.number_of_nodes() << std::endl;
 
+  const ffea::Quadrature &rule1x2 = ffea::QuadratureRule1x2();
+  const ffea::Quadrature &rule2x2 = ffea::QuadratureRule2x2();
+
+  ffea::ElementFactory line_factory(rule1x2);
+  ffea::ElementFactory quad_factory(rule2x2);
+
+  auto ip = rule1x2.GetIntegrationPoints();
+
+  ffea::MeshBuilder mesh_builder(geometry);
+  mesh_builder.RegisterElementFactory(surface_group_name, quad_factory);
+  mesh_builder.RegisterElementFactory(neumann_group_name, line_factory);
+  mesh_builder.RegisterElementFactory(dirichlet_group_name, line_factory);
+  auto mesh = mesh_builder.Build(number_of_fields);
+
+  std::cout << mesh.number_of_dofs() << std::endl;
+
   // ********************** CONSTITUTIVE MODEL **********************
-  // double nu = 0.3;
-  // double E = 1;
-  // double factor = E / (1 - nu * nu);
-  // Eigen::MatrixXd constitutive_matrix(3, 3);
-  // constitutive_matrix(0, 0) = factor;
-  // constitutive_matrix(0, 1) = factor * nu;
-  // constitutive_matrix(1, 0) = constitutive_matrix(0, 1);
-  // constitutive_matrix(1, 1) = factor;
-  // constitutive_matrix(2, 2) = (1 - nu) * factor;
+  double nu = 0.3;
+  double E = 1;
+  double factor = E / (1 - nu * nu);
+  Eigen::MatrixXd constitutive_matrix(3, 3);
+  constitutive_matrix(0, 0) = factor;
+  constitutive_matrix(0, 1) = factor * nu;
+  constitutive_matrix(1, 0) = constitutive_matrix(0, 1);
+  constitutive_matrix(1, 1) = factor;
+  constitutive_matrix(2, 2) = (1 - nu) * factor;
 
-  // // ********************** DIFFERENTIAL OPERATOR **********************
-  // auto differential_operator = ffea::StrainDisplacementOperator2D();
+  // ********************** DIFFERENTIAL OPERATOR **********************
+  auto differential_operator = ffea::StrainDisplacementOperator2D();
 
-  // // ********************** MODEL **********************
-  // auto body_load =
-  //     [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-  //   std::vector<double> load{0.0, 0.0};
-  //   return load;
-  // };
+  // ********************** MODEL **********************
+  auto body_load =
+      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+    std::vector<double> load{0.0, 0.0};
+    return load;
+  };
 
-  // ffea::Model model(mesh, constitutive_matrix, differential_operator,
-  //                   body_load);
+  ffea::Model model(mesh, constitutive_matrix, differential_operator,
+                    body_load);
 
-  // // ********************** BOUNDARY CONDITIONS **********************
-  // auto load_function =
-  //     [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-  //   std::vector<double> load{0.0, 1.0};
-  //   return load;
-  // };
-  // model.AddNeumannBoundaryCondition("neumann", load_function);
+  // ********************** BOUNDARY CONDITIONS **********************
+  auto load_function =
+      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+    std::vector<double> load{0.0, 1.0};
+    return load;
+  };
+  model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
 
-  // auto boundary_function =
-  //     [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-  //   std::vector<double> load{0.0, 0.0};
-  //   return load;
-  // };
-  // std::unordered_set<size_t> directions_to_consider = {0, 1};
-  // model.AddDirichletBoundaryCondition("dirichlet", boundary_function,
-  //                                     directions_to_consider);
+  auto boundary_function =
+      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+    std::vector<double> load{0.0, 0.0};
+    return load;
+  };
+  std::unordered_set<size_t> directions_to_consider = {0, 1};
+  model.AddDirichletBoundaryCondition(dirichlet_group_name, boundary_function,
+                                      directions_to_consider);
 
-  // // ********************** ANALYSIS **********************
-  // ffea::Analysis analysis(model);
-  // analysis.Solve();
+  // ********************** ANALYSIS **********************
+  ffea::Analysis analysis(model);
+  analysis.Solve();
 
-  // // ********************** POSTPROCESSING **********************
-  // std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
-  //     std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
+  // ********************** POSTPROCESSING **********************
+  std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
+      std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
 
-  // std::cout << "Postprocessing..." << std::endl;
-  // ffea::OutputWriter writer(mesh);
-  // writer.RegisterPostProcessor(*displacement_postprocessor);
-  // writer.Write("ffea_output.vtk");
+  std::cout << "Postprocessing..." << std::endl;
+  ffea::OutputWriter writer(mesh);
+  writer.RegisterPostProcessor(*displacement_postprocessor);
+  writer.Write("ffea_output.vtk");
 
   return 0;
 }

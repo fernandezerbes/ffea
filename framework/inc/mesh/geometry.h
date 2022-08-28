@@ -29,10 +29,10 @@ class Geometry {
   const std::vector<std::shared_ptr<GeometricEntity>>& GetGeometricEntityGroup(
       const std::string& group_name) const;
 
- private:
-  std::vector<Node> nodes_;
   std::unordered_map<std::string, std::vector<std::shared_ptr<GeometricEntity>>>
       geometric_entities_groups_;
+ private:
+  std::vector<Node> nodes_;
 };
 
 }  // namespace ffea

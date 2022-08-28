@@ -11,7 +11,7 @@ Element::Element(GeometricEntity &geometric_entity,
 
 Element::~Element() {}
 
-IntegrationPointsGroupPtr Element::integration_points() const {
+std::vector<IntegrationPoint> Element::integration_points() const {
   return quadrature_.GetIntegrationPoints();
 }
 
@@ -45,7 +45,7 @@ Eigen::MatrixXd Element::ComputeStiffness(
   Eigen::MatrixXd stiffness =
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
 
-  for (const auto &integration_point : *integration_points()) {
+  for (const auto &integration_point : integration_points()) {
     const auto &local_coordinates = integration_point.local_coordinates();
     // Jacobian can be evaluated outside, to be shared with ComputeRhs
     const auto &jacobian =
@@ -67,15 +67,16 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::VectorXd rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
-  for (const auto &integration_point : *integration_points()) {
+  for (const auto &integration_point : integration_points()) {
     const auto &local_coordinates = integration_point.local_coordinates();
     const auto &shape_functions = geometric_entity_.EvaluateShapeFunctions(
         local_coordinates, ffea::DerivativeOrder::kZeroth);
     const auto &global_coordinates =
         geometric_entity_.MapLocalToGlobal(local_coordinates, shape_functions);
     const auto &body_load = load(global_coordinates);
-    const auto &jacobian =
-        geometric_entity_.EvaluateJacobian(local_coordinates);
+    const auto &normal = geometric_entity_.EvaluateNormal(local_coordinates);
+
+    std::cout << normal << std::endl;
 
     auto number_of_load_components = GetNumberOfDofsPerNode();
     for (size_t load_component_index = 0;
@@ -83,7 +84,7 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
          load_component_index++) {
       const auto &load_component_contribution =
           shape_functions * body_load[load_component_index] *
-          jacobian.determinant() * integration_point.weight();
+          normal.norm() * integration_point.weight();
       for (size_t node_index = 0; node_index < GetNumberOfNodes();
            node_index++) {
         auto dof_index =

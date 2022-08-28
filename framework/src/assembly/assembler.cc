@@ -17,7 +17,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Assembler::ProcessLinearSystem(
   for (auto& element : body_elements) {
     const auto& element_K =
         element.ComputeStiffness(constitutive_model, differential_operator);
-    const auto& element_rhs = element.ComputeRhs(source);
+    // const auto& element_rhs = element.ComputeRhs(source);
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
 
     // Scatter coefficients
@@ -31,7 +31,7 @@ std::pair<Eigen::MatrixXd, Eigen::VectorXd> Assembler::ProcessLinearSystem(
               element_K(local_i_index, local_j_index);
           local_j_index++;
         }
-        global_rhs(global_i_index) += element_rhs(local_i_index);
+        // global_rhs(global_i_index) += element_rhs(local_i_index);
         local_i_index++;
       }
     }

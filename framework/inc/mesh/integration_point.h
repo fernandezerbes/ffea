@@ -22,22 +22,19 @@ class IntegrationPoint {
   double weight_;
 };
 
-using IntegrationPointsGroupPtr =
-    std::shared_ptr<std::vector<IntegrationPoint>>;
-
 class Quadrature {
  public:
-  virtual IntegrationPointsGroupPtr GetIntegrationPoints() const = 0;
+  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const = 0;
 };
 
 class QuadratureRule1x2 : public Quadrature {
  public:
-  virtual IntegrationPointsGroupPtr GetIntegrationPoints() const override;
+  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
 };
 
 class QuadratureRule2x2 : public Quadrature {
  public:
-  virtual IntegrationPointsGroupPtr GetIntegrationPoints() const override;
+  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
 };
 
 }  // namespace ffea

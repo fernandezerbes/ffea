@@ -36,7 +36,7 @@ enum class GeometricEntityType {
 class GeometricEntity {
  public:
   GeometricEntity(size_t dimension, const std::vector<Node *> &nodes,
-                  const ShapeFunctions &shape_functions);
+                  std::unique_ptr<ShapeFunctions> shape_functions);
   virtual ~GeometricEntity();
 
   size_t dimension() const;
@@ -55,7 +55,7 @@ class GeometricEntity {
  private:
   size_t dimension_;
   std::vector<Node *> nodes_;
-  const ShapeFunctions &shape_functions_;
+  std::unique_ptr<ShapeFunctions> shape_functions_;
   Eigen::MatrixXd GetNodesCoordinatesValues() const;
 };
 

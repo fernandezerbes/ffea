@@ -40,7 +40,7 @@ class Element {
   GeometricEntity &geometric_entity_;
   std::vector<DegreeOfFreedom *> dofs_;
   const Quadrature &quadrature_;
-  IntegrationPointsGroupPtr integration_points() const;
+  std::vector<IntegrationPoint> integration_points() const;
 };
 
 }  // namespace ffea

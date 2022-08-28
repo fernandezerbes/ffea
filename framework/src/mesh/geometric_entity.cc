@@ -2,10 +2,12 @@
 
 namespace ffea {
 
-GeometricEntity::GeometricEntity(size_t dimension,
-                                 const std::vector<Node *> &nodes,
-                                 const ShapeFunctions &shape_functions)
-    : dimension_(dimension), nodes_(nodes), shape_functions_(shape_functions) {}
+GeometricEntity::GeometricEntity(
+    size_t dimension, const std::vector<Node *> &nodes,
+    std::unique_ptr<ShapeFunctions> shape_functions)
+    : dimension_(dimension),
+      nodes_(nodes),
+      shape_functions_(std::move(shape_functions)) {}
 
 GeometricEntity::~GeometricEntity() {}
 
@@ -16,7 +18,7 @@ size_t GeometricEntity::GetNumberOfNodes() const { return nodes_.size(); }
 std::vector<size_t> GeometricEntity::GetNodesIds() const {
   std::vector<size_t> nodes_ids;
   nodes_ids.reserve(GetNumberOfNodes());
-  for (const auto & node: nodes_) {
+  for (const auto &node : nodes_) {
     nodes_ids.push_back(node->id());
   }
   return nodes_ids;
@@ -25,7 +27,7 @@ std::vector<size_t> GeometricEntity::GetNodesIds() const {
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
     const Coordinates &local_coordinates,
     DerivativeOrder derivative_order) const {
-  return shape_functions_.Evaluate(local_coordinates.get(), derivative_order);
+  return shape_functions_->Evaluate(local_coordinates.get(), derivative_order);
 }
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
@@ -75,7 +77,7 @@ Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
 }
 
 TwoNodeLine2D::TwoNodeLine2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes, Linear1DShapeFunctions()) {}
+    : GeometricEntity(2, nodes, std::make_unique<Linear1DShapeFunctions>()) {}
 
 TwoNodeLine2D::~TwoNodeLine2D() {}
 
@@ -85,13 +87,13 @@ Eigen::VectorXd TwoNodeLine2D::EvaluateNormal(
       GeometricEntity::EvaluateJacobian(local_coordinates);
   // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
-  normal(0) = jacobian(1, 2);
-  normal(1) = -jacobian(1, 1);
+  normal(0) = jacobian(0, 1);
+  normal(1) = -jacobian(0, 0);
   return normal;
 }
 
 TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, Linear1DShapeFunctions()) {}
+    : GeometricEntity(3, nodes, std::make_unique<Linear1DShapeFunctions>()) {}
 
 TwoNodeLine3D::~TwoNodeLine3D() {}
 
@@ -99,7 +101,7 @@ Eigen::VectorXd TwoNodeLine3D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
 
 FourNodeQuad2D::FourNodeQuad2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes, Linear2DShapeFunctions()) {}
+    : GeometricEntity(2, nodes, std::make_unique<Linear2DShapeFunctions>()) {}
 
 FourNodeQuad2D::~FourNodeQuad2D() {}
 
@@ -107,7 +109,7 @@ Eigen::VectorXd FourNodeQuad2D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
 
 FourNodeQuad3D::FourNodeQuad3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, Linear2DShapeFunctions()) {}
+    : GeometricEntity(3, nodes, std::make_unique<Linear2DShapeFunctions>()) {}
 
 FourNodeQuad3D::~FourNodeQuad3D() {}
 
