@@ -96,6 +96,15 @@ class FourNodeQuad3D : public GeometricEntity {
       const Coordinates &local_coordinates) const override;
 };
 
+class EightNodeHex3D : public GeometricEntity {
+ public:
+  EightNodeHex3D(const std::vector<Node *> &nodes);
+  virtual ~EightNodeHex3D();
+
+  virtual Eigen::VectorXd EvaluateNormal(
+      const Coordinates &local_coordinates) const override;
+};
+
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_INC_GEOMETRICENTITY_H_

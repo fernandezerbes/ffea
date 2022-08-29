@@ -128,4 +128,9 @@ Eigen::VectorXd FourNodeQuad3D::EvaluateNormal(
   return normal;
 }
 
+EightNodeHex3D::~EightNodeHex3D() {}
+
+Eigen::VectorXd EightNodeHex3D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {}
+
 }  // namespace ffea
