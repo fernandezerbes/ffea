@@ -22,6 +22,13 @@ class StrainDisplacementOperator2D : public DifferentialOperator {
       const Eigen::MatrixXd &shape_function_derivatives) const override;
 };
 
+class StrainDisplacementOperator3D : public DifferentialOperator {
+ public:
+  StrainDisplacementOperator3D();
+  virtual const Eigen::MatrixXd Compute(
+      const Eigen::MatrixXd &shape_function_derivatives) const override;
+};
+
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
