@@ -43,4 +43,26 @@ std::vector<IntegrationPoint> QuadratureRule2x2::GetIntegrationPoints() const {
   return integration_points;
 }
 
+std::vector<IntegrationPoint> QuadratureRule2x2x2::GetIntegrationPoints() const {
+  std::vector<IntegrationPoint> integration_points;
+  integration_points.reserve(8);
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({-0.5773502691896257, -0.5773502691896257, -0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({0.5773502691896257, -0.5773502691896257, -0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({-0.5773502691896257, 0.5773502691896257, -0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({0.5773502691896257, 0.5773502691896257, -0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({-0.5773502691896257, -0.5773502691896257, 0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({0.5773502691896257, -0.5773502691896257, 0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({-0.5773502691896257, 0.5773502691896257, 0.5773502691896257}), 1.0));
+  integration_points.push_back(IntegrationPoint(
+      Coordinates({0.5773502691896257, 0.5773502691896257, 0.5773502691896257}), 1.0));
+  return integration_points;
+}
+
 }  // namespace ffea

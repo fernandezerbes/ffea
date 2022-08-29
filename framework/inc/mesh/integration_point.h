@@ -37,6 +37,13 @@ class QuadratureRule2x2 : public Quadrature {
   virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
 };
 
+
+class QuadratureRule2x2x2 : public Quadrature {
+ public:
+  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
+};
+
+
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_MESH_INTEGRATIONPOINT_H_
