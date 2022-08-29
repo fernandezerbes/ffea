@@ -49,6 +49,19 @@ class Linear2DShapeFunctions : public ShapeFunctions {
       const std::vector<double>& coordinates) const override;
 };
 
+class Linear3DShapeFunctions : public ShapeFunctions {
+ public:
+  virtual ~Linear3DShapeFunctions() override;
+
+ private:
+  virtual Eigen::MatrixXd Evaluate(
+      const std::vector<double>& coordinates) const override;
+  virtual Eigen::MatrixXd Evaluate1stDerivative(
+      const std::vector<double>& coordinates) const override;
+  virtual Eigen::MatrixXd Evaluate2ndDerivative(
+      const std::vector<double>& coordinates) const override;
+};
+
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_INC_MATH_SHAPE_FUNCTIONS_H_
