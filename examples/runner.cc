@@ -43,6 +43,9 @@ int main() {
   */
 
   // TODO Add shape functions for other elements (take from Felippa book)
+  // TODO Add differential operator as a reference in the elements (and in the element factories)
+  // TODO Add constitutive model class as a reference in the elements (and in the element factories)
+  // TODO See if Analysis and Model can be merged
   // TODO Add triangular, tethraedral, and hexahedral elements
   // TODO Add 3D example
   // TODO Refactor quadrature
@@ -72,7 +75,9 @@ int main() {
   const std::string surface_group_name = "surface";
 
   ffea::GeometricEntityFactory2D geometric_entity_factory;
-  ffea::GeometryFromFileBuilder geometry_builder("LShapedStructure.msh",
+  // ffea::GeometryFromFileBuilder geometry_builder("LShapedStructure.msh",
+  //                                                geometric_entity_factory);
+  ffea::GeometryFromFileBuilder geometry_builder("LShapedStructureTria.msh",
                                                  geometric_entity_factory);
 
   auto geometry = geometry_builder.Build();
@@ -81,13 +86,17 @@ int main() {
 
   const ffea::Quadrature &rule1x2 = ffea::QuadratureRule1x2();
   const ffea::Quadrature &rule2x2 = ffea::QuadratureRule2x2();
+  // const ffea::Quadrature &rule_tria = ffea::QuadratureRuleTria1();
+  const ffea::Quadrature &rule_tria = ffea::QuadratureRuleTria3();
 
   ffea::ElementFactory line_factory(rule1x2);
   ffea::ElementFactory quad_factory(rule2x2);
+  ffea::ElementFactory tria_factory(rule_tria);
 
   ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(surface_group_name, quad_factory);
-  mesh_builder.RegisterElementFactory(neumann_group_name, line_factory);
+  mesh_builder.RegisterElementFactory(surface_group_name, tria_factory);
+  // mesh_builder.RegisterElementFactory(surface_group_name, quad_factory);
+  mesh_builder.RegisterElementFactory(neumann_group_name, line_factory);  // This is wrong, I should decide with the element type + group name, because there can be meshes with mixed quad+tria for the same group
   mesh_builder.RegisterElementFactory(dirichlet_group_name, line_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
 
@@ -145,7 +154,8 @@ int main() {
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
-  writer.Write("ffea_output.vtk");
+  // writer.WriteQuad("ffea_output_quad.vtk");
+  writer.WriteTria("ffea_output_tria.vtk");
 
   return 0;
 }

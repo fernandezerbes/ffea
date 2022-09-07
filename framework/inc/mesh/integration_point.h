@@ -53,6 +53,11 @@ class QuadratureRuleTria3 : public Quadrature {
   virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
 };
 
+class QuadratureRuleTetra1 : public Quadrature {
+ public:
+  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
+};
+
 
 }  // namespace ffea
 

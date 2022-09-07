@@ -39,16 +39,16 @@ int main() {
 
   std::cout << geometry.number_of_nodes() << std::endl;
 
-  const ffea::Quadrature &rule2x2 = ffea::QuadratureRule2x2();
-  const ffea::Quadrature &rule2x2x2 = ffea::QuadratureRule2x2x2();
+  const ffea::Quadrature &ruleTria1 = ffea::QuadratureRuleTria1();
+  const ffea::Quadrature &ruleTetra1 = ffea::QuadratureRuleTetra1();
 
-  ffea::ElementFactory quad_factory(rule2x2);
-  ffea::ElementFactory hex_factory(rule2x2x2);
+  ffea::ElementFactory tria_factory(ruleTria1);
+  ffea::ElementFactory tetra_factory(ruleTetra1);
 
   ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(surface_group_name, hex_factory);
-  mesh_builder.RegisterElementFactory(neumann_group_name, quad_factory);
-  mesh_builder.RegisterElementFactory(dirichlet_group_name, quad_factory);
+  mesh_builder.RegisterElementFactory(surface_group_name, tetra_factory);
+  mesh_builder.RegisterElementFactory(neumann_group_name, tria_factory);
+  mesh_builder.RegisterElementFactory(dirichlet_group_name, tria_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
 
   std::cout << mesh.number_of_dofs() << std::endl;
@@ -87,7 +87,7 @@ int main() {
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{0.0, 0.0, 1.0};
+    std::vector<double> load{1.0, 0.0, 0.0};
     return load;
   };
   model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
@@ -112,7 +112,7 @@ int main() {
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
-  writer.Write("ffea_output.vtk");
+  writer.WriteTetra("ffea_output_tetra_3d.vtk");
 
   return 0;
 }

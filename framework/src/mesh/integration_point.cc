@@ -103,4 +103,14 @@ std::vector<IntegrationPoint> QuadratureRuleTria3::GetIntegrationPoints()
   return integration_points;
 }
 
+std::vector<IntegrationPoint> QuadratureRuleTetra1::GetIntegrationPoints()
+    const {
+  std::vector<IntegrationPoint> integration_points;
+  integration_points.reserve(1);
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0}),
+                       0.5));  // TODO Check weight
+  return integration_points;
+}
+
 }  // namespace ffea

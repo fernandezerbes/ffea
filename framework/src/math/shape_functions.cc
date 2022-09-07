@@ -264,7 +264,7 @@ Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate1stDerivative(
 
 Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate2ndDerivative(
     const std::vector<double>& coordinates) const {
-  return Eigen::MatrixXd::Zero(6, 3);
+  return Eigen::MatrixXd::Zero(3, 3);
 }
 
 LinearTet3DShapeFunctions::~LinearTet3DShapeFunctions() {}
@@ -287,15 +287,14 @@ Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate(
 Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate1stDerivative(
     const std::vector<double>& coordinates) const {
   /*
-    [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi   dN5/dxi   dN6/dxi   dN7/dxi
-    dN8/dxi, dN1/deta  dN2/deta   dN3/deta  dN4/deta  dN5/deta  dN6/deta
-    dN7/deta  dN8/deta, dN1/dzeta dN2/dzeta  dN3/zdeta dN4/dzeta dN5/dzeta
-    dN6/dzeta dN7/dzeta dN8/dzeta]
+    [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
+    dN1/deta  dN2/deta   dN3/deta  dN4/deta,
+    dN1/dzeta  dN2/dzeta   dN3/dzeta  dN4/dzeta,]
   */
   double xi = coordinates[0];
   double eta = coordinates[1];
   double zeta = coordinates[2];
-  Eigen::MatrixXd result(4, 4);
+  Eigen::MatrixXd result(3, 4);
 
   result(0, 0) = -1.0;
   result(0, 1) = 1.0;

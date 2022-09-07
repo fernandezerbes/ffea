@@ -142,6 +142,26 @@ ThreeNodeTria2D::~ThreeNodeTria2D() {}
 Eigen::VectorXd ThreeNodeTria2D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
 
+ThreeNodeTria3D::ThreeNodeTria3D(const std::vector<Node *> &nodes)
+    : GeometricEntity(3, nodes, std::make_unique<LinearTet2DShapeFunctions>()) {
+  // TODO Remove the 2D from LinearTet2DShapeFunctions, I don't think it's
+  // necessary
+}
+
+ThreeNodeTria3D::~ThreeNodeTria3D() {}
+
+Eigen::VectorXd ThreeNodeTria3D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {
+  Eigen::MatrixXd jacobian =
+      GeometricEntity::EvaluateJacobian(local_coordinates);
+  // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
+  //                          dx/deta, dy/deta, dz/deta]
+  Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
+  normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
+  normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
+  normal(2) = jacobian(0, 0) * jacobian(1, 2) - jacobian(0, 1) * jacobian(1, 0);
+  return normal;
+}
 
 FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes, std::make_unique<LinearTet3DShapeFunctions>()) {

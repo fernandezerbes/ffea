@@ -114,6 +114,15 @@ class ThreeNodeTria2D : public GeometricEntity {
       const Coordinates &local_coordinates) const override;
 };
 
+class ThreeNodeTria3D : public GeometricEntity {
+ public:
+  ThreeNodeTria3D(const std::vector<Node *> &nodes);
+  virtual ~ThreeNodeTria3D();
+
+  virtual Eigen::VectorXd EvaluateNormal(
+      const Coordinates &local_coordinates) const override;
+};
+
 class FourNodeTetra : public GeometricEntity {
  public:
   FourNodeTetra(const std::vector<Node *> &nodes);
