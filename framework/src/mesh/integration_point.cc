@@ -43,25 +43,63 @@ std::vector<IntegrationPoint> QuadratureRule2x2::GetIntegrationPoints() const {
   return integration_points;
 }
 
-std::vector<IntegrationPoint> QuadratureRule2x2x2::GetIntegrationPoints() const {
+std::vector<IntegrationPoint> QuadratureRule2x2x2::GetIntegrationPoints()
+    const {
   std::vector<IntegrationPoint> integration_points;
   integration_points.reserve(8);
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({-0.5773502691896257, -0.5773502691896257,
+                                    -0.5773502691896257}),
+                       1.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({0.5773502691896257, -0.5773502691896257,
+                                    -0.5773502691896257}),
+                       1.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({-0.5773502691896257, 0.5773502691896257,
+                                    -0.5773502691896257}),
+                       1.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257,
+                                    -0.5773502691896257}),
+                       1.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({-0.5773502691896257, -0.5773502691896257,
+                                    0.5773502691896257}),
+                       1.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({0.5773502691896257, -0.5773502691896257,
+                                    0.5773502691896257}),
+                       1.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({-0.5773502691896257, 0.5773502691896257,
+                                    0.5773502691896257}),
+                       1.0));
   integration_points.push_back(IntegrationPoint(
-      Coordinates({-0.5773502691896257, -0.5773502691896257, -0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({0.5773502691896257, -0.5773502691896257, -0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({-0.5773502691896257, 0.5773502691896257, -0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({0.5773502691896257, 0.5773502691896257, -0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({-0.5773502691896257, -0.5773502691896257, 0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({0.5773502691896257, -0.5773502691896257, 0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({-0.5773502691896257, 0.5773502691896257, 0.5773502691896257}), 1.0));
-  integration_points.push_back(IntegrationPoint(
-      Coordinates({0.5773502691896257, 0.5773502691896257, 0.5773502691896257}), 1.0));
+      Coordinates({0.5773502691896257, 0.5773502691896257, 0.5773502691896257}),
+      1.0));
+  return integration_points;
+}
+
+std::vector<IntegrationPoint> QuadratureRuleTria1::GetIntegrationPoints()
+    const {
+  std::vector<IntegrationPoint> integration_points;
+  integration_points.reserve(1);
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({1.0 / 3.0, 1.0 / 3.0, 0.0}), 0.5));
+  return integration_points;
+}
+
+std::vector<IntegrationPoint> QuadratureRuleTria3::GetIntegrationPoints()
+    const {
+  std::vector<IntegrationPoint> integration_points;
+  integration_points.reserve(3);
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({0.5, 0.5, 0.0}), 1.0 / 6.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({0.5, 0.0, 0.0}), 1.0 / 6.0));
+  integration_points.push_back(
+      IntegrationPoint(Coordinates({0.0, 0.5, 0.0}), 1.0 / 6.0));
   return integration_points;
 }
 

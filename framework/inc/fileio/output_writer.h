@@ -12,7 +12,8 @@ class OutputWriter {
  public:
   OutputWriter(Mesh& mesh);
   void RegisterPostProcessor(const PostProcessor &postprocessor);
-  void Write(const std::string& filename);
+  void WriteQuad(const std::string& filename);
+  void WriteTria(const std::string& filename);
 
  private:
   std::vector<const PostProcessor*> postprocessors_;

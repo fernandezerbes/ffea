@@ -133,4 +133,23 @@ EightNodeHex3D::~EightNodeHex3D() {}
 Eigen::VectorXd EightNodeHex3D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
 
+ThreeNodeTria2D::ThreeNodeTria2D(const std::vector<Node *> &nodes)
+    : GeometricEntity(2, nodes, std::make_unique<LinearTet2DShapeFunctions>()) {
+}
+
+ThreeNodeTria2D::~ThreeNodeTria2D() {}
+
+Eigen::VectorXd ThreeNodeTria2D::EvaluateNormal(
+    const Coordinates &local_coordinates) const {}
+
+
+FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
+    : GeometricEntity(3, nodes, std::make_unique<LinearTet3DShapeFunctions>()) {
+}
+
+FourNodeTetra::~FourNodeTetra() {}
+
+Eigen::VectorXd FourNodeTetra::EvaluateNormal(
+    const Coordinates &local_coordinates) const {}
+
 }  // namespace ffea
