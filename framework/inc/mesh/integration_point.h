@@ -12,6 +12,7 @@ class IntegrationPoint {
  public:
   IntegrationPoint();
   IntegrationPoint(const Coordinates &local_coordinates, double weight);
+  IntegrationPoint(double x, double y, double z, double weight);
   ~IntegrationPoint();
 
   const Coordinates &local_coordinates() const;
@@ -24,56 +25,32 @@ class IntegrationPoint {
 
 using Quadrature = std::vector<IntegrationPoint>;
 
-const Quadrature rule_line_2 = {
-    IntegrationPoint(Coordinates({-0.5773502691896257, 0.0, 0.0}), 1.0),
-    IntegrationPoint(Coordinates({0.5773502691896257, 0.0, 0.0}), 1.0)};
+const Quadrature rule_line_2 = {{-0.5773502691896257, 0.0, 0.0, 1.0},
+                                {0.5773502691896257, 0.0, 0.0, 1.0}};
 
 const Quadrature rule_quad_4 = {
-    IntegrationPoint(
-        Coordinates({-0.5773502691896257, -0.5773502691896257, 0.0}), 1.0),
-    IntegrationPoint(
-        Coordinates({0.5773502691896257, -0.5773502691896257, 0.0}), 1.0),
-    IntegrationPoint(
-        Coordinates({-0.5773502691896257, 0.5773502691896257, 0.0}), 1.0),
-    IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257, 0.0}),
-                     1.0)};
+    {-0.5773502691896257, -0.5773502691896257, 0.0, 1.0},
+    {0.5773502691896257, -0.5773502691896257, 0.0, 1.0},
+    {-0.5773502691896257, 0.5773502691896257, 0.0, 1.0},
+    {0.5773502691896257, 0.5773502691896257, 0.0, 1.0}};
 
-const Quadrature rule_tria_1 = {
-    IntegrationPoint(Coordinates({1.0 / 3.0, 1.0 / 3.0, 0.0}), 0.5)};
+const Quadrature rule_tria_1 = {{1.0 / 3.0, 1.0 / 3.0, 0.0, 0.5}};
 
-const Quadrature rule_tria_3 = {
-    IntegrationPoint(Coordinates({0.5, 0.5, 0.0}), 1.0 / 6.0),
-    IntegrationPoint(Coordinates({0.5, 0.0, 0.0}), 1.0 / 6.0),
-    IntegrationPoint(Coordinates({0.0, 0.5, 0.0}), 1.0 / 6.0)};
+const Quadrature rule_tria_3 = {{0.5, 0.5, 0.0, 1.0 / 6.0},
+                                {0.5, 0.0, 0.0, 1.0 / 6.0},
+                                {0.0, 0.5, 0.0, 1.0 / 6.0}};
 
-const Quadrature rule_tetra_1 = {
-    IntegrationPoint(Coordinates({1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0}), 0.5)};
+const Quadrature rule_tetra_1 = {{1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 0.5}};
 
 const Quadrature rule_hex_8 = {
-    IntegrationPoint(Coordinates({-0.5773502691896257, -0.5773502691896257,
-                                  -0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({0.5773502691896257, -0.5773502691896257,
-                                  -0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({-0.5773502691896257, 0.5773502691896257,
-                                  -0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257,
-                                  -0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({-0.5773502691896257, -0.5773502691896257,
-                                  0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({0.5773502691896257, -0.5773502691896257,
-                                  0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({-0.5773502691896257, 0.5773502691896257,
-                                  0.5773502691896257}),
-                     1.0),
-    IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257,
-                                  0.5773502691896257}),
-                     1.0)};
+    {-0.5773502691896257, -0.5773502691896257, -0.5773502691896257, 1.0},
+    {0.5773502691896257, -0.5773502691896257, -0.5773502691896257, 1.0},
+    {-0.5773502691896257, 0.5773502691896257, -0.5773502691896257, 1.0},
+    {0.5773502691896257, 0.5773502691896257, -0.5773502691896257, 1.0},
+    {-0.5773502691896257, -0.5773502691896257, 0.5773502691896257, 1.0},
+    {0.5773502691896257, -0.5773502691896257, 0.5773502691896257, 1.0},
+    {-0.5773502691896257, 0.5773502691896257, 0.5773502691896257, 1.0},
+    {0.5773502691896257, 0.5773502691896257, 0.5773502691896257, 1.0}};
 
 }  // namespace ffea
 

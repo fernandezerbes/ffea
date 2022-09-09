@@ -85,8 +85,8 @@ int main() {
   std::cout << geometry.number_of_nodes() << std::endl;
 
   ffea::ElementFactory line_factory(ffea::rule_line_2);
-  ffea::ElementFactory quad_factory(ffea::rule_quad_4);
-  ffea::ElementFactory tria_factory(ffea::rule_tria_3);
+  // ffea::ElementFactory quad_factory(ffea::rule_quad_4);
+  ffea::ElementFactory tria_factory(ffea::rule_tria_1);
 
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(surface_group_name, tria_factory);

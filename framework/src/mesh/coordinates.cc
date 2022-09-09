@@ -6,6 +6,8 @@ Coordinates::Coordinates() {}
 
 Coordinates::Coordinates(const std::vector<double> &xyz) : xyz_(xyz) {}
 
+Coordinates::Coordinates(double x, double y, double z) : xyz_({x, y, z}) {}
+
 Coordinates::~Coordinates() {}
 
 const std::vector<double> &Coordinates::get() const { return xyz_; }

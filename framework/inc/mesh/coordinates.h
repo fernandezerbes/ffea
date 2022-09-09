@@ -10,6 +10,7 @@ class Coordinates {
  public:
   Coordinates();
   Coordinates(const std::vector<double> &xyz);
+  Coordinates(double x, double y, double z);
   ~Coordinates();
 
   const std::vector<double> &get() const;
