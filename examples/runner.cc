@@ -42,18 +42,13 @@ int main() {
 
   */
 
-  // TODO Add shape functions for other elements (take from Felippa book)
-  // TODO Add differential operator as a reference in the elements (and in the
-  // element factories)
-  // TODO Add constitutive model class as a reference in the elements (and in
-  // the element factories)
-  // TODO See if Analysis and Model can be merged
-  // TODO Add triangular, tethraedral, and hexahedral elements
-  // TODO Add 3D example
-  // TODO Refactor quadrature
+  // TODO Make element factory follow the Open-Closed principle
   // TODO Add class for constitutive model
-  // TODO Make member variables private in model
   // TODO Review responsibilities in model and analysis
+  // TODO See if Analysis and Model can be merged
+  // TODO Add differential operator and constitutive model as a reference in the
+  // elements (and in the element factories)
+  // TODO Make member variables private in model
   // TODO Remove dependency of Eigen
   // TODO Add caching of differential operator, shape functions, etc.
   // TODO Review element factories to see if something better can be done
@@ -67,11 +62,7 @@ int main() {
   // TODO Add MPI
 
   // ********************** MESH **********************
-  const size_t number_of_elements_in_x = 1;
-  const size_t number_of_elements_in_y = 1;
   const size_t number_of_fields = 2;
-  const double length_in_x = 1.0;
-  const double length_in_y = 3.0;
   const std::string dirichlet_group_name = "dirichlet";
   const std::string neumann_group_name = "neumann";
   const std::string surface_group_name = "surface";
@@ -84,8 +75,6 @@ int main() {
 
   auto geometry = geometry_builder.Build();
 
-  std::cout << geometry.number_of_nodes() << std::endl;
-
   ffea::ReducedIntegrationPointsProvider reduced_integration_points_provider;
   ffea::FullIntegrationPointsProvider full_integration_points_provider;
 
@@ -96,8 +85,6 @@ int main() {
   mesh_builder.RegisterElementFactory(neumann_group_name, element_factory);
   mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
-
-  std::cout << mesh.number_of_dofs() << std::endl;
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;

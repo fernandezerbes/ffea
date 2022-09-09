@@ -37,8 +37,6 @@ int main() {
 
   auto geometry = geometry_builder.Build();
 
-  std::cout << geometry.number_of_nodes() << std::endl;
-
   ffea::ReducedIntegrationPointsProvider reduced_integration_points_provider;
   ffea::FullIntegrationPointsProvider full_integration_points_provider;
 
@@ -49,8 +47,6 @@ int main() {
   mesh_builder.RegisterElementFactory(neumann_group_name, element_factory);
   mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
-
-  std::cout << mesh.number_of_dofs() << std::endl;
 
   // ********************** CONSTITUTIVE MODEL **********************
   double nu = 0.3;
