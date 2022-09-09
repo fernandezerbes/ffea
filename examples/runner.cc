@@ -45,13 +45,16 @@ int main() {
   // TODO Make element factory follow the Open-Closed principle
   // TODO Add class for constitutive model
   // TODO Review responsibilities in model and analysis
+  // TODO Make member variables private in model
   // TODO See if Analysis and Model can be merged
   // TODO Add differential operator and constitutive model as a reference in the
   // elements (and in the element factories)
-  // TODO Make member variables private in model
+  // TODO Reuse all possible values of shape functions, jacobians, etc. during
+  // system integration
+  // TODO Order element types in case statements
+  // TODO Complete element factories for all element types
   // TODO Remove dependency of Eigen
   // TODO Add caching of differential operator, shape functions, etc.
-  // TODO Review element factories to see if something better can be done
   // TODO Create analysis builders
   // TODO Review function signatures and check constness, encapsulation, etc
   // TODO Add unit-tests
