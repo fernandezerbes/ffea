@@ -84,14 +84,9 @@ int main() {
 
   std::cout << geometry.number_of_nodes() << std::endl;
 
-  const ffea::Quadrature &rule1x2 = ffea::QuadratureRule1x2();
-  const ffea::Quadrature &rule2x2 = ffea::QuadratureRule2x2();
-  // const ffea::Quadrature &rule_tria = ffea::QuadratureRuleTria1();
-  const ffea::Quadrature &rule_tria = ffea::QuadratureRuleTria3();
-
-  ffea::ElementFactory line_factory(rule1x2);
-  ffea::ElementFactory quad_factory(rule2x2);
-  ffea::ElementFactory tria_factory(rule_tria);
+  ffea::ElementFactory line_factory(ffea::rule_line_2);
+  ffea::ElementFactory quad_factory(ffea::rule_quad_4);
+  ffea::ElementFactory tria_factory(ffea::rule_tria_3);
 
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(surface_group_name, tria_factory);

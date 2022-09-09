@@ -1,8 +1,8 @@
 #ifndef FFEA_FRAMEWORK_MESH_INTEGRATIONPOINT_H_
 #define FFEA_FRAMEWORK_MESH_INTEGRATIONPOINT_H_
 
+#include <array>
 #include <memory>
-#include <vector>
 
 #include "./coordinates.h"
 
@@ -22,42 +22,58 @@ class IntegrationPoint {
   double weight_;
 };
 
-class Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const = 0;
-};
+using Quadrature = std::vector<IntegrationPoint>;
 
-class QuadratureRule1x2 : public Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
-};
+const Quadrature rule_line_2 = {
+    IntegrationPoint(Coordinates({-0.5773502691896257, 0.0, 0.0}), 1.0),
+    IntegrationPoint(Coordinates({0.5773502691896257, 0.0, 0.0}), 1.0)};
 
-class QuadratureRule2x2 : public Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
-};
+const Quadrature rule_quad_4 = {
+    IntegrationPoint(
+        Coordinates({-0.5773502691896257, -0.5773502691896257, 0.0}), 1.0),
+    IntegrationPoint(
+        Coordinates({0.5773502691896257, -0.5773502691896257, 0.0}), 1.0),
+    IntegrationPoint(
+        Coordinates({-0.5773502691896257, 0.5773502691896257, 0.0}), 1.0),
+    IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257, 0.0}),
+                     1.0)};
 
+const Quadrature rule_tria_1 = {
+    IntegrationPoint(Coordinates({1.0 / 3.0, 1.0 / 3.0, 0.0}), 0.5)};
 
-class QuadratureRule2x2x2 : public Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
-};
+const Quadrature rule_tria_3 = {
+    IntegrationPoint(Coordinates({0.5, 0.5, 0.0}), 1.0 / 6.0),
+    IntegrationPoint(Coordinates({0.5, 0.0, 0.0}), 1.0 / 6.0),
+    IntegrationPoint(Coordinates({0.0, 0.5, 0.0}), 1.0 / 6.0)};
 
-class QuadratureRuleTria1 : public Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
-};
+const Quadrature rule_tetra_1 = {
+    IntegrationPoint(Coordinates({1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0}), 0.5)};
 
-class QuadratureRuleTria3 : public Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
-};
-
-class QuadratureRuleTetra1 : public Quadrature {
- public:
-  virtual std::vector<IntegrationPoint> GetIntegrationPoints() const override;
-};
-
+const Quadrature rule_hex_8 = {
+    IntegrationPoint(Coordinates({-0.5773502691896257, -0.5773502691896257,
+                                  -0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({0.5773502691896257, -0.5773502691896257,
+                                  -0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({-0.5773502691896257, 0.5773502691896257,
+                                  -0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257,
+                                  -0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({-0.5773502691896257, -0.5773502691896257,
+                                  0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({0.5773502691896257, -0.5773502691896257,
+                                  0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({-0.5773502691896257, 0.5773502691896257,
+                                  0.5773502691896257}),
+                     1.0),
+    IntegrationPoint(Coordinates({0.5773502691896257, 0.5773502691896257,
+                                  0.5773502691896257}),
+                     1.0)};
 
 }  // namespace ffea
 

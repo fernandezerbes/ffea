@@ -41,7 +41,6 @@ class Element {
   GeometricEntity &geometric_entity_;
   std::vector<DegreeOfFreedom *> dofs_;
   const Quadrature &quadrature_;
-  std::vector<IntegrationPoint> integration_points() const;
 };
 
 }  // namespace ffea

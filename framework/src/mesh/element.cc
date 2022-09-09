@@ -11,10 +11,6 @@ Element::Element(GeometricEntity &geometric_entity,
 
 Element::~Element() {}
 
-std::vector<IntegrationPoint> Element::integration_points() const {
-  return quadrature_.GetIntegrationPoints();
-}
-
 std::vector<size_t> Element::GetLocalToGlobalDofIndicesMap() const {
   std::vector<size_t> indices_map;
   indices_map.reserve(GetNumberOfDofs());
@@ -45,7 +41,7 @@ Eigen::MatrixXd Element::ComputeStiffness(
   Eigen::MatrixXd stiffness =
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
 
-  for (const auto &integration_point : integration_points()) {
+  for (const auto &integration_point : quadrature_) {
     const auto &local_coordinates = integration_point.local_coordinates();
     // Jacobian can be evaluated outside, to be shared with ComputeRhs
     const auto &jacobian =
@@ -67,7 +63,7 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::VectorXd rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
-  for (const auto &integration_point : integration_points()) {
+  for (const auto &integration_point : quadrature_) {
     const auto &local_coordinates = integration_point.local_coordinates();
     const auto &shape_functions = geometric_entity_.EvaluateShapeFunctions(
         local_coordinates, ffea::DerivativeOrder::kZeroth);

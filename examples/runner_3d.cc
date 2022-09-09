@@ -39,11 +39,8 @@ int main() {
 
   std::cout << geometry.number_of_nodes() << std::endl;
 
-  const ffea::Quadrature &ruleTria1 = ffea::QuadratureRuleTria1();
-  const ffea::Quadrature &ruleTetra1 = ffea::QuadratureRuleTetra1();
-
-  ffea::ElementFactory tria_factory(ruleTria1);
-  ffea::ElementFactory tetra_factory(ruleTetra1);
+  ffea::ElementFactory tria_factory(ffea::rule_tria_1);
+  ffea::ElementFactory tetra_factory(ffea::rule_tetra_1);
 
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(surface_group_name, tetra_factory);
