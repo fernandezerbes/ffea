@@ -93,14 +93,7 @@ int main() {
 
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(surface_group_name, element_factory);
-  // mesh_builder.RegisterElementFactory(surface_group_name, quad_factory);
-  mesh_builder.RegisterElementFactory(
-      neumann_group_name,
-      element_factory);  // This is wrong, I should decide
-                         // with the element type + group
-                         // name, because there can be
-                         // meshes with mixed quad+tria for
-                         // the same group
+  mesh_builder.RegisterElementFactory(neumann_group_name, element_factory);
   mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
 
