@@ -15,7 +15,7 @@
 #include "../framework/inc/mesh/degree_of_freedom.h"
 #include "../framework/inc/mesh/element.h"
 #include "../framework/inc/mesh/geometry_builder.h"
-#include "../framework/inc/mesh/integration_point.h"
+#include "../framework/inc/mesh/integration_points_provider.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/mesh/node.h"
@@ -43,8 +43,10 @@ int main() {
   */
 
   // TODO Add shape functions for other elements (take from Felippa book)
-  // TODO Add differential operator as a reference in the elements (and in the element factories)
-  // TODO Add constitutive model class as a reference in the elements (and in the element factories)
+  // TODO Add differential operator as a reference in the elements (and in the
+  // element factories)
+  // TODO Add constitutive model class as a reference in the elements (and in
+  // the element factories)
   // TODO See if Analysis and Model can be merged
   // TODO Add triangular, tethraedral, and hexahedral elements
   // TODO Add 3D example
@@ -84,15 +86,22 @@ int main() {
 
   std::cout << geometry.number_of_nodes() << std::endl;
 
-  ffea::ElementFactory line_factory(ffea::rule_line_2);
-  // ffea::ElementFactory quad_factory(ffea::rule_quad_4);
-  ffea::ElementFactory tria_factory(ffea::rule_tria_1);
+  ffea::ReducedIntegrationPointsProvider reduced_integration_points_provider;
+  ffea::FullIntegrationPointsProvider full_integration_points_provider;
+
+  ffea::ElementFactory element_factory(full_integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(surface_group_name, tria_factory);
+  mesh_builder.RegisterElementFactory(surface_group_name, element_factory);
   // mesh_builder.RegisterElementFactory(surface_group_name, quad_factory);
-  mesh_builder.RegisterElementFactory(neumann_group_name, line_factory);  // This is wrong, I should decide with the element type + group name, because there can be meshes with mixed quad+tria for the same group
-  mesh_builder.RegisterElementFactory(dirichlet_group_name, line_factory);
+  mesh_builder.RegisterElementFactory(
+      neumann_group_name,
+      element_factory);  // This is wrong, I should decide
+                         // with the element type + group
+                         // name, because there can be
+                         // meshes with mixed quad+tria for
+                         // the same group
+  mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
 
   std::cout << mesh.number_of_dofs() << std::endl;

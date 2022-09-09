@@ -15,7 +15,7 @@
 #include "../framework/inc/mesh/degree_of_freedom.h"
 #include "../framework/inc/mesh/element.h"
 #include "../framework/inc/mesh/geometry_builder.h"
-#include "../framework/inc/mesh/integration_point.h"
+#include "../framework/inc/mesh/integration_points_provider.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/mesh/node.h"
@@ -28,7 +28,7 @@ int main() {
   // ********************** MESH **********************
   const std::string dirichlet_group_name = "dirichlet";
   const std::string neumann_group_name = "neumann";
-  const std::string surface_group_name = "surface";   // TODO Name `body`
+  const std::string surface_group_name = "surface";  // TODO Name `body`
   const size_t number_of_fields = 3;
 
   ffea::GeometricEntityFactory3D geometric_entity_factory;
@@ -39,13 +39,15 @@ int main() {
 
   std::cout << geometry.number_of_nodes() << std::endl;
 
-  ffea::ElementFactory tria_factory(ffea::rule_tria_1);
-  ffea::ElementFactory tetra_factory(ffea::rule_tetra_1);
+  ffea::ReducedIntegrationPointsProvider reduced_integration_points_provider;
+  ffea::FullIntegrationPointsProvider full_integration_points_provider;
+
+  ffea::ElementFactory element_factory(full_integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(surface_group_name, tetra_factory);
-  mesh_builder.RegisterElementFactory(neumann_group_name, tria_factory);
-  mesh_builder.RegisterElementFactory(dirichlet_group_name, tria_factory);
+  mesh_builder.RegisterElementFactory(surface_group_name, element_factory);
+  mesh_builder.RegisterElementFactory(neumann_group_name, element_factory);
+  mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
 
   std::cout << mesh.number_of_dofs() << std::endl;

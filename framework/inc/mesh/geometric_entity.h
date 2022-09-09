@@ -52,6 +52,7 @@ class GeometricEntity {
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
                                const Eigen::MatrixXd &shape_functions) const;
   const std::vector<Node *> &nodes() const;
+  virtual GeometricEntityType type() const = 0;
 
  private:
   size_t dimension_;
@@ -67,6 +68,7 @@ class TwoNodeLine2D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class TwoNodeLine3D : public GeometricEntity {
@@ -76,6 +78,7 @@ class TwoNodeLine3D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class FourNodeQuad2D : public GeometricEntity {
@@ -85,6 +88,7 @@ class FourNodeQuad2D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class FourNodeQuad3D : public GeometricEntity {
@@ -94,6 +98,7 @@ class FourNodeQuad3D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class EightNodeHex3D : public GeometricEntity {
@@ -103,6 +108,7 @@ class EightNodeHex3D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class ThreeNodeTria2D : public GeometricEntity {
@@ -112,6 +118,7 @@ class ThreeNodeTria2D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class ThreeNodeTria3D : public GeometricEntity {
@@ -121,6 +128,7 @@ class ThreeNodeTria3D : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 class FourNodeTetra : public GeometricEntity {
@@ -130,6 +138,7 @@ class FourNodeTetra : public GeometricEntity {
 
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const override;
+  virtual GeometricEntityType type() const override;
 };
 
 }  // namespace ffea

@@ -12,6 +12,7 @@ add_library(ffea
             src/mesh/geometric_entity_factory.cc
             src/mesh/geometry_builder.cc
             src/mesh/integration_point.cc
+            src/mesh/integration_points_provider.cc
             src/mesh/mesh.cc
             src/mesh/mesh_builder.cc
             src/mesh/node.cc

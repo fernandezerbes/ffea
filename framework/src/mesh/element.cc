@@ -4,10 +4,10 @@ namespace ffea {
 
 Element::Element(GeometricEntity &geometric_entity,
                  const std::vector<DegreeOfFreedom *> &dofs,
-                 const Quadrature &quadrature)
+                 const IntegrationPointsGroup &integration_points)
     : geometric_entity_(geometric_entity),
       dofs_(dofs),
-      quadrature_(quadrature) {}
+      integration_points_(integration_points) {}
 
 Element::~Element() {}
 
@@ -41,7 +41,7 @@ Eigen::MatrixXd Element::ComputeStiffness(
   Eigen::MatrixXd stiffness =
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
 
-  for (const auto &integration_point : quadrature_) {
+  for (const auto &integration_point : integration_points_) {
     const auto &local_coordinates = integration_point.local_coordinates();
     // Jacobian can be evaluated outside, to be shared with ComputeRhs
     const auto &jacobian =
@@ -63,7 +63,7 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::VectorXd rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
-  for (const auto &integration_point : quadrature_) {
+  for (const auto &integration_point : integration_points_) {
     const auto &local_coordinates = integration_point.local_coordinates();
     const auto &shape_functions = geometric_entity_.EvaluateShapeFunctions(
         local_coordinates, ffea::DerivativeOrder::kZeroth);
@@ -76,8 +76,8 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
          load_component_index < number_of_load_components;
          load_component_index++) {
       const auto &load_component_contribution =
-          shape_functions * body_load[load_component_index] *
-          normal.norm() * integration_point.weight();
+          shape_functions * body_load[load_component_index] * normal.norm() *
+          integration_point.weight();
       for (size_t node_index = 0; node_index < GetNumberOfNodes();
            node_index++) {
         auto dof_index =

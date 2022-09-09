@@ -9,18 +9,18 @@
 #include "../processor/operator.h"
 #include "./degree_of_freedom.h"
 #include "./element.h"
-#include "./integration_point.h"
+#include "./integration_points_provider.h"
 
 namespace ffea {
 
 class ElementFactory {
  public:
-  ElementFactory(const Quadrature &quadrature);
+  ElementFactory(const IntegrationPointsProvider &integration_points_provider);
   Element CreateElement(GeometricEntity &geometric_entity,
                         const std::vector<DegreeOfFreedom *> &dofs) const;
 
  private:
-  const Quadrature &quadrature_;
+  const IntegrationPointsProvider &integration_points_provider_;
 };
 
 }  // namespace ffea

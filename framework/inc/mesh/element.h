@@ -21,7 +21,7 @@ class Element {
  public:
   Element(GeometricEntity &geometric_entity,
           const std::vector<DegreeOfFreedom *> &dofs,
-          const Quadrature &quadrature);
+          const IntegrationPointsGroup &integration_points);
   virtual ~Element();
 
   std::vector<size_t> GetLocalToGlobalDofIndicesMap() const;
@@ -40,7 +40,7 @@ class Element {
  private:
   GeometricEntity &geometric_entity_;
   std::vector<DegreeOfFreedom *> dofs_;
-  const Quadrature &quadrature_;
+  const IntegrationPointsGroup &integration_points_;
 };
 
 }  // namespace ffea

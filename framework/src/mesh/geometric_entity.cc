@@ -94,6 +94,10 @@ Eigen::VectorXd TwoNodeLine2D::EvaluateNormal(
   return normal;
 }
 
+GeometricEntityType TwoNodeLine2D::type() const {
+  return GeometricEntityType::kTwoNodeLine;
+}
+
 TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes, std::make_unique<Linear1DShapeFunctions>()) {}
 
@@ -102,6 +106,10 @@ TwoNodeLine3D::~TwoNodeLine3D() {}
 Eigen::VectorXd TwoNodeLine3D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
 
+GeometricEntityType TwoNodeLine3D::type() const {
+  return GeometricEntityType::kTwoNodeLine;
+}
+
 FourNodeQuad2D::FourNodeQuad2D(const std::vector<Node *> &nodes)
     : GeometricEntity(2, nodes, std::make_unique<Linear2DShapeFunctions>()) {}
 
@@ -109,6 +117,10 @@ FourNodeQuad2D::~FourNodeQuad2D() {}
 
 Eigen::VectorXd FourNodeQuad2D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
+
+GeometricEntityType FourNodeQuad2D::type() const {
+  return GeometricEntityType::kFourNodeQuad;
+}
 
 FourNodeQuad3D::FourNodeQuad3D(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes, std::make_unique<Linear2DShapeFunctions>()) {}
@@ -128,10 +140,18 @@ Eigen::VectorXd FourNodeQuad3D::EvaluateNormal(
   return normal;
 }
 
+GeometricEntityType FourNodeQuad3D::type() const {
+  return GeometricEntityType::kFourNodeQuad;
+}
+
 EightNodeHex3D::~EightNodeHex3D() {}
 
 Eigen::VectorXd EightNodeHex3D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
+
+GeometricEntityType EightNodeHex3D::type() const {
+  return GeometricEntityType::kEightNodeHex;
+}
 
 ThreeNodeTria2D::ThreeNodeTria2D(const std::vector<Node *> &nodes)
     : GeometricEntity(2, nodes, std::make_unique<LinearTet2DShapeFunctions>()) {
@@ -141,6 +161,10 @@ ThreeNodeTria2D::~ThreeNodeTria2D() {}
 
 Eigen::VectorXd ThreeNodeTria2D::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
+
+GeometricEntityType ThreeNodeTria2D::type() const {
+  return GeometricEntityType::kThreeNodeTria;
+}
 
 ThreeNodeTria3D::ThreeNodeTria3D(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes, std::make_unique<LinearTet2DShapeFunctions>()) {
@@ -163,6 +187,10 @@ Eigen::VectorXd ThreeNodeTria3D::EvaluateNormal(
   return normal;
 }
 
+GeometricEntityType ThreeNodeTria3D::type() const {
+  return GeometricEntityType::kThreeNodeTria;
+}
+
 FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes, std::make_unique<LinearTet3DShapeFunctions>()) {
 }
@@ -171,5 +199,9 @@ FourNodeTetra::~FourNodeTetra() {}
 
 Eigen::VectorXd FourNodeTetra::EvaluateNormal(
     const Coordinates &local_coordinates) const {}
+
+GeometricEntityType FourNodeTetra::type() const {
+  return GeometricEntityType::kFourNodeTetra;
+}
 
 }  // namespace ffea
