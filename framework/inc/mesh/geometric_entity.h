@@ -52,6 +52,7 @@ class GeometricEntity {
   Eigen::MatrixXd EvaluateShapeFunctions(
       const Coordinates &local_coordinates,
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
+  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
                                const Eigen::MatrixXd &shape_functions) const;
   const std::vector<Node *> &nodes() const;

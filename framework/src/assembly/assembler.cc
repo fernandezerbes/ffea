@@ -3,7 +3,7 @@
 namespace ffea {
 
 std::pair<Eigen::MatrixXd, Eigen::VectorXd> Assembler::ProcessLinearSystem(
-    Mesh& mesh, const Eigen::MatrixXd& constitutive_model,
+    Mesh& mesh, const ConstitutiveModel& constitutive_model,
     const DifferentialOperator& differential_operator,
     ConditionFunction source) {
   auto number_of_dofs = mesh.number_of_dofs();

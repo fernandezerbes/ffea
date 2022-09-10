@@ -9,11 +9,13 @@
 #include "../mesh/mesh.h"
 #include "../processor/operator.h"
 #include "./boundary_condition.h"
+#include "./constitutive_model.h"
+
 namespace ffea {
 
 struct Model {
  public:
-  Model(Mesh &mesh, const Eigen::MatrixXd &constitutive_model,
+  Model(Mesh &mesh, const ConstitutiveModel &constitutive_model,
         const DifferentialOperator &differential_operator,
         ConditionFunction source);
 
@@ -26,7 +28,7 @@ struct Model {
           ffea::PenaltyEnforcementStrategy());
   void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
 
-  const Eigen::MatrixXd &constitutive_model;
+  const ConstitutiveModel &constitutive_model;
   const DifferentialOperator &differential_operator;
   std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
   Mesh &mesh_;

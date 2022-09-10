@@ -35,7 +35,7 @@ Coordinates &Element::GetCoordinatesOfNode(size_t node_index) const {
 }
 
 Eigen::MatrixXd Element::ComputeStiffness(
-    const Eigen::MatrixXd &constitutive_model,
+    const ConstitutiveModel &constitutive_model,
     const DifferentialOperator &differential_operator) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::MatrixXd stiffness =
@@ -53,8 +53,12 @@ Eigen::MatrixXd Element::ComputeStiffness(
         jacobian.inverse() * local_shape_functions_derivatives;
     Eigen::MatrixXd operator_matrix =
         differential_operator.Compute(global_shape_functions_derivatives);
+    const auto &global_coordinates =
+        geometric_entity_.MapLocalToGlobal(local_coordinates);
+    const auto &constitutive_matrix =
+        constitutive_model.Evaluate(global_coordinates);
 
-    stiffness += operator_matrix.transpose() * constitutive_model *
+    stiffness += operator_matrix.transpose() * constitutive_matrix *
                  operator_matrix * jacobian.determinant() *
                  integration_point.weight();
   }

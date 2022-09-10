@@ -20,6 +20,7 @@
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/mesh/node.h"
 #include "../framework/inc/model/boundary_condition.h"
+#include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
 #include "../framework/inc/processor/operator.h"
@@ -89,15 +90,10 @@ int main() {
   auto mesh = mesh_builder.Build(number_of_fields);
 
   // ********************** CONSTITUTIVE MODEL **********************
-  double nu = 0.3;
-  double E = 1;
-  double factor = E / (1 - nu * nu);
-  Eigen::MatrixXd constitutive_matrix(3, 3);
-  constitutive_matrix(0, 0) = factor;
-  constitutive_matrix(0, 1) = factor * nu;
-  constitutive_matrix(1, 0) = constitutive_matrix(0, 1);
-  constitutive_matrix(1, 1) = factor;
-  constitutive_matrix(2, 2) = (1 - nu) * factor;
+  double poisson_ratio = 0.3;
+  double youngs_modulus = 1;
+  ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus,
+                                                            poisson_ratio);
 
   // ********************** DIFFERENTIAL OPERATOR **********************
   auto differential_operator = ffea::StrainDisplacementOperator2D();
@@ -109,8 +105,7 @@ int main() {
     return load;
   };
 
-  ffea::Model model(mesh, constitutive_matrix, differential_operator,
-                    body_load);
+  ffea::Model model(mesh, constitutive_model, differential_operator, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =

@@ -59,6 +59,13 @@ Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
 }
 
 Coordinates GeometricEntity::MapLocalToGlobal(
+    const Coordinates &local_coordinates) const {
+  const auto &shape_functions =
+      EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kZeroth);
+  return MapLocalToGlobal(local_coordinates, shape_functions);
+}
+
+Coordinates GeometricEntity::MapLocalToGlobal(
     const Coordinates &local_coordinates,
     const Eigen::MatrixXd &shape_functions) const {
   // TODO Maybe this should be always 3: std::array<double, 3>

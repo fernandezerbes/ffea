@@ -11,6 +11,7 @@
 #include "./geometric_entity.h"
 #include "./integration_point.h"
 #include "./node.h"
+#include "../model/constitutive_model.h"
 
 namespace ffea {
 
@@ -30,7 +31,7 @@ class Element {
   size_t GetNumberOfDofsPerNode() const;
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
   Eigen::MatrixXd ComputeStiffness(
-      const Eigen::MatrixXd &constitutive_model,
+      const ConstitutiveModel &constitutive_model,
       const DifferentialOperator &differential_operator) const;
   Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
   void SetSolutionOnDofs(const Eigen::VectorXd &solution);

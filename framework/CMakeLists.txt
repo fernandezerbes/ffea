@@ -17,6 +17,7 @@ add_library(ffea
             src/mesh/mesh_builder.cc
             src/mesh/node.cc
             src/model/boundary_condition.cc
+            src/model/constitutive_model.cc
             src/model/model.cc
             src/fileio/output_writer.cc
             src/fileio/mesh_parser.cc

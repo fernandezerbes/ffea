@@ -2,7 +2,7 @@
 
 namespace ffea {
 
-Model::Model(Mesh& mesh, const Eigen::MatrixXd& constitutive_model,
+Model::Model(Mesh& mesh, const ConstitutiveModel& constitutive_model,
              const DifferentialOperator& differential_operator,
              ConditionFunction source)
     : mesh_(mesh),
