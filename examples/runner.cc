@@ -43,13 +43,10 @@ int main() {
 
   */
 
-  // TODO Review responsibilities in model and analysis
-  // TODO Make member variables private in model
-  // TODO Reuse all possible values of shape functions, jacobians, etc. during
-  // system integration
-  // TODO Order element types in case statements
   // TODO Complete element factories for all element types
   // TODO Add source term
+  // TODO Reuse all possible values of shape functions, jacobians, etc. during
+  // system integration
   // TODO Remove dependency of Eigen
   // TODO Add caching of differential operator, shape functions, etc.
   // TODO Create analysis builders

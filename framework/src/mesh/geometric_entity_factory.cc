@@ -10,10 +10,10 @@ GeometricEntityFactory2D::CreateGeometricEntity(
   switch (type) {
     case GeometricEntityType::kTwoNodeLine:
       return std::make_shared<TwoNodeLine2D>(nodes);
-    case GeometricEntityType::kFourNodeQuad:
-      return std::make_shared<FourNodeQuad2D>(nodes);
     case GeometricEntityType::kThreeNodeTria:
       return std::make_shared<ThreeNodeTria2D>(nodes);
+    case GeometricEntityType::kFourNodeQuad:
+      return std::make_shared<FourNodeQuad2D>(nodes);
     default:
       throw std::runtime_error("Unsupported GeometricEntityType");
   }
@@ -25,12 +25,14 @@ GeometricEntityFactory3D::CreateGeometricEntity(
   switch (type) {
     case GeometricEntityType::kTwoNodeLine:
       return std::make_shared<TwoNodeLine3D>(nodes);
-    case GeometricEntityType::kFourNodeQuad:
-      return std::make_shared<FourNodeQuad3D>(nodes);
     case GeometricEntityType::kThreeNodeTria:
       return std::make_shared<ThreeNodeTria3D>(nodes);
+    case GeometricEntityType::kFourNodeQuad:
+      return std::make_shared<FourNodeQuad3D>(nodes);
     case GeometricEntityType::kFourNodeTetra:
       return std::make_shared<FourNodeTetra>(nodes);
+    case GeometricEntityType::kEightNodeHex:
+      return std::make_shared<EightNodeHex3D>(nodes);
     default:
       throw std::runtime_error("Unsupported GeometricEntityType");
   }
