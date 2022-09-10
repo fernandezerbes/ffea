@@ -29,7 +29,7 @@ int main() {
   // ********************** MESH **********************
   const std::string dirichlet_group_name = "dirichlet";
   const std::string neumann_group_name = "neumann";
-  const std::string surface_group_name = "surface";  // TODO Name `body`
+  const std::string body_group_name = "body";
   const size_t number_of_fields = 3;
 
   ffea::GeometricEntityFactory3D geometric_entity_factory;
@@ -43,7 +43,7 @@ int main() {
   ffea::ElementFactory element_factory(integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(surface_group_name, element_factory);
+  mesh_builder.RegisterElementFactory(body_group_name, element_factory);
   mesh_builder.RegisterElementFactory(neumann_group_name, element_factory);
   mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
@@ -65,7 +65,7 @@ int main() {
   };
 
   ffea::Model model(mesh);
-  model.AddComputationalDomain(surface_group_name, constitutive_model,
+  model.AddComputationalDomain(body_group_name, constitutive_model,
                                differential_operator, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
