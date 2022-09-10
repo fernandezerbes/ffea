@@ -5,7 +5,7 @@
 namespace ffea {
 
 Eigen::MatrixXd ShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates,
+    const Coordinates& coordinates,
     DerivativeOrder derivative_order) const {
   switch (derivative_order) {
     case DerivativeOrder::kZeroth:
@@ -27,8 +27,8 @@ ShapeFunctions::~ShapeFunctions() {}
 Linear1DShapeFunctions::~Linear1DShapeFunctions() {}
 
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) const {
-  double xi = coordinates[0];
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
   Eigen::MatrixXd result(1, 2);
 
   result(0, 0) = 0.5 * (1.0 - xi);
@@ -38,7 +38,7 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   Eigen::MatrixXd result(1, 2);
 
   result(0, 0) = -0.5;
@@ -48,16 +48,16 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd Linear1DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(1, 2);
 }
 
 Linear2DShapeFunctions::~Linear2DShapeFunctions() {}
 
 Eigen::MatrixXd Linear2DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) const {
-  double xi = coordinates[0];
-  double eta = coordinates[1];
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
   Eigen::MatrixXd result(1, 4);
 
   result(0, 0) = 0.25 * (1 - xi) * (1 - eta);
@@ -69,13 +69,13 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd Linear2DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
      dN1/deta  dN2/deta   dN3/deta  dN4/deta]
   */
-  double xi = coordinates[0];
-  double eta = coordinates[1];
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
   Eigen::MatrixXd result(2, 4);
 
   result(0, 0) = -0.25 * (1 - eta);
@@ -92,14 +92,14 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd Linear2DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   /*
     [d^2N1/dxi^2      d^2N2/dxi^2     d^2N3/dxi^2     d^2N4/dxi^2,
      d^2N1/deta^2     d^2N2/deta^2    d^2N3/deta^2    d^2N4/deta^2,
      d^2N1/dxideta    d^2N2/dxideta   d^2N3/dxideta   d^2N4/dxideta]
   */
-  double xi = coordinates[0];
-  double eta = coordinates[1];
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 4);
 
   result(2, 0) = 0.25;
@@ -113,10 +113,10 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate2ndDerivative(
 Linear3DShapeFunctions::~Linear3DShapeFunctions() {}
 
 Eigen::MatrixXd Linear3DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) const {
-  double xi = coordinates[0];
-  double eta = coordinates[1];
-  double zeta = coordinates[2];
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
   Eigen::MatrixXd result(1, 8);
 
   result(0, 0) = 0.125 * (1 - xi) * (1 - eta) * (1 - zeta);
@@ -132,16 +132,16 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd Linear3DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi   dN5/dxi   dN6/dxi   dN7/dxi
     dN8/dxi, dN1/deta  dN2/deta   dN3/deta  dN4/deta  dN5/deta  dN6/deta
     dN7/deta  dN8/deta, dN1/dzeta dN2/dzeta  dN3/zdeta dN4/dzeta dN5/dzeta
     dN6/dzeta dN7/dzeta dN8/dzeta]
   */
-  double xi = coordinates[0];
-  double eta = coordinates[1];
-  double zeta = coordinates[2];
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
   Eigen::MatrixXd result(3, 8);
 
   result(0, 0) = -0.125 * (1 - eta) * (1 - zeta);
@@ -175,7 +175,7 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd Linear3DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   /*
     [d^2N1/dxi^2      d^2N2/dxi^2     d^2N3/dxi^2     d^2N4/dxi^2 d^2N5/dxi^2
     d^2N6/dxi^2     d^2N7/dxi^2     d^2N8/dxi^2, d^2N1/deta^2     d^2N2/deta^2
@@ -190,9 +190,9 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate2ndDerivative(
     d^2N5/dzetadxi   d^2N6/dzetadxi  d^2N7/dzetadxi  d^2N8/dzetadxi]
   */
 
-  double xi = coordinates[0];
-  double eta = coordinates[1];
-  double zeta = coordinates[2];
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 8);
 
   result(3, 0) = 0.125 * (1 - zeta);
@@ -228,9 +228,9 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate2ndDerivative(
 LinearTet2DShapeFunctions::~LinearTet2DShapeFunctions() {}
 
 Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) const {
-  double xi = coordinates[0];
-  double eta = coordinates[1];
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
   Eigen::MatrixXd result(1, 3);
 
   result(0, 0) = 1.0 - xi - eta;
@@ -241,13 +241,13 @@ Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi
      dN1/deta   dN2/deta    dN3/deta]
   */
-  double xi = coordinates[0];
-  double eta = coordinates[1];
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
   Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 3);
 
   result(0, 0) = -1.0;
@@ -263,17 +263,17 @@ Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(3, 3);
 }
 
 LinearTet3DShapeFunctions::~LinearTet3DShapeFunctions() {}
 
 Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate(
-    const std::vector<double>& coordinates) const {
-  double xi = coordinates[0];
-  double eta = coordinates[1];
-  double zeta = coordinates[2];
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
   Eigen::MatrixXd result(1, 4);
 
   result(0, 0) = 1.0 - xi - eta - zeta;
@@ -285,15 +285,15 @@ Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate(
 }
 
 Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate1stDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
     dN1/deta  dN2/deta   dN3/deta  dN4/deta,
     dN1/dzeta  dN2/dzeta   dN3/dzeta  dN4/dzeta,]
   */
-  double xi = coordinates[0];
-  double eta = coordinates[1];
-  double zeta = coordinates[2];
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
   Eigen::MatrixXd result(3, 4);
 
   result(0, 0) = -1.0;
@@ -309,7 +309,7 @@ Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate1stDerivative(
 }
 
 Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate2ndDerivative(
-    const std::vector<double>& coordinates) const {
+    const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(6, 4);
 }
 

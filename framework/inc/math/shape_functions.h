@@ -2,7 +2,7 @@
 #define FFEA_FRAMEWORK_INC_MATH_SHAPE_FUNCTIONS_H_
 
 #include <eigen3/Eigen/Dense>
-#include <vector>
+#include "../mesh/coordinates.h"
 
 namespace ffea {
 
@@ -10,17 +10,17 @@ enum class DerivativeOrder { kZeroth, kFirst, kSecond };
 
 class ShapeFunctions {
  public:
-  Eigen::MatrixXd Evaluate(const std::vector<double>& coordinates,
+  Eigen::MatrixXd Evaluate(const Coordinates& coordinates,
                            DerivativeOrder derivative_order) const;
 
   virtual ~ShapeFunctions();
 
  private:
-  virtual Eigen::MatrixXd Evaluate(const std::vector<double>& coordinates) const = 0;
+  virtual Eigen::MatrixXd Evaluate(const Coordinates& coordinates) const = 0;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) const = 0;
+      const Coordinates& coordinates) const = 0;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) const = 0;
+      const Coordinates& coordinates) const = 0;
 };
 
 class Linear1DShapeFunctions : public ShapeFunctions {
@@ -29,11 +29,11 @@ class Linear1DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
 };
 
 class Linear2DShapeFunctions : public ShapeFunctions {
@@ -42,11 +42,11 @@ class Linear2DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
 };
 
 class Linear3DShapeFunctions : public ShapeFunctions {
@@ -55,11 +55,11 @@ class Linear3DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
 };
 
 class LinearTet2DShapeFunctions : public ShapeFunctions {
@@ -68,11 +68,11 @@ class LinearTet2DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
 };
 
 class LinearTet3DShapeFunctions : public ShapeFunctions {
@@ -81,11 +81,11 @@ class LinearTet3DShapeFunctions : public ShapeFunctions {
 
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const std::vector<double>& coordinates) const override;
+      const Coordinates& coordinates) const override;
 };
 
 }  // namespace ffea

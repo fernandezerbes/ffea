@@ -27,7 +27,7 @@ std::vector<size_t> GeometricEntity::GetNodesIds() const {
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
     const Coordinates &local_coordinates,
     DerivativeOrder derivative_order) const {
-  return shape_functions_->Evaluate(local_coordinates.get(), derivative_order);
+  return shape_functions_->Evaluate(local_coordinates, derivative_order);
 }
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
@@ -62,26 +62,22 @@ Coordinates GeometricEntity::MapLocalToGlobal(
     const Coordinates &local_coordinates) const {
   const auto &shape_functions =
       EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kZeroth);
-  return MapLocalToGlobal(local_coordinates, shape_functions);
+  return MapLocalToGlobal(shape_functions);
 }
 
 Coordinates GeometricEntity::MapLocalToGlobal(
-    const Coordinates &local_coordinates,
-    const Eigen::MatrixXd &shape_functions) const {
+    const Eigen::MatrixXd &shape_functions_at_point) const {
   // TODO Maybe this should be always 3: std::array<double, 3>
-  std::vector<double> xyz(dimension_, 0.0);
+  std::array<double, 3> xyz{};
   for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
     const auto &node = nodes_[node_index];
     const auto &coordinates = node->coordinates();
-    // TODO Dimension index will be always less than 3
-    // Maybe we can always use the three dimensions
     for (size_t dimension_index = 0; dimension_index < dimension_;
          dimension_index++) {
-      xyz[dimension_index] +=
-          shape_functions(0, node_index) * coordinates.get(dimension_index);
+      xyz[dimension_index] += shape_functions_at_point(0, node_index) *
+                              coordinates.get(dimension_index);
     }
   }
-  // TODO this can be avoided if we create the coordinates before
   return Coordinates(xyz);
 }
 

@@ -18,8 +18,7 @@ Geometry::GetGeometricEntityGroup(const std::string& group_name) const {
 
 void Geometry::AddNode(const std::array<double, 3>& xyz) {
   size_t id = number_of_nodes();
-  // TODO Improve this std::vector<double>(xyz.begin(), xyz.end())
-  nodes_.emplace_back(id, std::vector<double>(xyz.begin(), xyz.end()));
+  nodes_.emplace_back(id, xyz);
 }
 
 void Geometry::AddGeometricEntity(GeometricEntityType type,

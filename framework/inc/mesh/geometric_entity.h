@@ -53,8 +53,8 @@ class GeometricEntity {
       const Coordinates &local_coordinates,
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
-  Coordinates MapLocalToGlobal(const Coordinates &local_coordinates,
-                               const Eigen::MatrixXd &shape_functions) const;
+  Coordinates MapLocalToGlobal(
+      const Eigen::MatrixXd &shape_functions_at_point) const;
   const std::vector<Node *> &nodes() const;
   virtual GeometricEntityType type() const = 0;
 

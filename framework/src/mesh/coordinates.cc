@@ -2,15 +2,13 @@
 
 namespace ffea {
 
-Coordinates::Coordinates() {}
+Coordinates::Coordinates() : xyz_{} {}
 
-Coordinates::Coordinates(const std::vector<double> &xyz) : xyz_(xyz) {}
+Coordinates::Coordinates(const std::array<double, 3> &xyz) : xyz_(xyz) {}
 
 Coordinates::Coordinates(double x, double y, double z) : xyz_({x, y, z}) {}
 
 Coordinates::~Coordinates() {}
-
-const std::vector<double> &Coordinates::get() const { return xyz_; }
 
 double Coordinates::get(size_t index) const { return xyz_[index]; }
 
@@ -20,7 +18,7 @@ void Coordinates::set(double x, double y, double z) {
   set(2, z);
 }
 
-void Coordinates::set(const std::vector<double> &xyz) { xyz_ = xyz; }
+void Coordinates::set(const std::array<double, 3> &xyz) { xyz_ = xyz; }
 
 void Coordinates::set(size_t index, double value) { xyz_[index] = value; }
 

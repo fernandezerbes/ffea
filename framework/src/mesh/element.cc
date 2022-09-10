@@ -75,7 +75,7 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
     const auto &shape_functions = geometric_entity_.EvaluateShapeFunctions(
         local_coordinates, ffea::DerivativeOrder::kZeroth);
     const auto &global_coordinates =
-        geometric_entity_.MapLocalToGlobal(local_coordinates, shape_functions);
+        geometric_entity_.MapLocalToGlobal(shape_functions);
     const auto &body_load = load(global_coordinates);
     const auto &normal = geometric_entity_.EvaluateNormal(local_coordinates);
     auto number_of_load_components = GetNumberOfDofsPerNode();
