@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace ffea {
-// TODO Check constness of these member functions on all classes
+
 struct NodeData {
   NodeData(size_t id, const std::array<double, 3> &coords);
   const size_t id;
