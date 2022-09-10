@@ -2,42 +2,52 @@
 
 namespace ffea {
 
-const IntegrationPointsGroup&
-ReducedIntegrationPointsProvider::GetIntegrationPoints(
+const IntegrationPointsGroup &IntegrationPointsProvider::GetIntegrationPoints(
     GeometricEntityType type) const {
-  switch (type) {
-    case GeometricEntityType::kTwoNodeLine:
-      return rule_line_1;
-    case GeometricEntityType::kFourNodeQuad:
-      return rule_quad_4; // TODO Check this rule
-    case GeometricEntityType::kThreeNodeTria:
-      return rule_tria_1;
-    case GeometricEntityType::kFourNodeTetra:
-      return rule_tetra_1;
-    case GeometricEntityType::kEightNodeHex:
-      return rule_hex_8; // TODO Check this rule
-    default:
-      throw std::runtime_error("Unsupported GeometricEntityType");
-  }
+  return integration_points_registry_.at(type);
 }
 
-const IntegrationPointsGroup&
-FullIntegrationPointsProvider::GetIntegrationPoints(
-    GeometricEntityType type) const {
-  switch (type) {
-    case GeometricEntityType::kTwoNodeLine:
-      return rule_line_2;
-    case GeometricEntityType::kFourNodeQuad:
-      return rule_quad_4;
-    case GeometricEntityType::kThreeNodeTria:
-      return rule_tria_3;
-    case GeometricEntityType::kFourNodeTetra:
-      return rule_tetra_1; // TODO Check this rule
-    case GeometricEntityType::kEightNodeHex:
-      return rule_hex_8;
-    default:
-      throw std::runtime_error("Unsupported GeometricEntityType");
-  }
+void IntegrationPointsProvider::RegisterIntegrationPoints(
+    GeometricEntityType type,
+    const IntegrationPointsGroup &integration_points) {
+  integration_points_registry_.insert({type, integration_points});
 }
+
+namespace utilities {
+
+IntegrationPointsProvider MakeFullIntegrationPointsProvider() {
+  IntegrationPointsProvider provider;
+  provider.RegisterIntegrationPoints(GeometricEntityType::kTwoNodeLine,
+                                     rule_line_1);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kThreeNodeTria,
+                                     rule_tria_1);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kFourNodeQuad,
+                                     rule_quad_4);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kFourNodeTetra,
+                                     rule_tetra_1);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kEightNodeHex,
+                                     rule_hex_8);
+
+  return provider;
+}
+
+IntegrationPointsProvider MakeReducedIntegrationPointsProvider() {
+  IntegrationPointsProvider provider;
+  provider.RegisterIntegrationPoints(GeometricEntityType::kTwoNodeLine,
+                                     rule_line_2);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kThreeNodeTria,
+                                     rule_tria_3);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kFourNodeQuad,
+                                     rule_quad_4);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kFourNodeTetra,
+                                     rule_tetra_1);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kEightNodeHex,
+                                     rule_hex_8);
+
+  return provider;
+}
+
+}  // namespace utilities
+
 
 }  // namespace ffea

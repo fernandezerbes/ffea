@@ -37,10 +37,9 @@ int main() {
 
   auto geometry = geometry_builder.Build();
 
-  ffea::ReducedIntegrationPointsProvider reduced_integration_points_provider;
-  ffea::FullIntegrationPointsProvider full_integration_points_provider;
-
-  ffea::ElementFactory element_factory(full_integration_points_provider);
+  auto integration_points_provider =
+      ffea::utilities::MakeFullIntegrationPointsProvider();
+  ffea::ElementFactory element_factory(integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(surface_group_name, element_factory);
