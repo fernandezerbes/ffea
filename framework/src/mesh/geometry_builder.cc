@@ -17,22 +17,22 @@ GeometryFromFileBuilder::GeometryFromFileBuilder(
     : GeometryBuilder::GeometryBuilder(factory),
       file_stream_(),
       parser_(),
-      mesh_data_() {
+      geometry_data_() {
   file_stream_.open(file_path);
-  parser_.Parse(file_stream_, mesh_data_);
+  parser_.Parse(file_stream_, geometry_data_);
 }
 
 GeometryFromFileBuilder::~GeometryFromFileBuilder() { file_stream_.close(); }
 
 void GeometryFromFileBuilder::AddNodes(Geometry &geometry) {
-  for (const auto &node : mesh_data_.nodes()) {
+  for (const auto &node : geometry_data_.nodes()) {
     geometry.AddNode(node.coords);
   }
 }
 
 void GeometryFromFileBuilder::AddEntities(Geometry &geometry) {
   for (const auto &geometric_entities_group :
-       mesh_data_.geometric_entities_groups()) {
+       geometry_data_.geometric_entities_groups()) {
     for (const auto &geometric_entity :
          geometric_entities_group.geometric_entities()) {
       // TODO Use mapping for gmsh elements instead of doing

@@ -35,7 +35,7 @@ class GeometryFromFileBuilder : public GeometryBuilder {
  private:
   std::ifstream file_stream_;
   GeometryParser parser_;
-  GeometryData mesh_data_;
+  GeometryData geometry_data_;
 };
 
 // class CartesianGeometryBuilder : public GeometryBuilder {

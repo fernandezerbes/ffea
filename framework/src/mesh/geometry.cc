@@ -26,12 +26,11 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
                                   const std::vector<size_t>& node_ids,
                                   const GeometricEntityFactory& factory) {
   std::vector<Node*> nodes;
-
-  // TODO See if this can be improved with a span, view or something like that
   nodes.reserve(node_ids.size());
   for (size_t id : node_ids) {
     nodes.push_back(&nodes_[id]);
   }
+  
   auto element = factory.CreateGeometricEntity(type, nodes);
 
   if (geometric_entities_groups_.contains(group_name)) {
