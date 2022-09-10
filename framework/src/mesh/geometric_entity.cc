@@ -67,7 +67,6 @@ Coordinates GeometricEntity::MapLocalToGlobal(
 
 Coordinates GeometricEntity::MapLocalToGlobal(
     const Eigen::MatrixXd &shape_functions_at_point) const {
-  // TODO Maybe this should be always 3: std::array<double, 3>
   std::array<double, 3> xyz{};
   for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
     const auto &node = nodes_[node_index];
