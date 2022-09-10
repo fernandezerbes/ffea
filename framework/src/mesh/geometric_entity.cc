@@ -153,6 +153,9 @@ GeometricEntityType FourNodeQuad3D::type() const {
   return GeometricEntityType::kFourNodeQuad;
 }
 
+EightNodeHex3D::EightNodeHex3D(const std::vector<Node *> &nodes)
+    : GeometricEntity(3, nodes, std::make_unique<Linear3DShapeFunctions>()) {}
+
 EightNodeHex3D::~EightNodeHex3D() {}
 
 Eigen::VectorXd EightNodeHex3D::EvaluateNormal(
