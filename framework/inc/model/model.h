@@ -16,12 +16,10 @@ namespace ffea {
 class Model {
  public:
   Model(Mesh &mesh);
-
-  void AddComputationalDomain(
-      const std::string &domain_name,
-      const ConstitutiveModel &constitutive_model,
-      const DifferentialOperator &differential_operator,
-      ConditionFunction source);
+  void AddComputationalDomain(const std::string &domain_name,
+                              const ConstitutiveModel &constitutive_model,
+                              const DifferentialOperator &differential_operator,
+                              ConditionFunction source);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
                                    ConditionFunction boundary_function);
   void AddDirichletBoundaryCondition(
@@ -31,12 +29,15 @@ class Model {
           ffea::PenaltyEnforcementStrategy());
   void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
   size_t NumberOfDofs() const;
+  void AddComputationalDomainsContributions(Eigen::MatrixXd &global_stiffness,
+                                            Eigen::VectorXd &global_rhs) const;
+  void EnforceBoundaryConditions(Eigen::MatrixXd &global_stiffness,
+                                 Eigen::VectorXd &global_rhs) const;
 
+ private:
   Mesh &mesh_;
   std::vector<ComputationalDomain> computational_domains_;
   std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
-
- private:
 };
 
 }  // namespace ffea

@@ -45,9 +45,6 @@ int main() {
 
   // TODO Review responsibilities in model and analysis
   // TODO Make member variables private in model
-  // TODO See if Analysis and Model can be merged
-  // TODO Add differential operator and constitutive model as a reference in the
-  // elements (and in the element factories)
   // TODO Reuse all possible values of shape functions, jacobians, etc. during
   // system integration
   // TODO Order element types in case statements

@@ -1,5 +1,7 @@
 #include "../../inc/model/model.h"
 
+#include <iostream>
+
 namespace ffea {
 
 Model::Model(Mesh& mesh)
@@ -36,7 +38,24 @@ void Model::AddDirichletBoundaryCondition(
 size_t Model::NumberOfDofs() const { return mesh_.number_of_dofs(); }
 
 void Model::ProjectSolutionOnMesh(const Eigen::VectorXd& solution) {
+  std::cout << "Projecting solution on mesh..." << std::endl;
   mesh_.SetSolutionOnDofs(solution);
+}
+
+void Model::AddComputationalDomainsContributions(
+    Eigen::MatrixXd& global_stiffness, Eigen::VectorXd& global_rhs) const {
+  std::cout << "Processing linear system..." << std::endl;
+  for (const auto& domain : computational_domains_) {
+    domain.AddContribution(global_stiffness, global_rhs);
+  }
+}
+
+void Model::EnforceBoundaryConditions(Eigen::MatrixXd& global_stiffness,
+                                      Eigen::VectorXd& global_rhs) const {
+  std::cout << "Enforcing boundary conditions..." << std::endl;
+  for (auto& bc : boundary_conditions_) {
+    bc->Enforce(global_stiffness, global_rhs);
+  }
 }
 
 }  // namespace ffea
