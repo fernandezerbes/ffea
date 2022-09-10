@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-#include "../fileio/mesh_parser.h"
+#include "../fileio/geometry_parser.h"
 #include "./geometric_entity_factory.h"
 #include "./geometry.h"
 
@@ -34,8 +34,8 @@ class GeometryFromFileBuilder : public GeometryBuilder {
 
  private:
   std::ifstream file_stream_;
-  MeshParser parser_;
-  MeshData mesh_data_;
+  GeometryParser parser_;
+  GeometryData mesh_data_;
 };
 
 // class CartesianGeometryBuilder : public GeometryBuilder {

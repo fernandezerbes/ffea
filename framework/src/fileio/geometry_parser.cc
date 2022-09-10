@@ -1,4 +1,4 @@
-#include "../../inc/fileio/mesh_parser.h"
+#include "../../inc/fileio/geometry_parser.h"
 
 #include <algorithm>
 #include <iostream>
@@ -8,38 +8,42 @@ namespace ffea {
 NodeData::NodeData(size_t id, const std::array<double, 3> &coords)
     : id(id), coords(coords) {}
 
-ElementData::ElementData(size_t element_type,
-                         const std::vector<size_t> &node_ids)
-    : type(element_type), node_ids(node_ids) {}
+GeometricEntityData::GeometricEntityData(size_t geometric_entity_type,
+                                         const std::vector<size_t> &node_ids)
+    : type(geometric_entity_type), node_ids(node_ids) {}
 
-ElementGroup::ElementGroup(const std::string &group_name)
-    : name(group_name), elements() {}
+GeometricEntityDataGroup::GeometricEntityDataGroup(
+    const std::string &group_name)
+    : name(group_name), geometric_entities_() {}
 
-void ElementGroup::AddElement(size_t element_type,
-                              const std::vector<size_t> &node_ids) {
-  elements.emplace_back(element_type, node_ids);
+void GeometricEntityDataGroup::AddGeometricEntity(
+    size_t geometric_entity_type, const std::vector<size_t> &node_ids) {
+  geometric_entities_.emplace_back(geometric_entity_type, node_ids);
 }
 
-void MeshData::AddNode(size_t id, const std::array<double, 3> &coords) {
+void GeometryData::AddNode(size_t id, const std::array<double, 3> &coords) {
   nodes_.emplace_back(id, coords);
 }
 
-void MeshData::AddElementGroup(const std::string &group_name) {
-  element_groups_.emplace_back(group_name);
+void GeometryData::AddGeometricEntityDataGroup(const std::string &group_name) {
+  geometric_entities_groups_.emplace_back(group_name);
 }
 
-void MeshData::AddElement(size_t element_type, size_t element_group_id,
-                          const std::vector<size_t> &node_ids) {
-  element_groups_[element_group_id].AddElement(element_type, node_ids);
+void GeometryData::AddGeometricEntityData(size_t geometric_entity_type,
+                                          size_t geometric_entity_group_id,
+                                          const std::vector<size_t> &node_ids) {
+  geometric_entities_groups_[geometric_entity_group_id].AddGeometricEntity(
+      geometric_entity_type, node_ids);
 }
 
-const std::vector<NodeData> &MeshData::nodes() const { return nodes_; }
+const std::vector<NodeData> &GeometryData::nodes() const { return nodes_; }
 
-const std::vector<ElementGroup> &MeshData::element_groups() const {
-  return element_groups_;
+const std::vector<GeometricEntityDataGroup>
+    &GeometryData::geometric_entities_groups() const {
+  return geometric_entities_groups_;
 }
 
-void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+void GeometryParser::Parse(std::ifstream &file, GeometryData &mesh_data) {
   std::string line;
   while (std::getline(file, line)) {
     auto parser = SectionParserFactory::CreateSectionParser(line);
@@ -49,7 +53,7 @@ void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   }
 }
 
-void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+void GroupNamesParser::Parse(std::ifstream &file, GeometryData &mesh_data) {
   size_t number_of_groups;
   file >> number_of_groups;
 
@@ -59,11 +63,11 @@ void GroupNamesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   for (size_t group_index = 0; group_index < number_of_groups; group_index++) {
     file >> dimension >> physical_tag >> name;
     name.erase(std::remove(name.begin(), name.end(), '"'), name.end());
-    mesh_data.AddElementGroup(name);
+    mesh_data.AddGeometricEntityDataGroup(name);
   }
 }
 
-void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+void NodesParser::Parse(std::ifstream &file, GeometryData &mesh_data) {
   size_t number_of_entity_blocks;
   size_t number_of_nodes;
   size_t minimum_node_tag;
@@ -100,7 +104,8 @@ void NodesParser::Parse(std::ifstream &file, MeshData &mesh_data) {
   }
 }
 
-void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {
+void GeometricEntitiesParser::Parse(std::ifstream &file,
+                                    GeometryData &mesh_data) {
   size_t number_of_entity_blocks;  // One entity block per physical group
   size_t number_of_elements;
   size_t minimum_element_tag;
@@ -135,7 +140,8 @@ void ElementsParser::Parse(std::ifstream &file, MeshData &mesh_data) {
       while (ss >> node_tag) {
         node_ids.push_back(node_tag - 1);  // Gmsh is 1-based, ffea is 0-based
       }
-      mesh_data.AddElement(element_type, entity_block_index, node_ids);
+      mesh_data.AddGeometricEntityData(element_type, entity_block_index,
+                                       node_ids);
     }
   }
 }
@@ -147,7 +153,7 @@ std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(
   } else if (section_name == "$Nodes") {
     return std::make_unique<NodesParser>();
   } else if (section_name == "$Elements") {
-    return std::make_unique<ElementsParser>();
+    return std::make_unique<GeometricEntitiesParser>();
   }
   return nullptr;
 }

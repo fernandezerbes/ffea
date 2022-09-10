@@ -1,0 +1,83 @@
+#ifndef FFEA_FRAMEWORK_INC_FILEIO_MESHPARSER_H_
+#define FFEA_FRAMEWORK_INC_FILEIO_MESHPARSER_H_
+
+#include <array>
+#include <fstream>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+namespace ffea {
+// TODO Check constness of these member functions on all classes
+struct NodeData {
+  NodeData(size_t id, const std::array<double, 3> &coords);
+  size_t id;
+  std::array<double, 3> coords;
+};
+
+struct GeometricEntityData {
+  GeometricEntityData(size_t geometric_entity_type,
+                      const std::vector<size_t> &node_ids);
+  size_t type;
+  std::vector<size_t> node_ids;
+};
+
+struct GeometricEntityDataGroup {
+  GeometricEntityDataGroup(const std::string &group_name);
+  void AddGeometricEntity(size_t geometric_entity_type,
+                          const std::vector<size_t> &node_ids);
+  std::string name;
+  std::vector<GeometricEntityData> geometric_entities_;
+};
+
+class GeometryData {
+ public:
+  void AddNode(size_t id, const std::array<double, 3> &coords);
+  void AddGeometricEntityDataGroup(const std::string &group_name);
+  void AddGeometricEntityData(size_t geometric_entity_type,
+                              size_t geometric_entity_group_id,
+                              const std::vector<size_t> &node_ids);
+  const std::vector<NodeData> &nodes() const;
+  const std::vector<GeometricEntityDataGroup> &geometric_entities_groups()
+      const;
+
+ private:
+  std::vector<NodeData> nodes_;
+  std::vector<GeometricEntityDataGroup> geometric_entities_groups_;
+};
+
+class Parser {
+ public:
+  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) = 0;
+};
+
+class GeometryParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+};
+
+class GroupNamesParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+};
+
+class NodesParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+};
+
+class GeometricEntitiesParser : public Parser {
+ public:
+  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+};
+
+class SectionParserFactory {
+ public:
+  static std::unique_ptr<Parser> CreateSectionParser(
+      const std::string &section_name);
+};
+
+}  // namespace ffea
+
+#endif  // FFEA_FRAMEWORK_INC_FILEIO_MESHPARSER_H_

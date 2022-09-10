@@ -20,7 +20,7 @@ add_library(ffea
             src/model/constitutive_model.cc
             src/model/model.cc
             src/fileio/output_writer.cc
-            src/fileio/mesh_parser.cc
+            src/fileio/geometry_parser.cc
             src/processor/operator.cc
             src/postprocessor/postprocessor.cc
 )
