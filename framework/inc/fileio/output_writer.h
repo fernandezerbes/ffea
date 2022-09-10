@@ -18,7 +18,7 @@ class OutputWriter {
 
  private:
   std::vector<const PostProcessor*> postprocessors_;
-  Mesh& mesh_;  // TODO Make mesh const
+  const Mesh& mesh_;
 };
 
 }  // namespace ffea
