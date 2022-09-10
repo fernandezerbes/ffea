@@ -15,7 +15,7 @@ namespace ffea {
 
 class BoundaryCondition {
  public:
-  BoundaryCondition(const Mesh &mesh, const std::string &boundary_name,
+  BoundaryCondition(const std::vector<Element> &boundary_elements,
                     ConditionFunction boundary_function);
   virtual ~BoundaryCondition();
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
@@ -28,7 +28,7 @@ class BoundaryCondition {
 
 class NeumannBoundaryCondition : public BoundaryCondition {
  public:
-  NeumannBoundaryCondition(const Mesh &mesh, const std::string &boundary_name,
+  NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
                            ConditionFunction boundary_function);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
@@ -69,7 +69,7 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
 class DirichletBoundaryCondition : public BoundaryCondition {
  public:
   DirichletBoundaryCondition(
-      const Mesh &mesh, const std::string &boundary_name,
+      const std::vector<Element> &boundary_elements,
       ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,
       const EnforcementStrategy &enforcement_strategy);

@@ -1,6 +1,7 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_COMPUTATIONALDOMAIN_H_
 #define FFEA_FRAMEWORK_INC_MODEL_COMPUTATIONALDOMAIN_H_
 
+#include <eigen3/Eigen/Dense>
 #include <string>
 
 #include "../mesh/element.h"
@@ -12,7 +13,7 @@ namespace ffea {
 
 class ComputationalDomain {
  public:
-  ComputationalDomain(const Mesh &mesh, const std::string &name,
+  ComputationalDomain(const std::vector<Element> &domain_elements,
                       const ConstitutiveModel &constitutive_model,
                       const DifferentialOperator &differential_operator,
                       ConditionFunction source);

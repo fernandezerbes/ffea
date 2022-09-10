@@ -3,10 +3,10 @@
 namespace ffea {
 
 ComputationalDomain::ComputationalDomain(
-    const Mesh& mesh, const std::string& name,
+    const std::vector<Element> &domain_elements,
     const ConstitutiveModel& constitutive_model,
     const DifferentialOperator& differential_operator, ConditionFunction source)
-    : domain_elements_(mesh.GetElementGroup(name)),
+    : domain_elements_(domain_elements),
       constitutive_model_(constitutive_model),
       differential_operator_(differential_operator),
       source_(source) {}

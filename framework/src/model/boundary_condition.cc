@@ -2,18 +2,18 @@
 
 namespace ffea {
 
-BoundaryCondition::BoundaryCondition(const Mesh &mesh,
-                                     const std::string &boundary_name,
-                                     ConditionFunction boundary_function)
-    : boundary_elements_(mesh.GetElementGroup(boundary_name)),
+BoundaryCondition::BoundaryCondition(
+    const std::vector<Element> &boundary_elements,
+    ConditionFunction boundary_function)
+    : boundary_elements_(boundary_elements),
       boundary_function_(boundary_function) {}
 
 BoundaryCondition::~BoundaryCondition() {}
 
 NeumannBoundaryCondition::NeumannBoundaryCondition(
-    const Mesh &mesh, const std::string &boundary_name,
+    const std::vector<Element> &boundary_elements,
     ConditionFunction boundary_function)
-    : BoundaryCondition(mesh, boundary_name, boundary_function) {}
+    : BoundaryCondition(boundary_elements, boundary_function) {}
 
 void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
@@ -82,11 +82,11 @@ void PenaltyEnforcementStrategy::Enforce(
 }
 
 DirichletBoundaryCondition::DirichletBoundaryCondition(
-    const Mesh &mesh, const std::string &boundary_name,
+    const std::vector<Element> &boundary_elements,
     ConditionFunction boundary_function,
     const std::unordered_set<size_t> &directions_to_consider,
     const EnforcementStrategy &enforcement_strategy)
-    : BoundaryCondition(mesh, boundary_name, boundary_function),
+    : BoundaryCondition(boundary_elements, boundary_function),
       directions_to_consider_(directions_to_consider),
       enforcement_strategy_(enforcement_strategy) {}
 
