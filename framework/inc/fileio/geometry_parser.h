@@ -12,22 +12,27 @@ namespace ffea {
 // TODO Check constness of these member functions on all classes
 struct NodeData {
   NodeData(size_t id, const std::array<double, 3> &coords);
-  size_t id;
-  std::array<double, 3> coords;
+  const size_t id;
+  const std::array<double, 3> coords;
 };
 
 struct GeometricEntityData {
   GeometricEntityData(size_t geometric_entity_type,
                       const std::vector<size_t> &node_ids);
-  size_t type;
-  std::vector<size_t> node_ids;
+  const size_t type;
+  const std::vector<size_t> node_ids;
 };
 
-struct GeometricEntityDataGroup {
+class GeometricEntityDataGroup {
+ public:
   GeometricEntityDataGroup(const std::string &group_name);
   void AddGeometricEntity(size_t geometric_entity_type,
                           const std::vector<size_t> &node_ids);
-  std::string name;
+  const std::string &name() const;
+  const std::vector<GeometricEntityData> &geometric_entities() const;
+
+ private:
+  const std::string name_;
   std::vector<GeometricEntityData> geometric_entities_;
 };
 
@@ -49,27 +54,32 @@ class GeometryData {
 
 class Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) = 0;
+  virtual void Parse(std::ifstream &file,
+                     GeometryData &geometry_data) const = 0;
 };
 
 class GeometryParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+  virtual void Parse(std::ifstream &file,
+                     GeometryData &geometry_data) const override;
 };
 
 class GroupNamesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+  virtual void Parse(std::ifstream &file,
+                     GeometryData &geometry_data) const override;
 };
 
 class NodesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+  virtual void Parse(std::ifstream &file,
+                     GeometryData &geometry_data) const override;
 };
 
 class GeometricEntitiesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &mesh_data) override;
+  virtual void Parse(std::ifstream &file,
+                     GeometryData &geometry_data) const override;
 };
 
 class SectionParserFactory {

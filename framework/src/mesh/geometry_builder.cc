@@ -31,13 +31,17 @@ void GeometryFromFileBuilder::AddNodes(Geometry &geometry) {
 }
 
 void GeometryFromFileBuilder::AddEntities(Geometry &geometry) {
-  for (const auto &element_group : mesh_data_.geometric_entities_groups()) {
-    for (const auto &element : element_group.geometric_entities_) {
-      // Use mapping for gmsh elements instead of doing ElementType(element.type
+  for (const auto &geometric_entities_group :
+       mesh_data_.geometric_entities_groups()) {
+    for (const auto &geometric_entity :
+         geometric_entities_group.geometric_entities()) {
+      // TODO Use mapping for gmsh elements instead of doing
+      // ElementType(element.type
       // - 1)
-      geometry.AddGeometricEntity(GeometricEntityType(element.type - 1),
-                                  element_group.name, element.node_ids,
-                                  geometric_entity_factory_);
+      geometry.AddGeometricEntity(
+          GeometricEntityType(geometric_entity.type - 1),
+          geometric_entities_group.name(), geometric_entity.node_ids,
+          geometric_entity_factory_);
     }
   }
 }
