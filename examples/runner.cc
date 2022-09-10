@@ -43,7 +43,6 @@ int main() {
 
   */
 
-  // TODO Add class for constitutive model
   // TODO Review responsibilities in model and analysis
   // TODO Make member variables private in model
   // TODO See if Analysis and Model can be merged
