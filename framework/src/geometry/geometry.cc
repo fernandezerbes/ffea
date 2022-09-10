@@ -1,4 +1,4 @@
-#include "../../inc/mesh/geometry.h"
+#include "../../inc/geometry/geometry.h"
 
 namespace ffea {
 
@@ -30,7 +30,7 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
   for (size_t id : node_ids) {
     nodes.push_back(&nodes_[id]);
   }
-  
+
   auto element = factory.CreateGeometricEntity(type, nodes);
 
   if (geometric_entities_groups_.contains(group_name)) {

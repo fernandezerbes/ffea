@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "../mesh/coordinates.h"
+#include "../geometry/coordinates.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
 

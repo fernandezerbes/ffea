@@ -9,21 +9,21 @@
 
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
+#include "../framework/inc/geometry/coordinates.h"
+#include "../framework/inc/geometry/geometry_builder.h"
+#include "../framework/inc/geometry/node.h"
 #include "../framework/inc/math/shape_functions.h"
 #include "../framework/inc/math/utils.h"
-#include "../framework/inc/mesh/coordinates.h"
 #include "../framework/inc/mesh/degree_of_freedom.h"
 #include "../framework/inc/mesh/element.h"
-#include "../framework/inc/mesh/geometry_builder.h"
 #include "../framework/inc/mesh/integration_points_provider.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
-#include "../framework/inc/mesh/node.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
+#include "../framework/inc/model/operator.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
-#include "../framework/inc/processor/operator.h"
 
 int main() {
   /*     0         1         2

@@ -1,8 +1,8 @@
-#ifndef FFEA_FRAMEWORK_INC_MESH_COORDINATES_H_
-#define FFEA_FRAMEWORK_INC_MESH_COORDINATES_H_
+#ifndef FFEA_FRAMEWORK_INC_GEOMETRY_COORDINATES_H_
+#define FFEA_FRAMEWORK_INC_GEOMETRY_COORDINATES_H_
 
-#include <iostream>
 #include <array>
+#include <iostream>
 
 namespace ffea {
 
@@ -26,4 +26,4 @@ std::ostream &operator<<(std::ostream &os, const Coordinates &xyz);
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_INC_MESH_COORDINATES_H_
+#endif  // FFEA_FRAMEWORK_INC_GEOMETRY_COORDINATES_H_

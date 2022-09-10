@@ -1,5 +1,5 @@
-#ifndef FFEA_FRAMEWORK_INC_MESH_GEOMETRY_H_
-#define FFEA_FRAMEWORK_INC_MESH_GEOMETRY_H_
+#ifndef FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRY_H_
+#define FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRY_H_
 
 #include <array>
 #include <string>
@@ -29,15 +29,16 @@ class Geometry {
   const std::vector<std::shared_ptr<GeometricEntity>>& GetGeometricEntityGroup(
       const std::string& group_name) const;
 
-  const std::vector<Node> &nodes() const;
+  const std::vector<Node>& nodes() const;
 
   // TODO Make private and provide iterator
   std::unordered_map<std::string, std::vector<std::shared_ptr<GeometricEntity>>>
       geometric_entities_groups_;
+
  private:
   std::vector<Node> nodes_;
 };
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_INC_MESH_GEOMETRY_H_
+#endif  // FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRY_H_

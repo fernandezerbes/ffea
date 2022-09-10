@@ -1,5 +1,5 @@
-#ifndef FFEA_FRAMEWORK_INC_MESH_GEOMETRYBUILDER_H_
-#define FFEA_FRAMEWORK_INC_MESH_GEOMETRYBUILDER_H_
+#ifndef FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRYBUILDER_H_
+#define FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRYBUILDER_H_
 
 #include <fstream>
 #include <string>
@@ -23,9 +23,8 @@ class GeometryBuilder {
 
 class GeometryFromFileBuilder : public GeometryBuilder {
  public:
-  GeometryFromFileBuilder(
-      const std::string &file_path,
-      const GeometricEntityFactory &factory);
+  GeometryFromFileBuilder(const std::string &file_path,
+                          const GeometricEntityFactory &factory);
   ~GeometryFromFileBuilder();
 
  protected:
@@ -59,4 +58,4 @@ class GeometryFromFileBuilder : public GeometryBuilder {
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_INC_MESH_GEOMETRYBUILDER_H_
+#endif  // FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRYBUILDER_H_

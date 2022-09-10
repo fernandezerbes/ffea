@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-#include "./geometric_entity.h"
+#include "../geometry/geometric_entity.h"
 #include "./integration_point.h"
 
 namespace ffea {

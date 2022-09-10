@@ -3,7 +3,7 @@
 
 #include <eigen3/Eigen/Dense>
 
-#include "../mesh/coordinates.h"
+#include "../geometry/coordinates.h"
 
 namespace ffea {
 

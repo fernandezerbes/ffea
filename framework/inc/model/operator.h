@@ -1,5 +1,5 @@
-#ifndef FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
-#define FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
+#ifndef FFEA_FRAMEWORK_MODEL_OPERATOR_H_
+#define FFEA_FRAMEWORK_MODEL_OPERATOR_H_
 
 #include <eigen3/Eigen/Dense>
 
@@ -31,4 +31,4 @@ class StrainDisplacementOperator3D : public DifferentialOperator {
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_PROCESSOR_OPERATOR_H_
+#endif  // FFEA_FRAMEWORK_MODEL_OPERATOR_H_

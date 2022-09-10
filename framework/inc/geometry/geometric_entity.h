@@ -1,5 +1,5 @@
-#ifndef FFEA_FRAMEWORK_INC_GEOMETRICENTITY_H_
-#define FFEA_FRAMEWORK_INC_GEOMETRICENTITY_H_
+#ifndef FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_
+#define FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_
 
 #include <eigen3/Eigen/Dense>
 #include <memory>
@@ -147,4 +147,4 @@ class FourNodeTetra : public GeometricEntity {
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_INC_GEOMETRICENTITY_H_
+#endif  // FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_

@@ -4,8 +4,8 @@
 #include <array>
 #include <memory>
 
-#include "./coordinates.h"
-#include "./geometric_entity.h"
+#include "../geometry/coordinates.h"
+#include "../geometry/geometric_entity.h"
 
 namespace ffea {
 

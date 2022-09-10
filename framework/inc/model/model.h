@@ -6,7 +6,7 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../processor/operator.h"
+#include "../model/operator.h"
 #include "./boundary_condition.h"
 #include "./computational_domain.h"
 #include "./constitutive_model.h"

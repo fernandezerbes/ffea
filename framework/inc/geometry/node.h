@@ -1,12 +1,10 @@
-#ifndef FFEA_FRAMEWORK_INC_MESH_NODE_H_
-#define FFEA_FRAMEWORK_INC_MESH_NODE_H_
-
-#include <vector>
+#ifndef FFEA_FRAMEWORK_INC_GEOMETRY_NODE_H_
+#define FFEA_FRAMEWORK_INC_GEOMETRY_NODE_H_
 
 #include <eigen3/Eigen/Dense>
+#include <vector>
 
 #include "./coordinates.h"
-#include "./degree_of_freedom.h"
 
 namespace ffea {
 
@@ -26,4 +24,4 @@ class Node {
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_INC_MESH_NODE_H_
+#endif  // FFEA_FRAMEWORK_INC_GEOMETRY_NODE_H_

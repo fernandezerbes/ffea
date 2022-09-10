@@ -1,4 +1,4 @@
-#include "../../inc/processor/operator.h"
+#include "../../inc/model/operator.h"
 
 namespace ffea {
 

@@ -4,8 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "../geometry/geometry.h"
 #include "./element_factory.h"
-#include "./geometry.h"
 #include "./mesh.h"
 
 namespace ffea {
@@ -28,4 +28,4 @@ class MeshBuilder
 
 }  // namespace ffea
 
-#endif // FFEA_FRAMEWORK_INC_MESH_MESHBUILDER_H_
+#endif  // FFEA_FRAMEWORK_INC_MESH_MESHBUILDER_H_

@@ -6,7 +6,7 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../processor/operator.h"
+#include "../model/operator.h"
 #include "./constitutive_model.h"
 
 namespace ffea {

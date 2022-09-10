@@ -1,4 +1,4 @@
-#include "../../inc/mesh/geometric_entity.h"
+#include "../../inc/geometry/geometric_entity.h"
 
 namespace ffea {
 

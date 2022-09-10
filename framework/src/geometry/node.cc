@@ -1,4 +1,4 @@
-#include "../../inc/mesh/node.h"
+#include "../../inc/geometry/node.h"
 
 namespace ffea {
 

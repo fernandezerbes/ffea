@@ -1,4 +1,4 @@
-#include "../../inc/mesh/geometric_entity_factory.h"
+#include "../../inc/geometry/geometric_entity_factory.h"
 
 #include <stdexcept>
 

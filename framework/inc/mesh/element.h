@@ -5,13 +5,13 @@
 #include <memory>
 #include <vector>
 
-#include "../processor/operator.h"
-#include "./coordinates.h"
-#include "./degree_of_freedom.h"
-#include "./geometric_entity.h"
-#include "./integration_point.h"
-#include "./node.h"
+#include "../geometry/coordinates.h"
+#include "../geometry/geometric_entity.h"
+#include "../geometry/node.h"
 #include "../model/constitutive_model.h"
+#include "../model/operator.h"
+#include "./degree_of_freedom.h"
+#include "./integration_point.h"
 
 namespace ffea {
 

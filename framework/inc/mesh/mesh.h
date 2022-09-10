@@ -6,13 +6,13 @@
 #include <unordered_map>
 #include <vector>
 
-#include "./coordinates.h"
+#include "../geometry/coordinates.h"
+#include "../geometry/geometric_entity.h"
+#include "../geometry/geometry.h"
+#include "../geometry/node.h"
 #include "./degree_of_freedom.h"
 #include "./element.h"
 #include "./element_factory.h"
-#include "./geometric_entity.h"
-#include "./geometry.h"
-#include "./node.h"
 
 namespace ffea {
 
@@ -32,8 +32,8 @@ class Mesh {
   size_t GetElementGroupNumberOfDofs(const std::string& group_name) const;
   void SetSolutionOnDofs(const Eigen::VectorXd& solution);
   double GetSolutionAtDof(size_t dof_id) const;
-  const std::vector<Node> &nodes() const;
-  const std::vector<DegreeOfFreedom> &dofs() const;
+  const std::vector<Node>& nodes() const;
+  const std::vector<DegreeOfFreedom>& dofs() const;
   size_t dofs_per_node() const;
 
  private:
