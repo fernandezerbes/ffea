@@ -87,7 +87,7 @@ Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
 const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }
 
 TwoNodeLine2D::TwoNodeLine2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes, std::make_unique<Linear1DShapeFunctions>()) {}
+    : GeometricEntity(2, nodes, std::make_unique<TwoNodeLineShapeFunctions>()) {}
 
 TwoNodeLine2D::~TwoNodeLine2D() {}
 
@@ -107,7 +107,7 @@ GeometricEntityType TwoNodeLine2D::type() const {
 }
 
 TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, std::make_unique<Linear1DShapeFunctions>()) {}
+    : GeometricEntity(3, nodes, std::make_unique<TwoNodeLineShapeFunctions>()) {}
 
 TwoNodeLine3D::~TwoNodeLine3D() {}
 
@@ -119,7 +119,7 @@ GeometricEntityType TwoNodeLine3D::type() const {
 }
 
 FourNodeQuad2D::FourNodeQuad2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes, std::make_unique<Linear2DShapeFunctions>()) {}
+    : GeometricEntity(2, nodes, std::make_unique<FourNodeQuadShapeFunctions>()) {}
 
 FourNodeQuad2D::~FourNodeQuad2D() {}
 
@@ -131,7 +131,7 @@ GeometricEntityType FourNodeQuad2D::type() const {
 }
 
 FourNodeQuad3D::FourNodeQuad3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, std::make_unique<Linear2DShapeFunctions>()) {}
+    : GeometricEntity(3, nodes, std::make_unique<FourNodeQuadShapeFunctions>()) {}
 
 FourNodeQuad3D::~FourNodeQuad3D() {}
 
@@ -153,7 +153,7 @@ GeometricEntityType FourNodeQuad3D::type() const {
 }
 
 EightNodeHex3D::EightNodeHex3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, std::make_unique<Linear3DShapeFunctions>()) {}
+    : GeometricEntity(3, nodes, std::make_unique<EightNodeHexShapeFunctions>()) {}
 
 EightNodeHex3D::~EightNodeHex3D() {}
 
@@ -165,7 +165,7 @@ GeometricEntityType EightNodeHex3D::type() const {
 }
 
 ThreeNodeTria2D::ThreeNodeTria2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes, std::make_unique<LinearTet2DShapeFunctions>()) {
+    : GeometricEntity(2, nodes, std::make_unique<ThreeNodeTriaShapeFunctions>()) {
 }
 
 ThreeNodeTria2D::~ThreeNodeTria2D() {}
@@ -178,8 +178,8 @@ GeometricEntityType ThreeNodeTria2D::type() const {
 }
 
 ThreeNodeTria3D::ThreeNodeTria3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, std::make_unique<LinearTet2DShapeFunctions>()) {
-  // TODO Remove the 2D from LinearTet2DShapeFunctions, I don't think it's
+    : GeometricEntity(3, nodes, std::make_unique<ThreeNodeTriaShapeFunctions>()) {
+  // TODO Remove the 2D from ThreeNodeTriaShapeFunctions, I don't think it's
   // necessary
 }
 
@@ -203,7 +203,7 @@ GeometricEntityType ThreeNodeTria3D::type() const {
 }
 
 FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, std::make_unique<LinearTet3DShapeFunctions>()) {
+    : GeometricEntity(3, nodes, std::make_unique<FourNodeTetraShapeFunctions>()) {
 }
 
 FourNodeTetra::~FourNodeTetra() {}

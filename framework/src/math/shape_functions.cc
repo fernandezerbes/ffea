@@ -5,8 +5,7 @@
 namespace ffea {
 
 Eigen::MatrixXd ShapeFunctions::Evaluate(
-    const Coordinates& coordinates,
-    DerivativeOrder derivative_order) const {
+    const Coordinates& coordinates, DerivativeOrder derivative_order) const {
   switch (derivative_order) {
     case DerivativeOrder::kZeroth:
       return Evaluate(coordinates);
@@ -24,9 +23,9 @@ Eigen::MatrixXd ShapeFunctions::Evaluate(
 
 ShapeFunctions::~ShapeFunctions() {}
 
-Linear1DShapeFunctions::~Linear1DShapeFunctions() {}
+TwoNodeLineShapeFunctions::~TwoNodeLineShapeFunctions() {}
 
-Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
+Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
   double xi = coordinates.get(0);
   Eigen::MatrixXd result(1, 2);
@@ -37,7 +36,7 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate(
   return result;
 }
 
-Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
+Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate1stDerivative(
     const Coordinates& coordinates) const {
   Eigen::MatrixXd result(1, 2);
 
@@ -47,14 +46,56 @@ Eigen::MatrixXd Linear1DShapeFunctions::Evaluate1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd Linear1DShapeFunctions::Evaluate2ndDerivative(
+Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate2ndDerivative(
     const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(1, 2);
 }
 
-Linear2DShapeFunctions::~Linear2DShapeFunctions() {}
+ThreeNodeTriaShapeFunctions::~ThreeNodeTriaShapeFunctions() {}
 
-Eigen::MatrixXd Linear2DShapeFunctions::Evaluate(
+Eigen::MatrixXd ThreeNodeTriaShapeFunctions::Evaluate(
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  Eigen::MatrixXd result(1, 3);
+
+  result(0, 0) = 1.0 - xi - eta;
+  result(0, 1) = xi;
+  result(0, 2) = eta;
+
+  return result;
+}
+
+Eigen::MatrixXd ThreeNodeTriaShapeFunctions::Evaluate1stDerivative(
+    const Coordinates& coordinates) const {
+  /*
+    [dN1/dxi   dN2/dxi    dN3/dxi
+     dN1/deta   dN2/deta    dN3/deta]
+  */
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 3);
+
+  result(0, 0) = -1.0;
+  result(0, 1) = 1.0;
+
+  result(1, 0) = -1.0;
+  result(1, 2) = 1.0;
+
+  // The other derivatives are always zero
+  // dNi/dzeta = dNi/dxi * dxi/dzeta + dNi/deta * deta/dzeta
+
+  return result;
+}
+
+Eigen::MatrixXd ThreeNodeTriaShapeFunctions::Evaluate2ndDerivative(
+    const Coordinates& coordinates) const {
+  return Eigen::MatrixXd::Zero(3, 3);
+}
+
+FourNodeQuadShapeFunctions::~FourNodeQuadShapeFunctions() {}
+
+Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
   double xi = coordinates.get(0);
   double eta = coordinates.get(1);
@@ -68,7 +109,7 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate(
   return result;
 }
 
-Eigen::MatrixXd Linear2DShapeFunctions::Evaluate1stDerivative(
+Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate1stDerivative(
     const Coordinates& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
@@ -91,7 +132,7 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd Linear2DShapeFunctions::Evaluate2ndDerivative(
+Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate2ndDerivative(
     const Coordinates& coordinates) const {
   /*
     [d^2N1/dxi^2      d^2N2/dxi^2     d^2N3/dxi^2     d^2N4/dxi^2,
@@ -110,9 +151,55 @@ Eigen::MatrixXd Linear2DShapeFunctions::Evaluate2ndDerivative(
   return result;
 }
 
-Linear3DShapeFunctions::~Linear3DShapeFunctions() {}
+FourNodeTetraShapeFunctions::~FourNodeTetraShapeFunctions() {}
 
-Eigen::MatrixXd Linear3DShapeFunctions::Evaluate(
+Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate(
+    const Coordinates& coordinates) const {
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
+  Eigen::MatrixXd result(1, 4);
+
+  result(0, 0) = 1.0 - xi - eta - zeta;
+  result(0, 1) = xi;
+  result(0, 2) = eta;
+  result(0, 3) = zeta;
+
+  return result;
+}
+
+Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate1stDerivative(
+    const Coordinates& coordinates) const {
+  /*
+    [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
+    dN1/deta  dN2/deta   dN3/deta  dN4/deta,
+    dN1/dzeta  dN2/dzeta   dN3/dzeta  dN4/dzeta,]
+  */
+  double xi = coordinates.get(0);
+  double eta = coordinates.get(1);
+  double zeta = coordinates.get(2);
+  Eigen::MatrixXd result(3, 4);
+
+  result(0, 0) = -1.0;
+  result(0, 1) = 1.0;
+
+  result(1, 0) = -1.0;
+  result(1, 2) = 1.0;
+
+  result(2, 0) = -1.0;
+  result(2, 3) = 1.0;
+
+  return result;
+}
+
+Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate2ndDerivative(
+    const Coordinates& coordinates) const {
+  return Eigen::MatrixXd::Zero(6, 4);
+}
+
+EightNodeHexShapeFunctions::~EightNodeHexShapeFunctions() {}
+
+Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
   double xi = coordinates.get(0);
   double eta = coordinates.get(1);
@@ -131,7 +218,7 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate(
   return result;
 }
 
-Eigen::MatrixXd Linear3DShapeFunctions::Evaluate1stDerivative(
+Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate1stDerivative(
     const Coordinates& coordinates) const {
   /*
     [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi   dN5/dxi   dN6/dxi   dN7/dxi
@@ -174,7 +261,7 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd Linear3DShapeFunctions::Evaluate2ndDerivative(
+Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate2ndDerivative(
     const Coordinates& coordinates) const {
   /*
     [d^2N1/dxi^2      d^2N2/dxi^2     d^2N3/dxi^2     d^2N4/dxi^2 d^2N5/dxi^2
@@ -223,94 +310,6 @@ Eigen::MatrixXd Linear3DShapeFunctions::Evaluate2ndDerivative(
   result(5, 7) = -0.125 * (1 + eta);
 
   return result;
-}
-
-LinearTet2DShapeFunctions::~LinearTet2DShapeFunctions() {}
-
-Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate(
-    const Coordinates& coordinates) const {
-  double xi = coordinates.get(0);
-  double eta = coordinates.get(1);
-  Eigen::MatrixXd result(1, 3);
-
-  result(0, 0) = 1.0 - xi - eta;
-  result(0, 1) = xi;
-  result(0, 2) = eta;
-
-  return result;
-}
-
-Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate1stDerivative(
-    const Coordinates& coordinates) const {
-  /*
-    [dN1/dxi   dN2/dxi    dN3/dxi
-     dN1/deta   dN2/deta    dN3/deta]
-  */
-  double xi = coordinates.get(0);
-  double eta = coordinates.get(1);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 3);
-
-  result(0, 0) = -1.0;
-  result(0, 1) = 1.0;
-
-  result(1, 0) = -1.0;
-  result(1, 2) = 1.0;
-
-  // The other derivatives are always zero
-  // dNi/dzeta = dNi/dxi * dxi/dzeta + dNi/deta * deta/dzeta
-
-  return result;
-}
-
-Eigen::MatrixXd LinearTet2DShapeFunctions::Evaluate2ndDerivative(
-    const Coordinates& coordinates) const {
-  return Eigen::MatrixXd::Zero(3, 3);
-}
-
-LinearTet3DShapeFunctions::~LinearTet3DShapeFunctions() {}
-
-Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate(
-    const Coordinates& coordinates) const {
-  double xi = coordinates.get(0);
-  double eta = coordinates.get(1);
-  double zeta = coordinates.get(2);
-  Eigen::MatrixXd result(1, 4);
-
-  result(0, 0) = 1.0 - xi - eta - zeta;
-  result(0, 1) = xi;
-  result(0, 2) = eta;
-  result(0, 3) = zeta;
-
-  return result;
-}
-
-Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate1stDerivative(
-    const Coordinates& coordinates) const {
-  /*
-    [dN1/dxi   dN2/dxi    dN3/dxi   dN4/dxi,
-    dN1/deta  dN2/deta   dN3/deta  dN4/deta,
-    dN1/dzeta  dN2/dzeta   dN3/dzeta  dN4/dzeta,]
-  */
-  double xi = coordinates.get(0);
-  double eta = coordinates.get(1);
-  double zeta = coordinates.get(2);
-  Eigen::MatrixXd result(3, 4);
-
-  result(0, 0) = -1.0;
-  result(0, 1) = 1.0;
-
-  result(1, 0) = -1.0;
-  result(1, 2) = 1.0;
-
-  result(2, 0) = -1.0;
-  result(2, 3) = 1.0;
-
-  return result;
-}
-
-Eigen::MatrixXd LinearTet3DShapeFunctions::Evaluate2ndDerivative(
-    const Coordinates& coordinates) const {
-  return Eigen::MatrixXd::Zero(6, 4);
 }
 
 }  // namespace ffea

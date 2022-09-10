@@ -2,6 +2,7 @@
 #define FFEA_FRAMEWORK_INC_MATH_SHAPE_FUNCTIONS_H_
 
 #include <eigen3/Eigen/Dense>
+
 #include "../mesh/coordinates.h"
 
 namespace ffea {
@@ -23,9 +24,9 @@ class ShapeFunctions {
       const Coordinates& coordinates) const = 0;
 };
 
-class Linear1DShapeFunctions : public ShapeFunctions {
+class TwoNodeLineShapeFunctions : public ShapeFunctions {
  public:
-  virtual ~Linear1DShapeFunctions() override;
+  virtual ~TwoNodeLineShapeFunctions() override;
 
  private:
   virtual Eigen::MatrixXd Evaluate(
@@ -36,9 +37,9 @@ class Linear1DShapeFunctions : public ShapeFunctions {
       const Coordinates& coordinates) const override;
 };
 
-class Linear2DShapeFunctions : public ShapeFunctions {
+class ThreeNodeTriaShapeFunctions : public ShapeFunctions {
  public:
-  virtual ~Linear2DShapeFunctions() override;
+  virtual ~ThreeNodeTriaShapeFunctions() override;
 
  private:
   virtual Eigen::MatrixXd Evaluate(
@@ -49,9 +50,9 @@ class Linear2DShapeFunctions : public ShapeFunctions {
       const Coordinates& coordinates) const override;
 };
 
-class Linear3DShapeFunctions : public ShapeFunctions {
+class FourNodeQuadShapeFunctions : public ShapeFunctions {
  public:
-  virtual ~Linear3DShapeFunctions() override;
+  virtual ~FourNodeQuadShapeFunctions() override;
 
  private:
   virtual Eigen::MatrixXd Evaluate(
@@ -62,9 +63,9 @@ class Linear3DShapeFunctions : public ShapeFunctions {
       const Coordinates& coordinates) const override;
 };
 
-class LinearTet2DShapeFunctions : public ShapeFunctions {
+class FourNodeTetraShapeFunctions : public ShapeFunctions {
  public:
-  virtual ~LinearTet2DShapeFunctions() override;
+  virtual ~FourNodeTetraShapeFunctions() override;
 
  private:
   virtual Eigen::MatrixXd Evaluate(
@@ -74,10 +75,9 @@ class LinearTet2DShapeFunctions : public ShapeFunctions {
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
       const Coordinates& coordinates) const override;
 };
-
-class LinearTet3DShapeFunctions : public ShapeFunctions {
+class EightNodeHexShapeFunctions : public ShapeFunctions {
  public:
-  virtual ~LinearTet3DShapeFunctions() override;
+  virtual ~EightNodeHexShapeFunctions() override;
 
  private:
   virtual Eigen::MatrixXd Evaluate(
