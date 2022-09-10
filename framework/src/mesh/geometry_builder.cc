@@ -25,13 +25,13 @@ GeometryFromFileBuilder::GeometryFromFileBuilder(
 GeometryFromFileBuilder::~GeometryFromFileBuilder() { file_stream_.close(); }
 
 void GeometryFromFileBuilder::AddNodes(Geometry &geometry) {
-  for (const auto &node : mesh_data_.nodes) {
+  for (const auto &node : mesh_data_.nodes()) {
     geometry.AddNode(node.coords);
   }
 }
 
 void GeometryFromFileBuilder::AddEntities(Geometry &geometry) {
-  for (const auto &element_group : mesh_data_.element_groups) {
+  for (const auto &element_group : mesh_data_.element_groups()) {
     for (const auto &element : element_group.elements) {
       // Use mapping for gmsh elements instead of doing ElementType(element.type
       // - 1)

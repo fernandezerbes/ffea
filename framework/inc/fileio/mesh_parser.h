@@ -35,11 +35,12 @@ class MeshData {
   void AddElementGroup(const std::string &group_name);
   void AddElement(size_t element_type, size_t element_group_id,
                   const std::vector<size_t> &node_ids);
+  const std::vector<NodeData> &nodes() const;
+  const std::vector<ElementGroup> &element_groups() const;
 
-  // TODO Make private
-  //  private:
-  std::vector<NodeData> nodes;
-  std::vector<ElementGroup> element_groups;
+ private:
+  std::vector<NodeData> nodes_;
+  std::vector<ElementGroup> element_groups_;
 };
 
 class Parser {

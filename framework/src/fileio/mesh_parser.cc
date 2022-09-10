@@ -21,16 +21,22 @@ void ElementGroup::AddElement(size_t element_type,
 }
 
 void MeshData::AddNode(size_t id, const std::array<double, 3> &coords) {
-  nodes.emplace_back(id, coords);
+  nodes_.emplace_back(id, coords);
 }
 
 void MeshData::AddElementGroup(const std::string &group_name) {
-  element_groups.emplace_back(group_name);
+  element_groups_.emplace_back(group_name);
 }
 
 void MeshData::AddElement(size_t element_type, size_t element_group_id,
                           const std::vector<size_t> &node_ids) {
-  element_groups[element_group_id].AddElement(element_type, node_ids);
+  element_groups_[element_group_id].AddElement(element_type, node_ids);
+}
+
+const std::vector<NodeData> &MeshData::nodes() const { return nodes_; }
+
+const std::vector<ElementGroup> &MeshData::element_groups() const {
+  return element_groups_;
 }
 
 void MeshParser::Parse(std::ifstream &file, MeshData &mesh_data) {
