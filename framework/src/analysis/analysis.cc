@@ -2,22 +2,26 @@
 
 #include <Eigen/IterativeLinearSolvers>
 
-#include "../../inc/assembly/assembler.h"
-
 namespace ffea {
 
 Analysis::Analysis(Model &model) : model_(model) {}
 
 void Analysis::Solve() {
   std::cout << "Processing linear system..." << std::endl;
-  auto linear_system = Assembler::ProcessLinearSystem(
-      model_.mesh_, model_.constitutive_model, model_.differential_operator,
-      model_.source);
-  auto &global_stiffness = linear_system.first;
-  auto &global_rhs = linear_system.second;
+
+  auto number_of_dofs = model_.NumberOfDofs();
+  Eigen::MatrixXd global_stiffness =
+      Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
+  Eigen::VectorXd global_rhs = Eigen::VectorXd::Zero(number_of_dofs);
+
+  for (const auto& domain : model_.computational_domains_) {
+    domain.AddContribution(global_stiffness, global_rhs);
+  }
+
   std::cout << "Enforcing boundary conditions..." << std::endl;
-  Assembler::EnforceBoundaryConditions(global_stiffness, global_rhs,
-                                       model_.boundary_conditions_);
+  for (auto& bc : model_.boundary_conditions_) {
+    bc->Enforce(global_stiffness, global_rhs);
+  }
 
   std::cout << "Solving..." << std::endl;
   Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;

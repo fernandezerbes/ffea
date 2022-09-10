@@ -29,6 +29,7 @@ class Mesh {
   std::vector<Element>& GetElementGroup(const std::string& group_name);
   const std::vector<Element>& GetElementGroup(
       const std::string& group_name) const;
+  size_t GetElementGroupNumberOfDofs(const std::string& group_name) const;
   void SetSolutionOnDofs(const Eigen::VectorXd& solution);
   double GetSolutionAtDof(size_t dof_id) const;
   const std::vector<Node> &nodes() const;

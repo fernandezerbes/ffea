@@ -104,7 +104,9 @@ int main() {
     return load;
   };
 
-  ffea::Model model(mesh, constitutive_model, differential_operator, body_load);
+  ffea::Model model(mesh);
+  model.AddComputationalDomain(surface_group_name, constitutive_model,
+                               differential_operator, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =

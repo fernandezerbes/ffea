@@ -4,21 +4,24 @@
 #include <eigen3/Eigen/Dense>
 #include <memory>
 
-#include "../assembly/assembler.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
 #include "../processor/operator.h"
 #include "./boundary_condition.h"
+#include "./computational_domain.h"
 #include "./constitutive_model.h"
 
 namespace ffea {
 
-struct Model {
+class Model {
  public:
-  Model(Mesh &mesh, const ConstitutiveModel &constitutive_model,
-        const DifferentialOperator &differential_operator,
-        ConditionFunction source);
+  Model(Mesh &mesh);
 
+  void AddComputationalDomain(
+      const std::string &domain_name,
+      const ConstitutiveModel &constitutive_model,
+      const DifferentialOperator &differential_operator,
+      ConditionFunction source);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
                                    ConditionFunction boundary_function);
   void AddDirichletBoundaryCondition(
@@ -27,12 +30,11 @@ struct Model {
       const EnforcementStrategy &enforcement_strategy =
           ffea::PenaltyEnforcementStrategy());
   void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
+  size_t NumberOfDofs() const;
 
-  const ConstitutiveModel &constitutive_model;
-  const DifferentialOperator &differential_operator;
-  std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
   Mesh &mesh_;
-  ConditionFunction source;
+  std::vector<ComputationalDomain> computational_domains_;
+  std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
 
  private:
 };

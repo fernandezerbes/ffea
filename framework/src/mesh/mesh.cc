@@ -1,5 +1,7 @@
 #include "../../inc/mesh/mesh.h"
 
+#include <unordered_set>
+
 namespace ffea {
 
 Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
@@ -30,6 +32,16 @@ std::vector<Element>& Mesh::GetElementGroup(const std::string& group_name) {
 const std::vector<Element>& Mesh::GetElementGroup(
     const std::string& group_name) const {
   return element_groups_.at(group_name);
+}
+
+size_t Mesh::GetElementGroupNumberOfDofs(const std::string& group_name) const {
+  std::unordered_set<size_t> unique_dof_ids;
+  const auto& element_group = GetElementGroup(group_name);
+  for (const auto& element : element_group) {
+    const auto& dof_ids = element.GetLocalToGlobalDofIndicesMap();
+    unique_dof_ids.insert(dof_ids.begin(), dof_ids.end());
+  }
+  return unique_dof_ids.size();
 }
 
 void Mesh::AddElement(const std::string& group_name,

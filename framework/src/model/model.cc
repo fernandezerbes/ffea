@@ -2,13 +2,18 @@
 
 namespace ffea {
 
-Model::Model(Mesh& mesh, const ConstitutiveModel& constitutive_model,
-             const DifferentialOperator& differential_operator,
-             ConditionFunction source)
+Model::Model(Mesh& mesh)
     : mesh_(mesh),
-      constitutive_model(constitutive_model),
-      differential_operator(differential_operator),
-      source(source) {}
+      computational_domains_(),
+      boundary_conditions_() {}
+
+void Model::AddComputationalDomain(
+    const std::string& domain_name, const ConstitutiveModel& constitutive_model,
+    const DifferentialOperator& differential_operator,
+    ConditionFunction source) {
+  computational_domains_.emplace_back(mesh_, domain_name, constitutive_model,
+                                      differential_operator, source);
+}
 
 void Model::AddNeumannBoundaryCondition(const std::string& boundary_name,
                                         ConditionFunction boundary_function) {
@@ -25,6 +30,10 @@ void Model::AddDirichletBoundaryCondition(
       std::make_unique<ffea::DirichletBoundaryCondition>(
           mesh_, boundary_name, boundary_function, directions_to_consider,
           enforcement_strategy));
+}
+
+size_t Model::NumberOfDofs() const {
+  return mesh_.number_of_dofs();
 }
 
 void Model::ProjectSolutionOnMesh(const Eigen::VectorXd& solution) {
