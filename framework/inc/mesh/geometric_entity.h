@@ -45,6 +45,9 @@ class GeometricEntity {
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
   virtual Eigen::VectorXd EvaluateNormal(
       const Coordinates &local_coordinates) const = 0;
+  Eigen::MatrixXd EvaluateJacobian(
+      const Coordinates &local_coordinates,
+      const Eigen::MatrixXd &shape_functions_derivatives) const;
   Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coordinates) const;
   Eigen::MatrixXd EvaluateShapeFunctions(
       const Coordinates &local_coordinates,

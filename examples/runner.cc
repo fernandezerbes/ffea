@@ -52,6 +52,7 @@ int main() {
   // system integration
   // TODO Order element types in case statements
   // TODO Complete element factories for all element types
+  // TODO Add source term
   // TODO Remove dependency of Eigen
   // TODO Add caching of differential operator, shape functions, etc.
   // TODO Create analysis builders

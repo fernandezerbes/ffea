@@ -45,11 +45,17 @@ Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
+    const Coordinates &local_coordinates,
+    const Eigen::MatrixXd &shape_functions_derivatives) const {
+  const auto &nodes_coordinates_values = GetNodesCoordinatesValues();
+  return shape_functions_derivatives * nodes_coordinates_values;
+}
+
+Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
     const Coordinates &local_coordinates) const {
   const auto &shape_functions_derivatives =
       EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kFirst);
-  const auto &nodes_coordinates_values = GetNodesCoordinatesValues();
-  return shape_functions_derivatives * nodes_coordinates_values;
+  return EvaluateJacobian(local_coordinates, shape_functions_derivatives);
 }
 
 Coordinates GeometricEntity::MapLocalToGlobal(

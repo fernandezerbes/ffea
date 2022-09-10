@@ -44,12 +44,15 @@ Eigen::MatrixXd Element::ComputeStiffness(
   for (const auto &integration_point : integration_points_) {
     const auto &local_coordinates = integration_point.local_coordinates();
     // Jacobian can be evaluated outside, to be shared with ComputeRhs
-    const auto &jacobian =
-        geometric_entity_.EvaluateJacobian(local_coordinates);
-    const auto &dN_local = geometric_entity_.EvaluateShapeFunctions(
-        local_coordinates, ffea::DerivativeOrder::kFirst);
-    const auto &dN_global = jacobian.inverse() * dN_local;
-    Eigen::MatrixXd operator_matrix = differential_operator.Compute(dN_global);
+    const auto &local_shape_functions_derivatives =
+        geometric_entity_.EvaluateShapeFunctions(local_coordinates,
+                                                 ffea::DerivativeOrder::kFirst);
+    const auto &jacobian = geometric_entity_.EvaluateJacobian(
+        local_coordinates, local_shape_functions_derivatives);
+    const auto &global_shape_functions_derivatives =
+        jacobian.inverse() * local_shape_functions_derivatives;
+    Eigen::MatrixXd operator_matrix =
+        differential_operator.Compute(global_shape_functions_derivatives);
 
     stiffness += operator_matrix.transpose() * constitutive_model *
                  operator_matrix * jacobian.determinant() *
