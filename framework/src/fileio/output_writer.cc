@@ -10,7 +10,7 @@ void OutputWriter::RegisterPostProcessor(const PostProcessor& postprocessor) {
   postprocessors_.push_back(&postprocessor);
 }
 
-void OutputWriter::WriteQuad(const std::string& filename) {
+void OutputWriter::WriteQuad(const std::string& filename) const {
   std::ofstream file;
 
   file.open(filename);
@@ -65,7 +65,7 @@ void OutputWriter::WriteQuad(const std::string& filename) {
   file.close();
 }
 
-void OutputWriter::WriteTria(const std::string& filename) {
+void OutputWriter::WriteTria(const std::string& filename) const {
   std::ofstream file;
 
   file.open(filename);
@@ -120,7 +120,7 @@ void OutputWriter::WriteTria(const std::string& filename) {
   file.close();
 }
 
-void OutputWriter::WriteTetra(const std::string& filename) {
+void OutputWriter::WriteTetra(const std::string& filename) const {
   std::ofstream file;
 
   file.open(filename);
