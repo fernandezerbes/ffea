@@ -13,7 +13,6 @@ namespace ffea {
 
 class GeometricEntityFactory {
  public:
-  // TODO See if unique_ptr can be changed to a reference
   virtual std::shared_ptr<GeometricEntity> CreateGeometricEntity(
       GeometricEntityType type, const std::vector<Node *> &nodes) const = 0;
 };
