@@ -44,7 +44,6 @@ int main() {
 
   */
 
-  // TODO Complete element factories for all element types
   // TODO Add source term
   // TODO Reuse all possible values of shape functions, jacobians, etc. during
   // system integration

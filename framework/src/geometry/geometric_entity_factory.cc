@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 namespace ffea {
-
+// TODO Change this to unique_ptr
 std::shared_ptr<GeometricEntity>
 GeometricEntityFactory2D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
@@ -30,7 +30,7 @@ GeometricEntityFactory3D::CreateGeometricEntity(
     case GeometricEntityType::kFourNodeQuad:
       return std::make_shared<FourNodeQuad3D>(nodes);
     case GeometricEntityType::kFourNodeTetra:
-      return std::make_shared<FourNodeTetra>(nodes);
+      return std::make_shared<FourNodeTetra3D>(nodes);
     case GeometricEntityType::kEightNodeHex:
       return std::make_shared<EightNodeHex3D>(nodes);
     default:

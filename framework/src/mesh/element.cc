@@ -77,13 +77,15 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
     const auto &global_coordinates =
         geometric_entity_.MapLocalToGlobal(shape_functions);
     const auto &body_load = load(global_coordinates);
-    const auto &normal = geometric_entity_.EvaluateNormal(local_coordinates);
+    const auto &jacobian =
+        geometric_entity_.EvaluateJacobian(local_coordinates);
+    auto differential = geometric_entity_.EvaluateDifferential(jacobian);
     auto number_of_load_components = GetNumberOfDofsPerNode();
     for (size_t load_component_index = 0;
          load_component_index < number_of_load_components;
          load_component_index++) {
       const auto &load_component_contribution =
-          shape_functions * body_load[load_component_index] * normal.norm() *
+          shape_functions * body_load[load_component_index] * differential *
           integration_point.weight();
       for (size_t node_index = 0; node_index < GetNumberOfNodes();
            node_index++) {

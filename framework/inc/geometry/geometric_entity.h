@@ -43,8 +43,6 @@ class GeometricEntity {
   size_t GetNumberOfNodes() const;
   std::vector<size_t> GetNodesIds() const;
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const = 0;
   Eigen::MatrixXd EvaluateJacobian(
       const Coordinates &local_coordinates,
       const Eigen::MatrixXd &shape_functions_derivatives) const;
@@ -52,6 +50,10 @@ class GeometricEntity {
   Eigen::MatrixXd EvaluateShapeFunctions(
       const Coordinates &local_coordinates,
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
+  virtual Eigen::VectorXd EvaluateNormalVector(
+      const Eigen::MatrixXd &jacobian) const;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const = 0;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
@@ -70,8 +72,10 @@ class TwoNodeLine2D : public GeometricEntity {
   TwoNodeLine2D(const std::vector<Node *> &nodes);
   virtual ~TwoNodeLine2D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual Eigen::VectorXd EvaluateNormalVector(
+      const Eigen::MatrixXd &jacobian) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
@@ -80,8 +84,10 @@ class TwoNodeLine3D : public GeometricEntity {
   TwoNodeLine3D(const std::vector<Node *> &nodes);
   virtual ~TwoNodeLine3D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual Eigen::VectorXd EvaluateNormalVector(
+      const Eigen::MatrixXd &jacobian) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
@@ -90,8 +96,8 @@ class FourNodeQuad2D : public GeometricEntity {
   FourNodeQuad2D(const std::vector<Node *> &nodes);
   virtual ~FourNodeQuad2D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
@@ -100,8 +106,10 @@ class FourNodeQuad3D : public GeometricEntity {
   FourNodeQuad3D(const std::vector<Node *> &nodes);
   virtual ~FourNodeQuad3D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual Eigen::VectorXd EvaluateNormalVector(
+      const Eigen::MatrixXd &jacobian) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
@@ -110,8 +118,8 @@ class EightNodeHex3D : public GeometricEntity {
   EightNodeHex3D(const std::vector<Node *> &nodes);
   virtual ~EightNodeHex3D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
@@ -120,8 +128,8 @@ class ThreeNodeTria2D : public GeometricEntity {
   ThreeNodeTria2D(const std::vector<Node *> &nodes);
   virtual ~ThreeNodeTria2D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
@@ -130,18 +138,20 @@ class ThreeNodeTria3D : public GeometricEntity {
   ThreeNodeTria3D(const std::vector<Node *> &nodes);
   virtual ~ThreeNodeTria3D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual Eigen::VectorXd EvaluateNormalVector(
+      const Eigen::MatrixXd &jacobian) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 
-class FourNodeTetra : public GeometricEntity {
+class FourNodeTetra3D : public GeometricEntity {
  public:
-  FourNodeTetra(const std::vector<Node *> &nodes);
-  virtual ~FourNodeTetra();
+  FourNodeTetra3D(const std::vector<Node *> &nodes);
+  virtual ~FourNodeTetra3D();
 
-  virtual Eigen::VectorXd EvaluateNormal(
-      const Coordinates &local_coordinates) const override;
+  virtual double EvaluateDifferential(
+      const Eigen::MatrixXd &jacobian) const override;
   virtual GeometricEntityType type() const override;
 };
 

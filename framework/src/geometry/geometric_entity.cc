@@ -1,5 +1,8 @@
 #include "../../inc/geometry/geometric_entity.h"
 
+#include <stdexcept>
+#include <string>
+
 namespace ffea {
 
 GeometricEntity::GeometricEntity(
@@ -80,6 +83,13 @@ Coordinates GeometricEntity::MapLocalToGlobal(
   return Coordinates(xyz);
 }
 
+Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
+    const Eigen::MatrixXd &jacobian) const {
+  std::string type_name = typeid(*this).name();
+  throw std::logic_error("Normal is undefined for geometric entity of type " +
+                         type_name);
+}
+
 Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
   return nodes_[node_index]->coordinates();
 }
@@ -92,15 +102,18 @@ TwoNodeLine2D::TwoNodeLine2D(const std::vector<Node *> &nodes)
 
 TwoNodeLine2D::~TwoNodeLine2D() {}
 
-Eigen::VectorXd TwoNodeLine2D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {
-  Eigen::MatrixXd jacobian =
-      GeometricEntity::EvaluateJacobian(local_coordinates);
+Eigen::VectorXd TwoNodeLine2D::EvaluateNormalVector(
+    const Eigen::MatrixXd &jacobian) const {
   // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
   normal(0) = jacobian(0, 1);
   normal(1) = -jacobian(0, 0);
   return normal;
+}
+
+double TwoNodeLine2D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  return jacobian.determinant();
 }
 
 GeometricEntityType TwoNodeLine2D::type() const {
@@ -113,8 +126,37 @@ TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
 
 TwoNodeLine3D::~TwoNodeLine3D() {}
 
-Eigen::VectorXd TwoNodeLine3D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {}
+Eigen::VectorXd TwoNodeLine3D::EvaluateNormalVector(
+    const Eigen::MatrixXd &jacobian) const {
+  /*
+  - Jacobian has the form: [1x2] * [2x3] = [1x3] = [dx/dxi, dy/dxi, dz/dxi]
+  - Line vector is u = [dx/dxi, dy/dxi, dz/dxi] = [a, b, c], which is
+    perpendicular to a plane a * x + b * y + c * z = 0
+  - Replacing th dx/dxi * x + dy/dxi * y + dz/dxi * z = 0 and choosing any x and
+    y, e.g. x = 1 and y = 0 we find z as
+    z = - dx/dxi / dz/dxi
+  - Normal vector to lying on plane is n = [x, y, z] = [1, 0, -dx/dxi / dz/dxi]
+  - Scale the vector to have the same length as u
+  */
+  double direction_vector_norm = jacobian(0, 0) * jacobian(0, 0) +
+                                 jacobian(0, 1) * jacobian(0, 1) +
+                                 jacobian(0, 2) * jacobian(0, 2);
+
+  Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
+  normal(0) = 1.0;
+  normal(1) = 0.0;
+  normal(2) = -jacobian(0, 0) / jacobian(0, 1);
+
+  return normal * std::sqrt(direction_vector_norm / normal.squaredNorm());
+}
+
+double TwoNodeLine3D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  double result = std::sqrt(jacobian(0, 0) * jacobian(0, 0) +
+                            jacobian(0, 1) * jacobian(0, 1) +
+                            jacobian(0, 2) * jacobian(0, 2));
+  return result;
+}
 
 GeometricEntityType TwoNodeLine3D::type() const {
   return GeometricEntityType::kTwoNodeLine;
@@ -126,8 +168,10 @@ FourNodeQuad2D::FourNodeQuad2D(const std::vector<Node *> &nodes)
 
 FourNodeQuad2D::~FourNodeQuad2D() {}
 
-Eigen::VectorXd FourNodeQuad2D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {}
+double FourNodeQuad2D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  return jacobian.determinant();
+}
 
 GeometricEntityType FourNodeQuad2D::type() const {
   return GeometricEntityType::kFourNodeQuad;
@@ -139,10 +183,8 @@ FourNodeQuad3D::FourNodeQuad3D(const std::vector<Node *> &nodes)
 
 FourNodeQuad3D::~FourNodeQuad3D() {}
 
-Eigen::VectorXd FourNodeQuad3D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {
-  Eigen::MatrixXd jacobian =
-      GeometricEntity::EvaluateJacobian(local_coordinates);
+Eigen::VectorXd FourNodeQuad3D::EvaluateNormalVector(
+    const Eigen::MatrixXd &jacobian) const {
   // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
@@ -150,6 +192,12 @@ Eigen::VectorXd FourNodeQuad3D::EvaluateNormal(
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
   normal(2) = jacobian(0, 0) * jacobian(1, 2) - jacobian(0, 1) * jacobian(1, 0);
   return normal;
+}
+
+double FourNodeQuad3D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  Eigen::VectorXd normal = EvaluateNormalVector(jacobian);
+  return normal.norm();
 }
 
 GeometricEntityType FourNodeQuad3D::type() const {
@@ -162,8 +210,10 @@ EightNodeHex3D::EightNodeHex3D(const std::vector<Node *> &nodes)
 
 EightNodeHex3D::~EightNodeHex3D() {}
 
-Eigen::VectorXd EightNodeHex3D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {}
+double EightNodeHex3D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  return jacobian.determinant();
+}
 
 GeometricEntityType EightNodeHex3D::type() const {
   return GeometricEntityType::kEightNodeHex;
@@ -175,8 +225,10 @@ ThreeNodeTria2D::ThreeNodeTria2D(const std::vector<Node *> &nodes)
 
 ThreeNodeTria2D::~ThreeNodeTria2D() {}
 
-Eigen::VectorXd ThreeNodeTria2D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {}
+double ThreeNodeTria2D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  return jacobian.determinant();
+}
 
 GeometricEntityType ThreeNodeTria2D::type() const {
   return GeometricEntityType::kThreeNodeTria;
@@ -188,10 +240,8 @@ ThreeNodeTria3D::ThreeNodeTria3D(const std::vector<Node *> &nodes)
 
 ThreeNodeTria3D::~ThreeNodeTria3D() {}
 
-Eigen::VectorXd ThreeNodeTria3D::EvaluateNormal(
-    const Coordinates &local_coordinates) const {
-  Eigen::MatrixXd jacobian =
-      GeometricEntity::EvaluateJacobian(local_coordinates);
+Eigen::VectorXd ThreeNodeTria3D::EvaluateNormalVector(
+    const Eigen::MatrixXd &jacobian) const {
   // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
@@ -201,20 +251,28 @@ Eigen::VectorXd ThreeNodeTria3D::EvaluateNormal(
   return normal;
 }
 
+double ThreeNodeTria3D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  Eigen::VectorXd normal = EvaluateNormalVector(jacobian);
+  return normal.norm();
+}
+
 GeometricEntityType ThreeNodeTria3D::type() const {
   return GeometricEntityType::kThreeNodeTria;
 }
 
-FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
+FourNodeTetra3D::FourNodeTetra3D(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes,
                       std::make_unique<FourNodeTetraShapeFunctions>()) {}
 
-FourNodeTetra::~FourNodeTetra() {}
+FourNodeTetra3D::~FourNodeTetra3D() {}
 
-Eigen::VectorXd FourNodeTetra::EvaluateNormal(
-    const Coordinates &local_coordinates) const {}
+double FourNodeTetra3D::EvaluateDifferential(
+    const Eigen::MatrixXd &jacobian) const {
+  return jacobian.determinant();
+}
 
-GeometricEntityType FourNodeTetra::type() const {
+GeometricEntityType FourNodeTetra3D::type() const {
   return GeometricEntityType::kFourNodeTetra;
 }
 
