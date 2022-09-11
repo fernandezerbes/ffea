@@ -1,6 +1,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCholesky>
 #include <array>
+#include <chrono>
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Sparse>
 #include <iostream>
@@ -59,6 +60,12 @@ int main() {
   // TODO Add MPI
 
   // ********************** MESH **********************
+  auto start = std::chrono::high_resolution_clock::now();
+  size_t number_of_cores = 4;
+  Eigen::setNbThreads(number_of_cores);
+  std::cout << "Running with " << Eigen::nbThreads() << " threads..."
+            << std::endl;
+
   const size_t number_of_fields = 2;
   const std::string dirichlet_group_name = "dirichlet";
   const std::string neumann_group_name = "neumann";
@@ -132,6 +139,11 @@ int main() {
   writer.RegisterPostProcessor(*displacement_postprocessor);
   // writer.WriteQuad("ffea_output_quad.vtk");
   writer.WriteTria("ffea_output_tria.vtk");
+
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = stop - start;
+
+  std::cout << "Ran in " << duration.count() << " ns" << std::endl;
 
   return 0;
 }

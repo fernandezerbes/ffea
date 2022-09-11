@@ -1,6 +1,7 @@
 #include <Eigen/IterativeLinearSolvers>
 #include <Eigen/SparseCholesky>
 #include <array>
+#include <chrono>
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Sparse>
 #include <iostream>
@@ -27,6 +28,12 @@
 
 int main() {
   // ********************** MESH **********************
+  auto start = std::chrono::high_resolution_clock::now();
+  size_t number_of_cores = 4;
+  Eigen::setNbThreads(number_of_cores);
+  std::cout << "Running with " << Eigen::nbThreads() << " threads..."
+            << std::endl;
+
   const std::string dirichlet_group_name = "dirichlet";
   const std::string neumann_group_name = "neumann";
   const std::string body_group_name = "body";
@@ -97,6 +104,12 @@ int main() {
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
   writer.WriteTetra("ffea_output_tetra_3d.vtk");
+
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+
+  std::cout << "Ran in " << duration.count() << " ms" << std::endl;
 
   return 0;
 }
