@@ -19,24 +19,33 @@ class Geometry {
   ~Geometry();
 
   size_t number_of_nodes() const;
+
   void AddNode(const std::array<double, 3>& xyz);
+
   void AddGeometricEntity(
-      GeometricEntityType type, const std::string& group_name,
-      const std::vector<size_t>& node_ids,
+      GeometricEntityType type, const std::vector<size_t>& node_ids,
       const GeometricEntityFactory& geometric_entity_factory);
-  std::vector<std::shared_ptr<GeometricEntity>>& GetGeometricEntityGroup(
+
+  void RegisterGeometricEntityGroup(
+      const std::string& group_name,
+      const std::vector<size_t>& geometric_entities_ids);
+
+  std::vector<GeometricEntity*>& GetGeometricEntityGroup(
       const std::string& group_name);
-  const std::vector<std::shared_ptr<GeometricEntity>>& GetGeometricEntityGroup(
+
+  const std::vector<GeometricEntity*>& GetGeometricEntityGroup(
       const std::string& group_name) const;
 
   const std::vector<Node>& nodes() const;
 
-  // TODO Make private and provide iterator
-  std::unordered_map<std::string, std::vector<std::shared_ptr<GeometricEntity>>>
-      geometric_entities_groups_;
-
  private:
   std::vector<Node> nodes_;
+  std::vector<std::shared_ptr<GeometricEntity>> geometric_entities_;
+
+ public:
+  // TODO Make private
+  std::unordered_map<std::string, std::vector<GeometricEntity*>>
+      geometric_entities_groups_;
 };
 
 }  // namespace ffea

@@ -9,6 +9,7 @@ Geometry GeometryBuilder::Build() {
   Geometry geometry;
   AddNodes(geometry);
   AddEntities(geometry);
+  AddEntitiesGroups(geometry);
   return geometry;
 }
 
@@ -31,18 +32,22 @@ void GeometryFromFileBuilder::AddNodes(Geometry &geometry) {
 }
 
 void GeometryFromFileBuilder::AddEntities(Geometry &geometry) {
+  for (const auto &geometric_entity : geometry_data_.geometric_entities()) {
+    // TODO Use mapping for gmsh elements instead of doing
+    // ElementType(element.type
+    // - 1)
+    geometry.AddGeometricEntity(GeometricEntityType(geometric_entity.type - 1),
+                                geometric_entity.node_ids,
+                                geometric_entity_factory_);
+  }
+}
+
+void GeometryFromFileBuilder::AddEntitiesGroups(Geometry &geometry) {
   for (const auto &geometric_entities_group :
        geometry_data_.geometric_entities_groups()) {
-    for (const auto &geometric_entity :
-         geometric_entities_group.geometric_entities()) {
-      // TODO Use mapping for gmsh elements instead of doing
-      // ElementType(element.type
-      // - 1)
-      geometry.AddGeometricEntity(
-          GeometricEntityType(geometric_entity.type - 1),
-          geometric_entities_group.name(), geometric_entity.node_ids,
-          geometric_entity_factory_);
-    }
+    geometry.RegisterGeometricEntityGroup(
+        geometric_entities_group.name(),
+        geometric_entities_group.geometric_entities_ids());
   }
 }
 

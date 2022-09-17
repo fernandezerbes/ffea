@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 namespace ffea {
-// TODO Change this to unique_ptr
+// TODO Change this to shared_ptr
 std::shared_ptr<GeometricEntity>
 GeometricEntityFactory2D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {

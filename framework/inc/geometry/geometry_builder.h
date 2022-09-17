@@ -18,6 +18,7 @@ class GeometryBuilder {
  protected:
   virtual void AddNodes(Geometry &geometry) = 0;
   virtual void AddEntities(Geometry &geometry) = 0;
+  virtual void AddEntitiesGroups(Geometry &geometry) = 0;
   const GeometricEntityFactory &geometric_entity_factory_;
 };
 
@@ -30,6 +31,7 @@ class GeometryFromFileBuilder : public GeometryBuilder {
  protected:
   virtual void AddNodes(Geometry &geometry) override;
   virtual void AddEntities(Geometry &geometry) override;
+  virtual void AddEntitiesGroups(Geometry &geometry) override;
 
  private:
   std::ifstream file_stream_;
