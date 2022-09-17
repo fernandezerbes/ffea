@@ -66,7 +66,7 @@ void GeometryData::AddGeometricEntityData(size_t id,
   }
 }
 
-void GeometryData::RegisterShapeTag(size_t dimension, size_t shape_id,
+void GeometryData::RegisterShapeId(size_t dimension, size_t shape_id,
                                     size_t entity_group_id) {
   auto &map = shape_id_to_entities_group_ids_maps_[dimension];
   if (map.contains(shape_id)) {
@@ -138,47 +138,36 @@ void ShapesParser::Parse(std::ifstream &file,
     for (size_t shape_index = 0; shape_index < shapes_per_dimension[dimension];
          shape_index++) {
       int shape_id;
-      file >> shape_id;  // column_index = 0
-      std::cout << shape_id << " ";
+      file >> shape_id;  // column = 0
       utilities::ConvertOneToZeroBased(shape_id);
 
-      size_t stop_column_index = (dimension == 0) ? 4 : 7;
-
+      size_t end_coords_column = (dimension == 0) ? 4 : 7;
       double coords;
-      for (size_t column_index = 1; column_index < stop_column_index;
-           column_index++) {
+      for (size_t column = 1; column < end_coords_column; column++) {
         file >> coords;
-        std::cout << coords << " ";
       }
 
       size_t number_of_geometric_entities_groups;
       file >> number_of_geometric_entities_groups;
-      std::cout << number_of_geometric_entities_groups << " ";
-
-      for (size_t column_index = stop_column_index;
-           column_index <
-           stop_column_index + number_of_geometric_entities_groups;
-           column_index++) {
+      for (size_t column = end_coords_column;
+           column < end_coords_column + number_of_geometric_entities_groups;
+           column++) {
         int entity_group_id;
         file >> entity_group_id;
-        std::cout << entity_group_id << " ";
         utilities::ConvertOneToZeroBased(entity_group_id);
-        geometry_data.RegisterShapeTag(dimension, shape_id, entity_group_id);
+        geometry_data.RegisterShapeId(dimension, shape_id, entity_group_id);
       }
 
       if (dimension > 0) {
         size_t number_of_bounding_shapes;
         file >> number_of_bounding_shapes;
-        std::cout << number_of_bounding_shapes << " ";
         int bounding_shape_id;
         for (size_t bounding_shape_index = 0;
              bounding_shape_index < number_of_bounding_shapes;
              bounding_shape_index++) {
           file >> bounding_shape_id;
-          std::cout << bounding_shape_id << " ";
         }
       }
-      std::cout << std::endl;
     }
   }
 }
@@ -225,14 +214,14 @@ void NodesParser::Parse(std::ifstream &file,
 void GeometricEntitiesParser::Parse(std::ifstream &file,
                                     GeometryData &geometry_data) const {
   size_t number_of_entity_blocks;
-  size_t number_of_elements;
-  size_t minimum_element_id;
-  size_t maximum_element_id;
-  file >> number_of_entity_blocks >> number_of_elements >> minimum_element_id >>
-      maximum_element_id;
+  size_t number_of_entities;
+  size_t minimum_entity_id;
+  size_t maximum_entity_id;
+  file >> number_of_entity_blocks >> number_of_entities >> minimum_entity_id >>
+      maximum_entity_id;
 
-  size_t total_number_of_elements = maximum_element_id - minimum_element_id + 1;
-  if (number_of_elements != total_number_of_elements) {
+  size_t total_number_of_entities = maximum_entity_id - minimum_entity_id + 1;
+  if (number_of_entities != total_number_of_entities) {
     throw std::runtime_error("Partitioned meshes are not supported");
   }
 
@@ -247,11 +236,11 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
     utilities::ConvertOneToZeroBased(owner_shape_id);
 
     size_t node_id;
-    size_t element_id;
+    size_t entity_id;
     std::vector<size_t> node_ids;
     std::string line;
-    for (size_t element_index = 0; element_index < number_of_entities_in_block;
-         element_index++) {
+    for (size_t entity_index = 0; entity_index < number_of_entities_in_block;
+         entity_index++) {
       node_ids.clear();
       std::getline(file, line);
       // TODO Make this better, don't know why getline is returning an empty
@@ -260,13 +249,13 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
         std::getline(file, line);
       }
       std::istringstream ss(line);
-      ss >> element_id;
-      utilities::ConvertOneToZeroBased(element_id);
+      ss >> entity_id;
+      utilities::ConvertOneToZeroBased(entity_id);
       while (ss >> node_id) {
         utilities::ConvertOneToZeroBased(node_id);
         node_ids.push_back(node_id);
       }
-      geometry_data.AddGeometricEntityData(element_id, geometric_entity_type,
+      geometry_data.AddGeometricEntityData(entity_id, geometric_entity_type,
                                            node_ids, owner_shape_dimension,
                                            owner_shape_id);
     }

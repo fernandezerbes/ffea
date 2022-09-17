@@ -55,7 +55,7 @@ class GeometryData {
                               const std::vector<size_t> &node_ids,
                               size_t owner_shape_dimension,
                               size_t owner_shape_id);
-  void RegisterShapeTag(size_t dimension, size_t shape_id,
+  void RegisterShapeId(size_t dimension, size_t shape_id,
                         size_t entity_group_id);
   const std::vector<NodeData> &nodes() const;
   const std::vector<GeometricEntityData> &geometric_entities() const;

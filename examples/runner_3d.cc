@@ -40,10 +40,10 @@ int main() {
   const size_t number_of_fields = 3;
 
   ffea::GeometricEntityFactory3D geometric_entity_factory;
-  // ffea::GeometryFromFileBuilder geometry_builder("cube.msh",
-  //                                                geometric_entity_factory);
-  ffea::GeometryFromFileBuilder geometry_builder("cylinder.msh",
+  ffea::GeometryFromFileBuilder geometry_builder("cube.msh",
                                                  geometric_entity_factory);
+  // ffea::GeometryFromFileBuilder geometry_builder("cylinder.msh",
+  //                                                geometric_entity_factory);
 
   auto geometry = geometry_builder.Build();
 

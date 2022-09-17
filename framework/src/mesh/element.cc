@@ -79,7 +79,6 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
     const auto &jacobian =
         geometric_entity_.EvaluateJacobian(local_coordinates);
     auto differential = geometric_entity_.EvaluateDifferential(jacobian);
-    std::cout << "Differential = " << differential << std::endl;
     auto number_of_load_components = GetNumberOfDofsPerNode();
     for (size_t load_component_index = 0;
          load_component_index < number_of_load_components;
