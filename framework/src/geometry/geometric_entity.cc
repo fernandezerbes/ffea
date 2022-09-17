@@ -122,6 +122,7 @@ GeometricEntityType TwoNodeLine2D::type() const {
 
 TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
     : GeometricEntity(3, nodes, std::make_unique<TwoNodeLineShapeFunctions>()) {
+  // TODO Throw exception if the number of nodes is not correct
 }
 
 TwoNodeLine3D::~TwoNodeLine3D() {}
@@ -227,7 +228,7 @@ ThreeNodeTria2D::~ThreeNodeTria2D() {}
 
 double ThreeNodeTria2D::EvaluateDifferential(
     const Eigen::MatrixXd &jacobian) const {
-  return jacobian.determinant();
+  return jacobian.determinant() / 2.0;
 }
 
 GeometricEntityType ThreeNodeTria2D::type() const {
@@ -254,7 +255,7 @@ Eigen::VectorXd ThreeNodeTria3D::EvaluateNormalVector(
 double ThreeNodeTria3D::EvaluateDifferential(
     const Eigen::MatrixXd &jacobian) const {
   Eigen::VectorXd normal = EvaluateNormalVector(jacobian);
-  return normal.norm();
+  return normal.norm() / 2.0;
 }
 
 GeometricEntityType ThreeNodeTria3D::type() const {
@@ -269,7 +270,7 @@ FourNodeTetra3D::~FourNodeTetra3D() {}
 
 double FourNodeTetra3D::EvaluateDifferential(
     const Eigen::MatrixXd &jacobian) const {
-  return jacobian.determinant();
+  return jacobian.determinant() / 6.0;
 }
 
 GeometricEntityType FourNodeTetra3D::type() const {
