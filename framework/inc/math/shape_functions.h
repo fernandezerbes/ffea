@@ -88,6 +88,33 @@ class EightNodeHexShapeFunctions : public ShapeFunctions {
       const Coordinates& coordinates) const override;
 };
 
+class SixNodeTriaShapeFunctions : public ShapeFunctions {
+ public:
+  virtual ~SixNodeTriaShapeFunctions() override;
+
+ private:
+  virtual Eigen::MatrixXd Evaluate(
+      const Coordinates& coordinates) const override;
+  virtual Eigen::MatrixXd Evaluate1stDerivative(
+      const Coordinates& coordinates) const override;
+  virtual Eigen::MatrixXd Evaluate2ndDerivative(
+      const Coordinates& coordinates) const override;
+};
+
+class TenNodeTetraShapeFunctions : public ShapeFunctions {
+ public:
+  virtual ~TenNodeTetraShapeFunctions() override;
+
+ private:
+  virtual Eigen::MatrixXd Evaluate(
+      const Coordinates& coordinates) const override;
+  virtual Eigen::MatrixXd Evaluate1stDerivative(
+      const Coordinates& coordinates) const override;
+  virtual Eigen::MatrixXd Evaluate2ndDerivative(
+      const Coordinates& coordinates) const override;
+};
+
+
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_INC_MATH_SHAPE_FUNCTIONS_H_
