@@ -3,6 +3,7 @@
 
 #include <array>
 #include <fstream>
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -43,6 +44,8 @@ class GeometryData {
   void AddGeometricEntityData(size_t geometric_entity_type,
                               size_t geometric_entity_group_id,
                               const std::vector<size_t> &node_ids);
+  void RegisterShapeTag(size_t dimension, size_t shape_tag,
+                        size_t entity_group_tag);
   const std::vector<NodeData> &nodes() const;
   const std::vector<GeometricEntityDataGroup> &geometric_entities_groups()
       const;
@@ -50,6 +53,8 @@ class GeometryData {
  private:
   std::vector<NodeData> nodes_;
   std::vector<GeometricEntityDataGroup> geometric_entities_groups_;
+  std::array<std::multimap<size_t, size_t>, 4>
+      shape_tag_to_entities_group_tags_maps_;
 };
 
 class Parser {

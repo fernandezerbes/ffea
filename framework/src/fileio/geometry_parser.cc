@@ -43,6 +43,12 @@ void GeometryData::AddGeometricEntityData(size_t geometric_entity_type,
       geometric_entity_type, node_ids);
 }
 
+void GeometryData::RegisterShapeTag(size_t dimension, size_t shape_tag,
+                                    size_t entity_group_tag) {
+  shape_tag_to_entities_group_tags_maps_[dimension].insert(
+      {shape_tag, entity_group_tag});
+}
+
 const std::vector<NodeData> &GeometryData::nodes() const { return nodes_; }
 
 const std::vector<GeometricEntityDataGroup>

@@ -44,9 +44,37 @@ int main() {
 
   */
 
+  // Algorithm for mesh
+  // Create entity names sets
+  // 1 = {}
+  // 2 = {}
+  // 3 = {}
+  // Run over entities, and based on physical tag populate the physical names sets
+  // 1 = {numann, dirichlet}
+  // 2 = {body}
+  // 3 = {neumann}
+  // Run over elements
+  // Get the entity tag of the element
+  // With the entity tag, get all the physical tags
+  // Add shared pointers to all physical tags
+  // Also could add a filter
+
+  // TODO Add check for mesh file format version
+  // TODO Fix mesh reading
+  // TODO See if it's convenient to have shape functions as part of geometric
+  // entities. We will need more hierarchy levels, but it may be beneficial for
+  // trias and tetras that have closed form shape functions, jacobians, etc
+  // TODO Check computation of jacobian for triangular shapes (looks wrong)
+  // TODO Do half of computations when matrices are symmetric. We can overload
+  // functions based on symmetric matrices.
+  // TODO Check results for axial case
   // TODO Add source term
   // TODO Reuse all possible values of shape functions, jacobians, etc. during
   // system integration
+  // TODO See if protected virtual classes can be made private
+  // TODO Add copy-constructor and copy-assignment operators
+  // TODO Add move-constructor and move-assignment operators
+  // TODO Add mass matrix contribution
   // TODO Remove dependency of Eigen
   // TODO Add caching of differential operator, shape functions, etc.
   // TODO Create analysis builders

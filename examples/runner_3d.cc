@@ -40,7 +40,9 @@ int main() {
   const size_t number_of_fields = 3;
 
   ffea::GeometricEntityFactory3D geometric_entity_factory;
-  ffea::GeometryFromFileBuilder geometry_builder("cube.msh",
+  // ffea::GeometryFromFileBuilder geometry_builder("cube.msh",
+  //                                                geometric_entity_factory);
+  ffea::GeometryFromFileBuilder geometry_builder("cylinder.msh",
                                                  geometric_entity_factory);
 
   auto geometry = geometry_builder.Build();
@@ -78,7 +80,7 @@ int main() {
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{0.0, 0.0, 1.0};
+    std::vector<double> load{1.0, 0.0, 0.0};
     return load;
   };
   model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
