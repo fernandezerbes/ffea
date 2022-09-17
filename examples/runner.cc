@@ -48,7 +48,6 @@ int main() {
   // TODO See if it's convenient to have shape functions as part of geometric
   // entities. We will need more hierarchy levels, but it may be beneficial for
   // trias and tetras that have closed form shape functions, jacobians, etc
-  // TODO Check computation of jacobian for triangular shapes (looks wrong)
   // TODO Do half of computations when matrices are symmetric. We can overload
   // functions based on symmetric matrices.
   // TODO Check results for axial case
