@@ -33,7 +33,7 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
   }
 
   auto geometric_entity = factory.CreateGeometricEntity(type, nodes);
-  geometric_entities_.push_back(geometric_entity);
+  geometric_entities_.push_back(std::move(geometric_entity));
 }
 
 void Geometry::RegisterGeometricEntityGroup(

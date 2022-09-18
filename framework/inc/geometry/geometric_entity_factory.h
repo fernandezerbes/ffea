@@ -13,20 +13,20 @@ namespace ffea {
 
 class GeometricEntityFactory {
  public:
-  virtual std::shared_ptr<GeometricEntity> CreateGeometricEntity(
+  virtual std::unique_ptr<GeometricEntity> CreateGeometricEntity(
       GeometricEntityType type, const std::vector<Node *> &nodes) const = 0;
 };
 
 class GeometricEntityFactory2D : public GeometricEntityFactory {
  public:
-  virtual std::shared_ptr<GeometricEntity> CreateGeometricEntity(
+  virtual std::unique_ptr<GeometricEntity> CreateGeometricEntity(
       GeometricEntityType type,
       const std::vector<Node *> &nodes) const override;
 };
 
 class GeometricEntityFactory3D : public GeometricEntityFactory {
  public:
-  virtual std::shared_ptr<GeometricEntity> CreateGeometricEntity(
+  virtual std::unique_ptr<GeometricEntity> CreateGeometricEntity(
       GeometricEntityType type,
       const std::vector<Node *> &nodes) const override;
 };

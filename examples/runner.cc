@@ -45,6 +45,7 @@ int main() {
   */
 
   // TODO Get rid of shared_ptr when not appropriate
+  // TODO Change shape functions classes for functions?
   // TODO Add check for mesh file format version
   // TODO Do half of computations when matrices are symmetric. We can overload
   // functions based on symmetric matrices.

@@ -18,6 +18,10 @@ class Geometry {
   Geometry();
   ~Geometry();
 
+  // We need to provide a default move constructor because it's not implicitly
+  // declared when having a user-declared destructor (~Geometry();)
+  Geometry(Geometry&&) = default;
+
   size_t number_of_nodes() const;
 
   void AddNode(const std::array<double, 3>& xyz);
@@ -40,7 +44,7 @@ class Geometry {
 
  private:
   std::vector<Node> nodes_;
-  std::vector<std::shared_ptr<GeometricEntity>> geometric_entities_;
+  std::vector<std::unique_ptr<GeometricEntity>> geometric_entities_;
 
  public:
   // TODO Make private
