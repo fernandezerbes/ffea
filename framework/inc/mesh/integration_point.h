@@ -67,6 +67,12 @@ const IntegrationPointsGroup rule_quad_4 = {
 const IntegrationPointsGroup rule_tetra_1 = {
     {1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0, 0.5}};
 
+const IntegrationPointsGroup rule_tetra_4 = {
+    {0.58541020, 0.13819660, 0.13819660, 0.041666667},
+    {0.13819660, 0.58541020, 0.13819660, 0.041666667},
+    {0.13819660, 0.13819660, 0.58541020, 0.041666667},
+    {0.13819660, 0.13819660, 0.13819660, 0.041666667}};
+
 // Hexas
 
 const IntegrationPointsGroup rule_hex_8 = {
