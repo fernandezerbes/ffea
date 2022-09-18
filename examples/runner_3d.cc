@@ -82,7 +82,7 @@ int main() {
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
-    std::vector<double> load{1.0, 0.0, 0.0};
+    std::vector<double> load{0.0, 0.0, 1.0};
     return load;
   };
   model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
