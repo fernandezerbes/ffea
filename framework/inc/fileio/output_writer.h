@@ -15,6 +15,7 @@ class OutputWriter {
   void WriteQuad(const std::string& filename) const;
   void WriteTria(const std::string& filename) const;
   void WriteTetra(const std::string& filename) const;
+  void WriteTetraQuadratic(const std::string& filename) const;
 
  private:
   std::vector<const PostProcessor*> postprocessors_;

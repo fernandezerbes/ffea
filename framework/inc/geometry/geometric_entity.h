@@ -35,10 +35,12 @@ enum class GeometricEntityType {
 
 class GeometricEntity {
  public:
-  GeometricEntity(size_t dimension, const std::vector<Node *> &nodes,
+  GeometricEntity(GeometricEntityType type, size_t dimension,
+                  const std::vector<Node *> &nodes,
                   std::unique_ptr<ShapeFunctions> shape_functions);
   virtual ~GeometricEntity();
 
+  GeometricEntityType type() const;
   size_t dimension() const;
   size_t GetNumberOfNodes() const;
   std::vector<size_t> GetNodesIds() const;
@@ -58,101 +60,101 @@ class GeometricEntity {
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
   const std::vector<Node *> &nodes() const;
-  virtual GeometricEntityType type() const = 0;
 
  private:
+  GeometricEntityType type_;
   size_t dimension_;
   std::vector<Node *> nodes_;
   std::unique_ptr<ShapeFunctions> shape_functions_;
   Eigen::MatrixXd GetNodesCoordinatesValues() const;
 };
 
-class TwoNodeLine2D : public GeometricEntity {
+class Line2D : public GeometricEntity {
  public:
-  TwoNodeLine2D(const std::vector<Node *> &nodes);
-  virtual ~TwoNodeLine2D();
+  Line2D(GeometricEntityType type, const std::vector<Node *> &nodes,
+         std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Line2D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class TwoNodeLine3D : public GeometricEntity {
+class Line3D : public GeometricEntity {
  public:
-  TwoNodeLine3D(const std::vector<Node *> &nodes);
-  virtual ~TwoNodeLine3D();
+  Line3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+         std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Line3D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class FourNodeQuad2D : public GeometricEntity {
+class Quad2D : public GeometricEntity {
  public:
-  FourNodeQuad2D(const std::vector<Node *> &nodes);
-  virtual ~FourNodeQuad2D();
+  Quad2D(GeometricEntityType type, const std::vector<Node *> &nodes,
+         std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Quad2D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class FourNodeQuad3D : public GeometricEntity {
+class Quad3D : public GeometricEntity {
  public:
-  FourNodeQuad3D(const std::vector<Node *> &nodes);
-  virtual ~FourNodeQuad3D();
+  Quad3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+         std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Quad3D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class EightNodeHex3D : public GeometricEntity {
+class Hex3D : public GeometricEntity {
  public:
-  EightNodeHex3D(const std::vector<Node *> &nodes);
-  virtual ~EightNodeHex3D();
+  Hex3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+        std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Hex3D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class ThreeNodeTria2D : public GeometricEntity {
+class Tria2D : public GeometricEntity {
  public:
-  ThreeNodeTria2D(const std::vector<Node *> &nodes);
-  virtual ~ThreeNodeTria2D();
+  Tria2D(GeometricEntityType type, const std::vector<Node *> &nodes,
+         std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Tria2D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class ThreeNodeTria3D : public GeometricEntity {
+class Tria3D : public GeometricEntity {
  public:
-  ThreeNodeTria3D(const std::vector<Node *> &nodes);
-  virtual ~ThreeNodeTria3D();
+  Tria3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+         std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Tria3D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
-class FourNodeTetra3D : public GeometricEntity {
+class Tetra3D : public GeometricEntity {
  public:
-  FourNodeTetra3D(const std::vector<Node *> &nodes);
-  virtual ~FourNodeTetra3D();
+  Tetra3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+          std::unique_ptr<ShapeFunctions> shape_functions);
+  virtual ~Tetra3D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
-  virtual GeometricEntityType type() const override;
 };
 
 }  // namespace ffea

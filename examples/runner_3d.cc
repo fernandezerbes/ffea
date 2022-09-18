@@ -40,10 +40,12 @@ int main() {
   const size_t number_of_fields = 3;
 
   ffea::GeometricEntityFactory3D geometric_entity_factory;
-  ffea::GeometryFromFileBuilder geometry_builder("cube.msh",
+
+  // std::string filename = "cube.msh";
+  // std::string filename = "cylinder.msh";
+  std::string filename = "cylinder_quadratic.msh";
+  ffea::GeometryFromFileBuilder geometry_builder(filename,
                                                  geometric_entity_factory);
-  // ffea::GeometryFromFileBuilder geometry_builder("cylinder.msh",
-  //                                                geometric_entity_factory);
 
   auto geometry = geometry_builder.Build();
 
@@ -105,7 +107,8 @@ int main() {
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
-  writer.WriteTetra("ffea_output_tetra_3d.vtk");
+  // writer.WriteTetra("ffea_output_tetra_3d.vtk");
+  writer.WriteTetraQuadratic("ffea_output_tetra_3d_quadratic.vtk");
 
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration =

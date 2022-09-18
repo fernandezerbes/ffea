@@ -15,6 +15,8 @@ void IntegrationPointsProvider::RegisterIntegrationPoints(
 
 namespace utilities {
 
+// TODO Review factories
+
 IntegrationPointsProvider MakeFullIntegrationPointsProvider() {
   IntegrationPointsProvider provider;
   provider.RegisterIntegrationPoints(GeometricEntityType::kTwoNodeLine,
@@ -27,6 +29,10 @@ IntegrationPointsProvider MakeFullIntegrationPointsProvider() {
                                      rule_tetra_1);
   provider.RegisterIntegrationPoints(GeometricEntityType::kEightNodeHex,
                                      rule_hex_8);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kSixNodeTria,
+                                     rule_tria_1);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kTenNodeTetra,
+                                     rule_tetra_1);
 
   return provider;
 }
@@ -43,11 +49,13 @@ IntegrationPointsProvider MakeReducedIntegrationPointsProvider() {
                                      rule_tetra_1);
   provider.RegisterIntegrationPoints(GeometricEntityType::kEightNodeHex,
                                      rule_hex_8);
-
+  provider.RegisterIntegrationPoints(GeometricEntityType::kSixNodeTria,
+                                     rule_tria_1);
+  provider.RegisterIntegrationPoints(GeometricEntityType::kTenNodeTetra,
+                                     rule_tetra_1);
   return provider;
 }
 
 }  // namespace utilities
-
 
 }  // namespace ffea

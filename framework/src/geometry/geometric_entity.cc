@@ -6,13 +6,17 @@
 namespace ffea {
 
 GeometricEntity::GeometricEntity(
-    size_t dimension, const std::vector<Node *> &nodes,
+    GeometricEntityType type, size_t dimension,
+    const std::vector<Node *> &nodes,
     std::unique_ptr<ShapeFunctions> shape_functions)
-    : dimension_(dimension),
+    : type_(type),
+      dimension_(dimension),
       nodes_(nodes),
       shape_functions_(std::move(shape_functions)) {}
 
 GeometricEntity::~GeometricEntity() {}
+
+GeometricEntityType GeometricEntity::type() const { return type_; }
 
 size_t GeometricEntity::dimension() const { return dimension_; }
 
@@ -96,13 +100,13 @@ Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
 
 const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }
 
-TwoNodeLine2D::TwoNodeLine2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes, std::make_unique<TwoNodeLineShapeFunctions>()) {
-}
+Line2D::Line2D(GeometricEntityType type, const std::vector<Node *> &nodes,
+               std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
 
-TwoNodeLine2D::~TwoNodeLine2D() {}
+Line2D::~Line2D() {}
 
-Eigen::VectorXd TwoNodeLine2D::EvaluateNormalVector(
+Eigen::VectorXd Line2D::EvaluateNormalVector(
     const Eigen::MatrixXd &jacobian) const {
   // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
@@ -111,23 +115,17 @@ Eigen::VectorXd TwoNodeLine2D::EvaluateNormalVector(
   return normal;
 }
 
-double TwoNodeLine2D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Line2D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   return jacobian.determinant();
 }
 
-GeometricEntityType TwoNodeLine2D::type() const {
-  return GeometricEntityType::kTwoNodeLine;
-}
+Line3D::Line3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+               std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
-TwoNodeLine3D::TwoNodeLine3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes, std::make_unique<TwoNodeLineShapeFunctions>()) {
-  // TODO Throw exception if the number of nodes is not correct
-}
+Line3D::~Line3D() {}
 
-TwoNodeLine3D::~TwoNodeLine3D() {}
-
-Eigen::VectorXd TwoNodeLine3D::EvaluateNormalVector(
+Eigen::VectorXd Line3D::EvaluateNormalVector(
     const Eigen::MatrixXd &jacobian) const {
   /*
   - Jacobian has the form: [1x2] * [2x3] = [1x3] = [dx/dxi, dy/dxi, dz/dxi]
@@ -151,40 +149,30 @@ Eigen::VectorXd TwoNodeLine3D::EvaluateNormalVector(
   return normal * std::sqrt(direction_vector_norm / normal.squaredNorm());
 }
 
-double TwoNodeLine3D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Line3D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   double result = std::sqrt(jacobian(0, 0) * jacobian(0, 0) +
                             jacobian(0, 1) * jacobian(0, 1) +
                             jacobian(0, 2) * jacobian(0, 2));
   return result;
 }
 
-GeometricEntityType TwoNodeLine3D::type() const {
-  return GeometricEntityType::kTwoNodeLine;
-}
+Quad2D::Quad2D(GeometricEntityType type, const std::vector<Node *> &nodes,
+               std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
 
-FourNodeQuad2D::FourNodeQuad2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes,
-                      std::make_unique<FourNodeQuadShapeFunctions>()) {}
+Quad2D::~Quad2D() {}
 
-FourNodeQuad2D::~FourNodeQuad2D() {}
-
-double FourNodeQuad2D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Quad2D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   return jacobian.determinant();
 }
 
-GeometricEntityType FourNodeQuad2D::type() const {
-  return GeometricEntityType::kFourNodeQuad;
-}
+Quad3D::Quad3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+               std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
-FourNodeQuad3D::FourNodeQuad3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes,
-                      std::make_unique<FourNodeQuadShapeFunctions>()) {}
+Quad3D::~Quad3D() {}
 
-FourNodeQuad3D::~FourNodeQuad3D() {}
-
-Eigen::VectorXd FourNodeQuad3D::EvaluateNormalVector(
+Eigen::VectorXd Quad3D::EvaluateNormalVector(
     const Eigen::MatrixXd &jacobian) const {
   // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
@@ -195,53 +183,38 @@ Eigen::VectorXd FourNodeQuad3D::EvaluateNormalVector(
   return normal;
 }
 
-double FourNodeQuad3D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Quad3D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   Eigen::VectorXd normal = EvaluateNormalVector(jacobian);
   return normal.norm();
 }
 
-GeometricEntityType FourNodeQuad3D::type() const {
-  return GeometricEntityType::kFourNodeQuad;
-}
+Hex3D::Hex3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+             std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
-EightNodeHex3D::EightNodeHex3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes,
-                      std::make_unique<EightNodeHexShapeFunctions>()) {}
+Hex3D::~Hex3D() {}
 
-EightNodeHex3D::~EightNodeHex3D() {}
-
-double EightNodeHex3D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Hex3D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   return jacobian.determinant();
 }
 
-GeometricEntityType EightNodeHex3D::type() const {
-  return GeometricEntityType::kEightNodeHex;
-}
+Tria2D::Tria2D(GeometricEntityType type, const std::vector<Node *> &nodes,
+               std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
 
-ThreeNodeTria2D::ThreeNodeTria2D(const std::vector<Node *> &nodes)
-    : GeometricEntity(2, nodes,
-                      std::make_unique<ThreeNodeTriaShapeFunctions>()) {}
+Tria2D::~Tria2D() {}
 
-ThreeNodeTria2D::~ThreeNodeTria2D() {}
-
-double ThreeNodeTria2D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Tria2D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   return jacobian.determinant() / 2.0;
 }
 
-GeometricEntityType ThreeNodeTria2D::type() const {
-  return GeometricEntityType::kThreeNodeTria;
-}
+Tria3D::Tria3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+               std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
-ThreeNodeTria3D::ThreeNodeTria3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes,
-                      std::make_unique<ThreeNodeTriaShapeFunctions>()) {}
+Tria3D::~Tria3D() {}
 
-ThreeNodeTria3D::~ThreeNodeTria3D() {}
-
-Eigen::VectorXd ThreeNodeTria3D::EvaluateNormalVector(
+Eigen::VectorXd Tria3D::EvaluateNormalVector(
     const Eigen::MatrixXd &jacobian) const {
   // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
@@ -252,29 +225,19 @@ Eigen::VectorXd ThreeNodeTria3D::EvaluateNormalVector(
   return normal;
 }
 
-double ThreeNodeTria3D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Tria3D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   Eigen::VectorXd normal = EvaluateNormalVector(jacobian);
   return normal.norm() / 2.0;
 }
 
-GeometricEntityType ThreeNodeTria3D::type() const {
-  return GeometricEntityType::kThreeNodeTria;
-}
+Tetra3D::Tetra3D(GeometricEntityType type, const std::vector<Node *> &nodes,
+                 std::unique_ptr<ShapeFunctions> shape_functions)
+    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
-FourNodeTetra3D::FourNodeTetra3D(const std::vector<Node *> &nodes)
-    : GeometricEntity(3, nodes,
-                      std::make_unique<FourNodeTetraShapeFunctions>()) {}
+Tetra3D::~Tetra3D() {}
 
-FourNodeTetra3D::~FourNodeTetra3D() {}
-
-double FourNodeTetra3D::EvaluateDifferential(
-    const Eigen::MatrixXd &jacobian) const {
+double Tetra3D::EvaluateDifferential(const Eigen::MatrixXd &jacobian) const {
   return jacobian.determinant() / 6.0;
-}
-
-GeometricEntityType FourNodeTetra3D::type() const {
-  return GeometricEntityType::kFourNodeTetra;
 }
 
 }  // namespace ffea

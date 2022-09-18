@@ -348,11 +348,11 @@ Eigen::MatrixXd SixNodeTriaShapeFunctions::Evaluate1stDerivative(
   result(0, 4) = 4.0 * s;
   result(0, 5) = -4.0 * s;
 
-  result(0, 0) = -3.0 + 4.0 * (r + s);
-  result(0, 2) = 4.0 * s - 1.0;
-  result(0, 3) = -4.0 * r;
-  result(0, 4) = 4.0 * r;
-  result(0, 5) = 4.0 - 4.0 * r - 8.0 * s;
+  result(1, 0) = -3.0 + 4.0 * (r + s);
+  result(1, 2) = 4.0 * s - 1.0;
+  result(1, 3) = -4.0 * r;
+  result(1, 4) = 4.0 * r;
+  result(1, 5) = 4.0 - 4.0 * r - 8.0 * s;
 
   return result;
 }
@@ -373,14 +373,14 @@ Eigen::MatrixXd SixNodeTriaShapeFunctions::Evaluate2ndDerivative(
   result(0, 1) = 4.0;
   result(0, 3) = -8.0;
 
-  result(0, 0) = 4.0;
-  result(0, 2) = 4.0;
-  result(0, 5) = -8.0;
+  result(1, 0) = 4.0;
+  result(1, 2) = 4.0;
+  result(1, 5) = -8.0;
 
-  result(0, 0) = 4.0;
-  result(0, 3) = -4.0;
-  result(0, 4) = 4.0;
-  result(0, 5) = -4.0;
+  result(2, 0) = 4.0;
+  result(2, 3) = -4.0;
+  result(2, 4) = 4.0;
+  result(2, 5) = -4.0;
 
   return result;
 }
