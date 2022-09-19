@@ -14,7 +14,8 @@ namespace ffea {
 
 class ElementFactory {
  public:
-  ElementFactory(const IntegrationPointsProvider &integration_points_provider);
+  explicit ElementFactory(
+      const IntegrationPointsProvider &integration_points_provider);
   Element CreateElement(GeometricEntity &geometric_entity,
                         const std::vector<DegreeOfFreedom *> &dofs) const;
 
