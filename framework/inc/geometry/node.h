@@ -11,7 +11,6 @@ namespace ffea {
 class Node {
  public:
   Node(size_t id, const Coordinates &coordinates);
-  ~Node();
 
   size_t id() const;
   Coordinates &coordinates();
