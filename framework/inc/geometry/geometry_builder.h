@@ -16,10 +16,12 @@ class GeometryBuilder {
   Geometry Build();
 
  protected:
+  const GeometricEntityFactory &geometric_entity_factory_;
+ 
+ private:
   virtual void AddNodes(Geometry &geometry) = 0;
   virtual void AddEntities(Geometry &geometry) = 0;
   virtual void AddEntitiesGroups(Geometry &geometry) = 0;
-  const GeometricEntityFactory &geometric_entity_factory_;
 };
 
 class GeometryFromFileBuilder : public GeometryBuilder {
@@ -27,12 +29,11 @@ class GeometryFromFileBuilder : public GeometryBuilder {
   GeometryFromFileBuilder(const std::string &file_path,
                           const GeometricEntityFactory &factory);
 
- protected:
+ private:
   virtual void AddNodes(Geometry &geometry) override;
   virtual void AddEntities(Geometry &geometry) override;
   virtual void AddEntitiesGroups(Geometry &geometry) override;
 
- private:
   std::ifstream file_stream_;
   GeometryParser parser_;
   GeometryData geometry_data_;
