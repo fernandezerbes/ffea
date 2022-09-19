@@ -11,10 +11,7 @@ namespace ffea {
 
 class IntegrationPoint {
  public:
-  IntegrationPoint();
-  IntegrationPoint(const Coordinates &local_coordinates, double weight);
   IntegrationPoint(double x, double y, double z, double weight);
-  ~IntegrationPoint();
 
   const Coordinates &local_coordinates() const;
   double weight() const;
