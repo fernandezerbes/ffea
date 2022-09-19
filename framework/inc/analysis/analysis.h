@@ -9,7 +9,7 @@ namespace ffea {
 
 class Analysis {
  public:
-  Analysis(Model &model);
+  explicit Analysis(Model &model);
 
   void Solve();
 
