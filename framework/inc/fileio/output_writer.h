@@ -10,7 +10,7 @@ namespace ffea {
 
 class OutputWriter {
  public:
-  OutputWriter(Mesh& mesh);
+  explicit OutputWriter(Mesh& mesh);
   void RegisterPostProcessor(const PostProcessor &postprocessor);
   void WriteQuad(const std::string& filename) const;
   void WriteTria(const std::string& filename) const;
