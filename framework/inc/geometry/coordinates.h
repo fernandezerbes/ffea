@@ -8,10 +8,8 @@ namespace ffea {
 
 class Coordinates {
  public:
-  Coordinates();
   Coordinates(const std::array<double, 3> &xyz);
   Coordinates(double x, double y, double z);
-  ~Coordinates();
 
   double get(size_t index) const;
   void set(double x, double y, double z);

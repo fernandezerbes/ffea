@@ -5,13 +5,9 @@
 
 namespace ffea {
 
-Coordinates::Coordinates() : xyz_{} {}
-
 Coordinates::Coordinates(const std::array<double, 3> &xyz) : xyz_(xyz) {}
 
 Coordinates::Coordinates(double x, double y, double z) : xyz_({x, y, z}) {}
-
-Coordinates::~Coordinates() {}
 
 double Coordinates::get(size_t index) const {
   if (index > 2) {
