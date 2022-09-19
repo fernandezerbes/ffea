@@ -7,7 +7,8 @@ namespace ffea {
 
 class DifferentialOperator {
  public:
-  DifferentialOperator(size_t physical_dimension);
+  explicit DifferentialOperator(size_t physical_dimension);
+  
   virtual const Eigen::MatrixXd Compute(
       const Eigen::MatrixXd &shape_function_derivatives) const = 0;
 
@@ -18,6 +19,7 @@ class DifferentialOperator {
 class StrainDisplacementOperator2D : public DifferentialOperator {
  public:
   StrainDisplacementOperator2D();
+  
   virtual const Eigen::MatrixXd Compute(
       const Eigen::MatrixXd &shape_function_derivatives) const override;
 };
@@ -25,6 +27,7 @@ class StrainDisplacementOperator2D : public DifferentialOperator {
 class StrainDisplacementOperator3D : public DifferentialOperator {
  public:
   StrainDisplacementOperator3D();
+  
   virtual const Eigen::MatrixXd Compute(
       const Eigen::MatrixXd &shape_function_derivatives) const override;
 };

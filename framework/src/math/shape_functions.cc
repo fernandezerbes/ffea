@@ -21,10 +21,6 @@ Eigen::MatrixXd ShapeFunctions::Evaluate(
   }
 }
 
-ShapeFunctions::~ShapeFunctions() {}
-
-TwoNodeLineShapeFunctions::~TwoNodeLineShapeFunctions() {}
-
 Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
   double r = coordinates.get(0);
@@ -50,8 +46,6 @@ Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate2ndDerivative(
     const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(1, 2);
 }
-
-ThreeNodeTriaShapeFunctions::~ThreeNodeTriaShapeFunctions() {}
 
 Eigen::MatrixXd ThreeNodeTriaShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
@@ -92,8 +86,6 @@ Eigen::MatrixXd ThreeNodeTriaShapeFunctions::Evaluate2ndDerivative(
     const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(3, 3);
 }
-
-FourNodeQuadShapeFunctions::~FourNodeQuadShapeFunctions() {}
 
 Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
@@ -151,8 +143,6 @@ Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate2ndDerivative(
   return result;
 }
 
-FourNodeTetraShapeFunctions::~FourNodeTetraShapeFunctions() {}
-
 Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
   double r = coordinates.get(0);
@@ -196,8 +186,6 @@ Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate2ndDerivative(
     const Coordinates& coordinates) const {
   return Eigen::MatrixXd::Zero(6, 4);
 }
-
-EightNodeHexShapeFunctions::~EightNodeHexShapeFunctions() {}
 
 Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
@@ -312,8 +300,6 @@ Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate2ndDerivative(
   return result;
 }
 
-SixNodeTriaShapeFunctions::~SixNodeTriaShapeFunctions() {}
-
 Eigen::MatrixXd SixNodeTriaShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {
   double r = coordinates.get(0);
@@ -384,8 +370,6 @@ Eigen::MatrixXd SixNodeTriaShapeFunctions::Evaluate2ndDerivative(
 
   return result;
 }
-
-TenNodeTetraShapeFunctions::~TenNodeTetraShapeFunctions() {}
 
 Eigen::MatrixXd TenNodeTetraShapeFunctions::Evaluate(
     const Coordinates& coordinates) const {

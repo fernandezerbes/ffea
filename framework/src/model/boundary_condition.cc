@@ -8,8 +8,6 @@ BoundaryCondition::BoundaryCondition(
     : boundary_elements_(boundary_elements),
       boundary_function_(boundary_function) {}
 
-BoundaryCondition::~BoundaryCondition() {}
-
 NeumannBoundaryCondition::NeumannBoundaryCondition(
     const std::vector<Element> &boundary_elements,
     ConditionFunction boundary_function)

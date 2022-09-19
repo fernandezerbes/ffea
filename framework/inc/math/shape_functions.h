@@ -14,8 +14,6 @@ class ShapeFunctions {
   Eigen::MatrixXd Evaluate(const Coordinates& coordinates,
                            DerivativeOrder derivative_order) const;
 
-  virtual ~ShapeFunctions();
-
  private:
   virtual Eigen::MatrixXd Evaluate(const Coordinates& coordinates) const = 0;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
@@ -25,9 +23,6 @@ class ShapeFunctions {
 };
 
 class TwoNodeLineShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~TwoNodeLineShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;
@@ -38,9 +33,6 @@ class TwoNodeLineShapeFunctions : public ShapeFunctions {
 };
 
 class ThreeNodeTriaShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~ThreeNodeTriaShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;
@@ -51,9 +43,6 @@ class ThreeNodeTriaShapeFunctions : public ShapeFunctions {
 };
 
 class FourNodeQuadShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~FourNodeQuadShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;
@@ -64,9 +53,6 @@ class FourNodeQuadShapeFunctions : public ShapeFunctions {
 };
 
 class FourNodeTetraShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~FourNodeTetraShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;
@@ -76,9 +62,6 @@ class FourNodeTetraShapeFunctions : public ShapeFunctions {
       const Coordinates& coordinates) const override;
 };
 class EightNodeHexShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~EightNodeHexShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;
@@ -89,9 +72,6 @@ class EightNodeHexShapeFunctions : public ShapeFunctions {
 };
 
 class SixNodeTriaShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~SixNodeTriaShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;
@@ -102,9 +82,6 @@ class SixNodeTriaShapeFunctions : public ShapeFunctions {
 };
 
 class TenNodeTetraShapeFunctions : public ShapeFunctions {
- public:
-  virtual ~TenNodeTetraShapeFunctions() override;
-
  private:
   virtual Eigen::MatrixXd Evaluate(
       const Coordinates& coordinates) const override;

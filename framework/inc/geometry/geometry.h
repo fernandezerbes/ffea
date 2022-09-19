@@ -16,6 +16,9 @@ namespace ffea {
 class Geometry {
  public:
   Geometry() = default;
+
+  // We need the move-constructor and move-assignment operator defined to be
+  // able to move the vector of unique_ptr. The rest is just rule of 5.
   ~Geometry() = default;
   Geometry(const Geometry&) = delete;
   Geometry& operator=(const Geometry&) = delete;

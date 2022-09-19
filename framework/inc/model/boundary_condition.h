@@ -17,7 +17,12 @@ class BoundaryCondition {
  public:
   BoundaryCondition(const std::vector<Element> &boundary_elements,
                     ConditionFunction boundary_function);
-  virtual ~BoundaryCondition();
+  virtual ~BoundaryCondition() = default;
+  BoundaryCondition(const BoundaryCondition &) = delete;
+  BoundaryCondition &operator=(const BoundaryCondition &) = delete;
+  BoundaryCondition(BoundaryCondition &&) = default;
+  BoundaryCondition &operator=(BoundaryCondition &&) = default;
+
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const = 0;
 

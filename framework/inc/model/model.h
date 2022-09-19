@@ -15,7 +15,8 @@ namespace ffea {
 
 class Model {
  public:
-  Model(Mesh &mesh);
+  explicit Model(Mesh &mesh);
+  
   void AddComputationalDomain(const std::string &domain_name,
                               const ConstitutiveModel &constitutive_model,
                               const DifferentialOperator &differential_operator,

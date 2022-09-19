@@ -16,7 +16,8 @@ class PostProcessor {
 
 class DisplacementsPostProcessor : public PostProcessor {
  public:
-  DisplacementsPostProcessor(const Mesh& mesh);
+  explicit DisplacementsPostProcessor(const Mesh& mesh);
+  
   virtual Eigen::VectorXd GetValuesAtNode(const Element& element,
                                 size_t component_index) const override;
 
