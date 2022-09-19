@@ -77,7 +77,6 @@ class Line2D : public GeometricEntity {
  public:
   Line2D(GeometricEntityType type, const std::vector<Node *> &nodes,
          std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Line2D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
@@ -89,7 +88,6 @@ class Line3D : public GeometricEntity {
  public:
   Line3D(GeometricEntityType type, const std::vector<Node *> &nodes,
          std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Line3D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
@@ -101,7 +99,6 @@ class Quad2D : public GeometricEntity {
  public:
   Quad2D(GeometricEntityType type, const std::vector<Node *> &nodes,
          std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Quad2D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
@@ -111,7 +108,6 @@ class Quad3D : public GeometricEntity {
  public:
   Quad3D(GeometricEntityType type, const std::vector<Node *> &nodes,
          std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Quad3D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
@@ -123,7 +119,6 @@ class Hex3D : public GeometricEntity {
  public:
   Hex3D(GeometricEntityType type, const std::vector<Node *> &nodes,
         std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Hex3D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
@@ -133,7 +128,6 @@ class Tria2D : public GeometricEntity {
  public:
   Tria2D(GeometricEntityType type, const std::vector<Node *> &nodes,
          std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Tria2D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
@@ -143,7 +137,6 @@ class Tria3D : public GeometricEntity {
  public:
   Tria3D(GeometricEntityType type, const std::vector<Node *> &nodes,
          std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Tria3D();
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Eigen::MatrixXd &jacobian) const override;
@@ -155,7 +148,6 @@ class Tetra3D : public GeometricEntity {
  public:
   Tetra3D(GeometricEntityType type, const std::vector<Node *> &nodes,
           std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~Tetra3D();
 
   virtual double EvaluateDifferential(
       const Eigen::MatrixXd &jacobian) const override;
