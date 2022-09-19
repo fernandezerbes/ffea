@@ -9,8 +9,6 @@ Element::Element(GeometricEntity &geometric_entity,
       dofs_(dofs),
       integration_points_(integration_points) {}
 
-Element::~Element() {}
-
 std::vector<size_t> Element::GetLocalToGlobalDofIndicesMap() const {
   std::vector<size_t> indices_map;
   indices_map.reserve(GetNumberOfDofs());

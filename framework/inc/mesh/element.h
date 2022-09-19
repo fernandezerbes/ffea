@@ -23,7 +23,6 @@ class Element {
   Element(GeometricEntity &geometric_entity,
           const std::vector<DegreeOfFreedom *> &dofs,
           const IntegrationPointsGroup &integration_points);
-  virtual ~Element();
 
   std::vector<size_t> GetLocalToGlobalDofIndicesMap() const;
   size_t GetNumberOfDofs() const;
