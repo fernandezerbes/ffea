@@ -3,11 +3,6 @@
 #include <stdexcept>
 namespace ffea {
 
-Geometry::Geometry()
-    : nodes_(), geometric_entities_(), geometric_entities_groups_() {}
-
-Geometry::~Geometry() {}
-
 std::vector<GeometricEntity*>& Geometry::GetGeometricEntityGroup(
     const std::string& group_name) {
   return geometric_entities_groups_.at(group_name);

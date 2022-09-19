@@ -15,12 +15,12 @@ namespace ffea {
 
 class Geometry {
  public:
-  Geometry();
-  ~Geometry();
-
-  // We need to provide a default move constructor because it's not implicitly
-  // declared when having a user-declared destructor (~Geometry();)
+  Geometry() = default;
+  ~Geometry() = default;
+  Geometry(const Geometry&) = delete;
+  Geometry& operator=(const Geometry&) = delete;
   Geometry(Geometry&&) = default;
+  Geometry& operator=(Geometry&&) = delete;
 
   size_t number_of_nodes() const;
 
