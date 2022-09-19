@@ -67,7 +67,7 @@ void GeometryData::AddGeometricEntityData(size_t id,
 }
 
 void GeometryData::RegisterShapeId(size_t dimension, size_t shape_id,
-                                    size_t entity_group_id) {
+                                   size_t entity_group_id) {
   auto &map = shape_id_to_entities_group_ids_maps_[dimension];
   if (map.contains(shape_id)) {
     auto &entity_group_ids = map.at(shape_id);
@@ -91,11 +91,14 @@ const std::vector<GeometricEntityDataGroup>
 
 GeometricEntityDataGroup &GeometryData::GetGeometricEntityDataGroup(
     size_t group_id) {
-  for (auto &geg : geometric_entities_groups_) {
-    if (geg.id() == group_id) {
-      return geg;
+  for (auto &group : geometric_entities_groups_) {
+    if (group.id() == group_id) {
+      return group;
     }
   }
+
+  throw std::runtime_error("GeometricEntityDataGroup with id = " +
+                           std::to_string(group_id) + " not found");
 }
 
 void GeometryParser::Parse(std::ifstream &file,
