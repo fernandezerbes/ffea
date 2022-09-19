@@ -12,7 +12,7 @@ namespace ffea {
 
 class GeometryBuilder {
  public:
-  GeometryBuilder(const GeometricEntityFactory &factory);
+  explicit GeometryBuilder(const GeometricEntityFactory &factory);
   Geometry Build();
 
  protected:
@@ -26,7 +26,6 @@ class GeometryFromFileBuilder : public GeometryBuilder {
  public:
   GeometryFromFileBuilder(const std::string &file_path,
                           const GeometricEntityFactory &factory);
-  ~GeometryFromFileBuilder();
 
  protected:
   virtual void AddNodes(Geometry &geometry) override;

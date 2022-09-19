@@ -21,9 +21,8 @@ GeometryFromFileBuilder::GeometryFromFileBuilder(
       geometry_data_() {
   file_stream_.open(file_path);
   parser_.Parse(file_stream_, geometry_data_);
+  file_stream_.close();
 }
-
-GeometryFromFileBuilder::~GeometryFromFileBuilder() { file_stream_.close(); }
 
 void GeometryFromFileBuilder::AddNodes(Geometry &geometry) {
   for (const auto &node : geometry_data_.nodes()) {
