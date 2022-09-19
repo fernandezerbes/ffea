@@ -16,6 +16,7 @@ class ElementFactory {
  public:
   explicit ElementFactory(
       const IntegrationPointsProvider &integration_points_provider);
+  
   Element CreateElement(GeometricEntity &geometric_entity,
                         const std::vector<DegreeOfFreedom *> &dofs) const;
 

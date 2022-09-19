@@ -44,7 +44,6 @@ int main() {
 
   */
 
-  // TODO Get rid of shared_ptr when not appropriate
   // TODO Change shape functions classes for functions?
   // TODO Add check for mesh file format version
   // TODO Do half of computations when matrices are symmetric. We can overload
@@ -54,11 +53,8 @@ int main() {
   // TODO Reuse all possible values of shape functions, jacobians, etc. during
   // system integration
   // TODO See if protected virtual classes can be made private
-  // TODO Add copy-constructor and copy-assignment operators
-  // TODO Add move-constructor and move-assignment operators
   // TODO Add mass matrix contribution
   // TODO Remove dependency of Eigen
-  // TODO Add caching of differential operator, shape functions, etc.
   // TODO Create analysis builders
   // TODO Review function signatures and check constness, encapsulation, etc
   // TODO Add unit-tests
