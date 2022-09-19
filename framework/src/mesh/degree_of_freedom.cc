@@ -4,16 +4,12 @@
 
 namespace ffea {
 
-DegreeOfFreedom::DegreeOfFreedom() {}
-
 DegreeOfFreedom::DegreeOfFreedom(size_t local_id, size_t number_of_auxiliary_values)
     : value_(),
       auxiliary_values_(number_of_auxiliary_values),
       local_id_(local_id),
       global_id_(local_id)  // TODO: To be set in a parallel environment
 {}
-
-DegreeOfFreedom::~DegreeOfFreedom() {}
 
 size_t DegreeOfFreedom::local_id() const { return local_id_; }
 

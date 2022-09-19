@@ -8,9 +8,7 @@ namespace ffea {
 
 class DegreeOfFreedom {
  public:
-  DegreeOfFreedom();
   DegreeOfFreedom(size_t local_id, size_t number_of_axiliary_values = 0);
-  ~DegreeOfFreedom();
 
   size_t local_id() const;
   size_t global_id() const;
