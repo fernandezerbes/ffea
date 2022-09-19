@@ -7,11 +7,11 @@ namespace ffea {
 
 namespace utilities {
 
-double DistanceBetweenPoints(const std::vector<double>& first_point,
-                             const std::vector<double>& second_point) {
-  std::vector<double> distance_vector = {second_point[0] - first_point[0],
-                                         second_point[1] - first_point[1],
-                                         second_point[2] - first_point[2]};
+double DistanceBetweenPoints(const std::array<double, 3>& first_point,
+                             const std::array<double, 3>& second_point) {
+  std::array<double, 3> distance_vector = {second_point[0] - first_point[0],
+                                           second_point[1] - first_point[1],
+                                           second_point[2] - first_point[2]};
 
   double inner_product =
       std::inner_product(distance_vector.begin(), distance_vector.end(),
