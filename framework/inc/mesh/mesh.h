@@ -19,7 +19,6 @@ namespace ffea {
 class Mesh {
  public:
   Mesh(Geometry& geometry, size_t dofs_per_node);
-  ~Mesh();
 
   size_t number_of_dofs() const;
   size_t number_of_nodes() const;

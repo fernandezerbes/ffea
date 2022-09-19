@@ -12,8 +12,6 @@ Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
   AddDofs();
 }
 
-Mesh::~Mesh() {}
-
 void Mesh::AddDofs() {
   dofs_.reserve(geometry_.number_of_nodes() * dofs_per_node_);
   for (size_t node_id = 0; node_id < geometry_.number_of_nodes(); node_id++) {
