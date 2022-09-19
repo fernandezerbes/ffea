@@ -38,7 +38,11 @@ class GeometricEntity {
   GeometricEntity(GeometricEntityType type, size_t dimension,
                   const std::vector<Node *> &nodes,
                   std::unique_ptr<ShapeFunctions> shape_functions);
-  virtual ~GeometricEntity();
+  virtual ~GeometricEntity() = default;
+  GeometricEntity(const GeometricEntity &other) = default;
+  GeometricEntity &operator=(const GeometricEntity &other) = default;
+  GeometricEntity(GeometricEntity &&other) = default;
+  GeometricEntity &operator=(GeometricEntity &&other) = default;
 
   GeometricEntityType type() const;
   size_t dimension() const;

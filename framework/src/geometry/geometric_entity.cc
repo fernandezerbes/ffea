@@ -14,8 +14,6 @@ GeometricEntity::GeometricEntity(
       nodes_(nodes),
       shape_functions_(std::move(shape_functions)) {}
 
-GeometricEntity::~GeometricEntity() {}
-
 GeometricEntityType GeometricEntity::type() const { return type_; }
 
 size_t GeometricEntity::dimension() const { return dimension_; }
