@@ -8,8 +8,6 @@ namespace ffea {
 MeshBuilder::MeshBuilder(Geometry &geometry)
     : geometry_(geometry), element_factories_() {}
 
-MeshBuilder::~MeshBuilder() {}
-
 Mesh MeshBuilder::Build(size_t number_of_fields) const {
   Mesh mesh(geometry_, number_of_fields);
 
