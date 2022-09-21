@@ -10,6 +10,7 @@
 #include "../geometry/coordinates.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
+#include "./types.h"
 
 namespace ffea {
 

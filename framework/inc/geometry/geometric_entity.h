@@ -52,9 +52,9 @@ class GeometricEntity {
       const Coordinates &local_coordinates,
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   virtual Eigen::VectorXd EvaluateNormalVector(
-      const Eigen::MatrixXd &jacobian) const;
+      const Coordinates &local_coordinates) const;
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const = 0;
+      const Coordinates &local_coordinates) const = 0;
   Coordinates MapLocalToGlobal(const Coordinates &local_coordinates) const;
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
@@ -74,9 +74,9 @@ class Line2D : public GeometricEntity {
          std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Line3D : public GeometricEntity {
@@ -85,9 +85,9 @@ class Line3D : public GeometricEntity {
          std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Quad2D : public GeometricEntity {
@@ -96,7 +96,7 @@ class Quad2D : public GeometricEntity {
          std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Quad3D : public GeometricEntity {
@@ -105,9 +105,9 @@ class Quad3D : public GeometricEntity {
          std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Hex3D : public GeometricEntity {
@@ -116,7 +116,7 @@ class Hex3D : public GeometricEntity {
         std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Tria2D : public GeometricEntity {
@@ -125,7 +125,7 @@ class Tria2D : public GeometricEntity {
          std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Tria3D : public GeometricEntity {
@@ -134,9 +134,9 @@ class Tria3D : public GeometricEntity {
          std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 class Tetra3D : public GeometricEntity {
@@ -145,7 +145,7 @@ class Tetra3D : public GeometricEntity {
           std::unique_ptr<ShapeFunctions> shape_functions);
 
   virtual double EvaluateDifferential(
-      const Eigen::MatrixXd &jacobian) const override;
+      const Coordinates &local_coordinates) const override;
 };
 
 }  // namespace ffea

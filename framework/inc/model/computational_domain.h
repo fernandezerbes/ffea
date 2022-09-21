@@ -6,26 +6,21 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../model/operator.h"
-#include "./constitutive_model.h"
+#include "./integrand.h"
 
 namespace ffea {
 
 class ComputationalDomain {
  public:
   ComputationalDomain(const std::vector<Element> &domain_elements,
-                      const ConstitutiveModel &constitutive_model,
-                      const DifferentialOperator &differential_operator,
-                      ConditionFunction source);
+                      const Integrand &integrand);
 
   void AddContribution(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const;
 
  private:
   const std::vector<Element> &domain_elements_;
-  const ConstitutiveModel &constitutive_model_;
-  const DifferentialOperator &differential_operator_;
-  ConditionFunction source_;
+  const Integrand &integrand_;
 };
 
 }  // namespace ffea

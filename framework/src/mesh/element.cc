@@ -32,32 +32,17 @@ Coordinates &Element::GetCoordinatesOfNode(size_t node_index) const {
   return geometric_entity_.GetCoordinatesOfNode(node_index);
 }
 
-Eigen::MatrixXd Element::ComputeStiffness(
-    const ConstitutiveModel &constitutive_model,
-    const DifferentialOperator &differential_operator) const {
+Eigen::MatrixXd Element::ComputeStiffness(const Integrand &integrand) const {
   size_t number_of_dofs = GetNumberOfDofs();
   Eigen::MatrixXd stiffness =
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
 
   for (const auto &integration_point : integration_points_) {
     const auto &local_coordinates = integration_point.local_coordinates();
-    // Jacobian can be evaluated outside, to be shared with ComputeRhs
-    const auto &local_shape_functions_derivatives =
-        geometric_entity_.EvaluateShapeFunctions(local_coordinates,
-                                                 ffea::DerivativeOrder::kFirst);
-    const auto &jacobian = geometric_entity_.EvaluateJacobian(
-        local_coordinates, local_shape_functions_derivatives);
-    const auto &global_shape_functions_derivatives =
-        jacobian.inverse() * local_shape_functions_derivatives;
-    Eigen::MatrixXd operator_matrix =
-        differential_operator.Compute(global_shape_functions_derivatives);
-    const auto &global_coordinates =
-        geometric_entity_.MapLocalToGlobal(local_coordinates);
-    const auto &constitutive_matrix =
-        constitutive_model.Evaluate(global_coordinates);
-    stiffness += operator_matrix.transpose() * constitutive_matrix *
-                 operator_matrix * integration_point.weight() *
-                 geometric_entity_.EvaluateDifferential(jacobian);
+    const auto &integrand_matrix =
+        integrand.Compute(geometric_entity_, local_coordinates);
+    stiffness += integrand_matrix * integration_point.weight() *
+                 geometric_entity_.EvaluateDifferential(local_coordinates);
   }
 
   return stiffness;
@@ -76,7 +61,8 @@ Eigen::VectorXd Element::ComputeRhs(ConditionFunction load) const {
     const auto &body_load = load(global_coordinates);
     const auto &jacobian =
         geometric_entity_.EvaluateJacobian(local_coordinates);
-    auto differential = geometric_entity_.EvaluateDifferential(jacobian);
+    auto differential =
+        geometric_entity_.EvaluateDifferential(local_coordinates);
     auto number_of_load_components = GetNumberOfDofsPerNode();
     for (size_t load_component_index = 0;
          load_component_index < number_of_load_components;

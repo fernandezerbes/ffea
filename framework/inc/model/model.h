@@ -6,21 +6,20 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../model/operator.h"
+#include "../model/integrand.h"
 #include "./boundary_condition.h"
 #include "./computational_domain.h"
 #include "./constitutive_model.h"
+#include "./types.h"
 
 namespace ffea {
 
 class Model {
  public:
   explicit Model(Mesh &mesh);
-  
+
   void AddComputationalDomain(const std::string &domain_name,
-                              const ConstitutiveModel &constitutive_model,
-                              const DifferentialOperator &differential_operator,
-                              ConditionFunction source);
+                              const Integrand &integrand);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
                                    ConditionFunction boundary_function);
   void AddDirichletBoundaryCondition(

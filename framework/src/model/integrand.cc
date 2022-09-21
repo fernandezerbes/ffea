@@ -1,14 +1,41 @@
-#include "../../inc/model/operator.h"
+#include "../../inc/model/integrand.h"
 
 namespace ffea {
 
-DifferentialOperator::DifferentialOperator(size_t physical_dimension)
+Integrand::Integrand(size_t physical_dimension)
     : physical_dimension_(physical_dimension) {}
 
-StrainDisplacementOperator2D::StrainDisplacementOperator2D()
-    : DifferentialOperator(2) {}
+ElasticityBaseIntegrand::ElasticityBaseIntegrand(
+    size_t physical_dimension, const ConstitutiveModel &constitutive_model,
+    ConditionFunction source)
+    : Integrand(physical_dimension),
+      constitutive_model_(constitutive_model),
+      source_(source) {}
 
-const Eigen::MatrixXd StrainDisplacementOperator2D::Compute(
+const Eigen::MatrixXd ElasticityBaseIntegrand::Compute(
+    const GeometricEntity &geometric_entity,
+    const Coordinates &local_coordinates) const {
+  const auto &local_shape_functions_derivatives =
+      geometric_entity.EvaluateShapeFunctions(local_coordinates,
+                                              ffea::DerivativeOrder::kFirst);
+  const auto &jacobian = geometric_entity.EvaluateJacobian(
+      local_coordinates, local_shape_functions_derivatives);
+  const auto &global_shape_functions_derivatives =
+      jacobian.inverse() * local_shape_functions_derivatives;
+  Eigen::MatrixXd operator_matrix =
+      GetStrainDisplacementOperator(global_shape_functions_derivatives);
+  const auto &global_coordinates =
+      geometric_entity.MapLocalToGlobal(local_coordinates);
+  const auto &constitutive_matrix =
+      constitutive_model_.Evaluate(global_coordinates);
+  return operator_matrix.transpose() * constitutive_matrix * operator_matrix;
+}
+
+Elasticity2DIntegrand::Elasticity2DIntegrand(
+    const ConstitutiveModel &constitutive_model, ConditionFunction source)
+    : ElasticityBaseIntegrand(2, constitutive_model, source) {}
+
+const Eigen::MatrixXd Elasticity2DIntegrand::GetStrainDisplacementOperator(
     const Eigen::MatrixXd &shape_function_derivatives) const {
   size_t number_of_shape_functions = shape_function_derivatives.cols();
 
@@ -33,10 +60,11 @@ const Eigen::MatrixXd StrainDisplacementOperator2D::Compute(
   return differential_operator;
 }
 
-StrainDisplacementOperator3D::StrainDisplacementOperator3D()
-    : DifferentialOperator(3) {}
+Elasticity3DIntegrand::Elasticity3DIntegrand(
+    const ConstitutiveModel &constitutive_model, ConditionFunction source)
+    : ElasticityBaseIntegrand(3, constitutive_model, source) {}
 
-const Eigen::MatrixXd StrainDisplacementOperator3D::Compute(
+const Eigen::MatrixXd Elasticity3DIntegrand::GetStrainDisplacementOperator(
     const Eigen::MatrixXd &shape_function_derivatives) const {
   size_t number_of_shape_functions = shape_function_derivatives.cols();
 

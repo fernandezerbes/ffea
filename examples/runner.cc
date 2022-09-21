@@ -22,8 +22,8 @@
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
+#include "../framework/inc/model/integrand.h"
 #include "../framework/inc/model/model.h"
-#include "../framework/inc/model/operator.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
@@ -44,8 +44,11 @@ int main() {
 
   */
 
+  // TODO Pass Clang analyzer
+  // TODO Use ONEmkl and PARDISO Solver
   // TODO Change shape functions classes for functions?
   // TODO Add check for mesh file format version
+  // TODO Add sparse matrices
   // TODO Do half of computations when matrices are symmetric. We can overload
   // functions based on symmetric matrices.
   // TODO Check results for axial case
@@ -99,10 +102,6 @@ int main() {
   double youngs_modulus = 1;
   ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus,
                                                             poisson_ratio);
-
-  // ********************** DIFFERENTIAL OPERATOR **********************
-  auto differential_operator = ffea::StrainDisplacementOperator2D();
-
   // ********************** MODEL **********************
   auto body_load =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {
@@ -110,9 +109,10 @@ int main() {
     return load;
   };
 
+  auto integrand = ffea::Elasticity2DIntegrand(constitutive_model, body_load);
+
   ffea::Model model(mesh);
-  model.AddComputationalDomain(surface_group_name, constitutive_model,
-                               differential_operator, body_load);
+  model.AddComputationalDomain(surface_group_name, integrand);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =

@@ -3,19 +3,13 @@
 namespace ffea {
 
 ComputationalDomain::ComputationalDomain(
-    const std::vector<Element> &domain_elements,
-    const ConstitutiveModel& constitutive_model,
-    const DifferentialOperator& differential_operator, ConditionFunction source)
-    : domain_elements_(domain_elements),
-      constitutive_model_(constitutive_model),
-      differential_operator_(differential_operator),
-      source_(source) {}
+    const std::vector<Element>& domain_elements, const Integrand& integrand)
+    : domain_elements_(domain_elements), integrand_(integrand) {}
 
 void ComputationalDomain::AddContribution(Eigen::MatrixXd& global_stiffness,
                                           Eigen::VectorXd& global_rhs) const {
   for (auto& element : domain_elements_) {
-    const auto& element_K =
-        element.ComputeStiffness(constitutive_model_, differential_operator_);
+    const auto& element_K = element.ComputeStiffness(integrand_);
     // const auto& element_rhs = element.ComputeRhs(source_);
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
 

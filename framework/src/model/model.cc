@@ -7,13 +7,10 @@ namespace ffea {
 Model::Model(Mesh& mesh)
     : mesh_(mesh), computational_domains_(), boundary_conditions_() {}
 
-void Model::AddComputationalDomain(
-    const std::string& domain_name, const ConstitutiveModel& constitutive_model,
-    const DifferentialOperator& differential_operator,
-    ConditionFunction source) {
+void Model::AddComputationalDomain(const std::string& domain_name,
+                                   const Integrand& integrand) {
   const auto& domain_elements = mesh_.GetElementGroup(domain_name);
-  computational_domains_.emplace_back(domain_elements, constitutive_model,
-                                      differential_operator, source);
+  computational_domains_.emplace_back(domain_elements, integrand);
 }
 
 void Model::AddNeumannBoundaryCondition(const std::string& boundary_name,
