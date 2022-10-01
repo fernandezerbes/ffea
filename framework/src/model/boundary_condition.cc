@@ -19,19 +19,19 @@ void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
 //   // TODO Take care of the case where more than one bc is applied to the
 //   same boundary for (auto &element : boundary_elements) {
 //     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
-//     for (size_t local_i_index = 0; local_i_index < dofs_map.size();
-//     local_i_index++) {
-//       size_t dof_direction = local_i_index %
+//     for (size_t local_i_idx = 0; local_i_idx < dofs_map.size();
+//     local_i_idx++) {
+//       size_t dof_direction = local_i_idx %
 //       element.GetNumberOfDofsPerNode(); if
 //       (!directions_to_consider.contains(dof_direction)) {
 //         continue;
 //       }
-//       size_t node_index = local_i_index /
+//       size_t node_idx = local_i_idx /
 //       element.GetNumberOfDofsPerNode(); const auto &node_coords =
-//       element.GetCoordinatesOfNode(node_index); auto boundary_values =
-//       boundary_function(node_coords); const auto &global_i_index =
-//       dofs_map[local_i_index]; global_stiffness.coeffRef(global_i_index,
-//       global_i_index) = 1.0; global_rhs(global_i_index) =
+//       element.GetCoordinatesOfNode(node_idx); auto boundary_values =
+//       boundary_function(node_coords); const auto &global_i_idx =
+//       dofs_map[local_i_idx]; global_stiffness.coeffRef(global_i_idx,
+//       global_i_idx) = 1.0; global_rhs(global_i_idx) =
 //       boundary_values[dof_direction] * penalty_;
 //     }
 //   }
@@ -47,18 +47,18 @@ void PenaltyEnforcementStrategy::Enforce(
     const std::unordered_set<size_t> &directions_to_consider) const {
   for (auto &element : boundary_elements) {
     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
-    for (size_t local_i_index = 0; local_i_index < dofs_map.size();
-         local_i_index++) {
-      size_t dof_direction = local_i_index % element.GetNumberOfDofsPerNode();
+    for (size_t local_i_idx = 0; local_i_idx < dofs_map.size();
+         local_i_idx++) {
+      size_t dof_direction = local_i_idx % element.GetNumberOfDofsPerNode();
       if (!directions_to_consider.contains(dof_direction)) {
         continue;
       }
-      size_t node_index = local_i_index / element.GetNumberOfDofsPerNode();
-      const auto &node_coords = element.GetCoordinatesOfNode(node_index);
+      size_t node_idx = local_i_idx / element.GetNumberOfDofsPerNode();
+      const auto &node_coords = element.GetCoordinatesOfNode(node_idx);
       auto boundary_values = boundary_function(node_coords);
-      const auto &global_i_index = dofs_map[local_i_index];
-      global_stiffness.coeffRef(global_i_index, global_i_index) += penalty_;
-      global_rhs(global_i_index) += boundary_values[dof_direction] * penalty_;
+      const auto &global_i_idx = dofs_map[local_i_idx];
+      global_stiffness.coeffRef(global_i_idx, global_i_idx) += penalty_;
+      global_rhs(global_i_idx) += boundary_values[dof_direction] * penalty_;
     }
   }
 }

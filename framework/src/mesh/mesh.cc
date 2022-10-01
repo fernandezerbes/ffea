@@ -15,9 +15,9 @@ Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
 void Mesh::AddDofs() {
   dofs_.reserve(geometry_.number_of_nodes() * dofs_per_node_);
   for (size_t node_id = 0; node_id < geometry_.number_of_nodes(); node_id++) {
-    for (size_t component_index = 0; component_index < dofs_per_node_;
-         component_index++) {
-      auto dof_id = GetDofId(node_id, component_index);
+    for (size_t component_idx = 0; component_idx < dofs_per_node_;
+         component_idx++) {
+      auto dof_id = GetDofId(node_id, component_idx);
       dofs_.emplace_back(dof_id);
     }
   }
@@ -49,9 +49,9 @@ void Mesh::AddElement(const std::string& group_name,
   element_dofs.reserve(geometric_entity.GetNumberOfNodes() * dofs_per_node_);
 
   for (size_t node_id : geometric_entity.GetNodesIds()) {
-    for (size_t component_index = 0; component_index < dofs_per_node_;
-         component_index++) {
-      auto dof_id = GetDofId(node_id, component_index);
+    for (size_t component_idx = 0; component_idx < dofs_per_node_;
+         component_idx++) {
+      auto dof_id = GetDofId(node_id, component_idx);
       element_dofs.push_back(&dofs_[dof_id]);
     }
   }
@@ -76,8 +76,8 @@ void Mesh::SetSolutionOnDofs(const Eigen::VectorXd& solution) {
   }
 }
 
-size_t Mesh::GetDofId(size_t node_id, size_t component_index) const {
-  return node_id * dofs_per_node_ + component_index;
+size_t Mesh::GetDofId(size_t node_id, size_t component_idx) const {
+  return node_id * dofs_per_node_ + component_idx;
 }
 
 const std::vector<Node>& Mesh::nodes() const { return geometry_.nodes(); }

@@ -120,7 +120,7 @@ void GroupNamesParser::Parse(std::ifstream &file,
   size_t dimensions;
   int id;
   std::string name;
-  for (size_t group_index = 0; group_index < number_of_groups; group_index++) {
+  for (size_t group_idx = 0; group_idx < number_of_groups; group_idx++) {
     file >> dimensions >> id >> name;
     utilities::ConvertOneToZeroBased(id);
     name.erase(std::remove(name.begin(), name.end(), '"'), name.end());
@@ -138,8 +138,8 @@ void ShapesParser::Parse(std::ifstream &file,
 
   for (size_t dimensions = 0; dimensions < shapes_per_dimension.size();
        dimensions++) {
-    for (size_t shape_index = 0; shape_index < shapes_per_dimension[dimensions];
-         shape_index++) {
+    for (size_t shape_idx = 0; shape_idx < shapes_per_dimension[dimensions];
+         shape_idx++) {
       int shape_id;
       file >> shape_id;  // column = 0
       utilities::ConvertOneToZeroBased(shape_id);
@@ -165,9 +165,9 @@ void ShapesParser::Parse(std::ifstream &file,
         size_t number_of_bounding_shapes;
         file >> number_of_bounding_shapes;
         int bounding_shape_id;
-        for (size_t bounding_shape_index = 0;
-             bounding_shape_index < number_of_bounding_shapes;
-             bounding_shape_index++) {
+        for (size_t bounding_shape_idx = 0;
+             bounding_shape_idx < number_of_bounding_shapes;
+             bounding_shape_idx++) {
           file >> bounding_shape_id;
         }
       }
@@ -188,16 +188,16 @@ void NodesParser::Parse(std::ifstream &file,
   int owner_shape_id;
   size_t parametric;
   size_t number_of_nodes_in_block;
-  for (size_t entity_block_index = 0;
-       entity_block_index < number_of_entity_blocks; entity_block_index++) {
+  for (size_t entity_block_idx = 0;
+       entity_block_idx < number_of_entity_blocks; entity_block_idx++) {
     file >> owner_shape_dimension >> owner_shape_id >> parametric >>
         number_of_nodes_in_block;
 
     size_t node_id;
     std::vector<size_t> node_ids;
     node_ids.reserve(number_of_nodes_in_block);
-    for (size_t node_index = 0; node_index < number_of_nodes_in_block;
-         node_index++) {
+    for (size_t node_idx = 0; node_idx < number_of_nodes_in_block;
+         node_idx++) {
       file >> node_id;
       utilities::ConvertOneToZeroBased(node_id);
       node_ids.push_back(node_id);
@@ -206,10 +206,10 @@ void NodesParser::Parse(std::ifstream &file,
     double x;
     double y;
     double z;
-    for (size_t node_index = 0; node_index < number_of_nodes_in_block;
-         node_index++) {
+    for (size_t node_idx = 0; node_idx < number_of_nodes_in_block;
+         node_idx++) {
       file >> x >> y >> z;
-      geometry_data.AddNode(node_ids[node_index], {x, y, z});
+      geometry_data.AddNode(node_ids[node_idx], {x, y, z});
     }
   }
 }
@@ -232,8 +232,8 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
   int owner_shape_id;
   size_t geometric_entity_type;
   size_t number_of_entities_in_block;
-  for (size_t entity_block_index = 0;
-       entity_block_index < number_of_entity_blocks; entity_block_index++) {
+  for (size_t entity_block_idx = 0;
+       entity_block_idx < number_of_entity_blocks; entity_block_idx++) {
     file >> owner_shape_dimension >> owner_shape_id >> geometric_entity_type >>
         number_of_entities_in_block;
     utilities::ConvertOneToZeroBased(owner_shape_id);
@@ -242,8 +242,8 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
     size_t entity_id;
     std::vector<size_t> node_ids;
     std::string line;
-    for (size_t entity_index = 0; entity_index < number_of_entities_in_block;
-         entity_index++) {
+    for (size_t entity_idx = 0; entity_idx < number_of_entities_in_block;
+         entity_idx++) {
       node_ids.clear();
       std::getline(file, line);
       // TODO Make this better, don't know why getline is returning an empty

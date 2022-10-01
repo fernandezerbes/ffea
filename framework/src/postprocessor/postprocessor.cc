@@ -6,8 +6,8 @@ DisplacementsPostProcessor::DisplacementsPostProcessor(const Mesh& mesh)
     : mesh_(mesh) {}
 
 Eigen::VectorXd DisplacementsPostProcessor::GetValuesAtNode(
-    const Element& element, size_t component_index) const {
-  return element.GetSolutionFromDofs(component_index);
+    const Element& element, size_t component_idx) const {
+  return element.GetSolutionFromDofs(component_idx);
 }
 
 }  // namespace ffea

@@ -82,16 +82,16 @@ void GeometryFromFileBuilder::AddEntitiesGroups(Geometry &geometry) {
 //   for (size_t j_element = 0; j_element < elements_in_y_; j_element++) {
 //     for (size_t i_element = 0; i_element < elements_in_x_; i_element++) {
 //       size_t index = j_element * elements_in_x_ + i_element;
-//       size_t first_node_index = index + j_element;
-//       size_t second_node_index = first_node_index + 1;
-//       size_t third_node_index =
-//           second_node_index + nodes_in_x_;  // counter-clockwise
-//       size_t fourth_node_index =
-//           first_node_index + nodes_in_x_;  // counter-clockwise
+//       size_t first_node_idx = index + j_element;
+//       size_t second_node_idx = first_node_idx + 1;
+//       size_t third_node_idx =
+//           second_node_idx + nodes_in_x_;  // counter-clockwise
+//       size_t fourth_node_idx =
+//           first_node_idx + nodes_in_x_;  // counter-clockwise
 //       geometry.AddElement(ffea::GeometricEntityType::kFourNodeQuad,
 //       body_name,
-//                       {first_node_index, second_node_index, third_node_index,
-//                        fourth_node_index});
+//                       {first_node_idx, second_node_idx, third_node_idx,
+//                        fourth_node_idx});
 //     }
 //   }
 
@@ -100,16 +100,16 @@ void GeometryFromFileBuilder::AddEntitiesGroups(Geometry &geometry) {
 
 //   for (size_t i_element = 0; i_element < elements_in_x_; i_element++) {
 //     size_t index_bottom = i_element;
-//     size_t first_node_index_bottom = index_bottom;
-//     size_t second_node_index_bottom = first_node_index_bottom + 1;
+//     size_t first_node_idx_bottom = index_bottom;
+//     size_t second_node_idx_bottom = first_node_idx_bottom + 1;
 //     geometry.AddElement(ffea::GeometricEntityType::kTwoNodeLine, bottom_edge,
-//                     {first_node_index_bottom, second_node_index_bottom});
+//                     {first_node_idx_bottom, second_node_idx_bottom});
 
 //     size_t index_top = i_element + (nodes_in_x_ * (nodes_in_y_ - 1));
-//     size_t first_node_index_top = index_top;
-//     size_t second_node_index_top = first_node_index_top + 1;
+//     size_t first_node_idx_top = index_top;
+//     size_t second_node_idx_top = first_node_idx_top + 1;
 //     geometry.AddElement(ffea::GeometricEntityType::kTwoNodeLine, top_edge,
-//                     {first_node_index_top, second_node_index_top});
+//                     {first_node_idx_top, second_node_idx_top});
 //   }
 // }
 

@@ -37,13 +37,13 @@ Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
   Eigen::MatrixXd coords_values(GetNumberOfNodes(), dimension_);
-  for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
-    const auto &node = nodes_[node_index];
+  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+    const auto &node = nodes_[node_idx];
     const auto &coords = node->coords();
-    for (size_t dimension_index = 0; dimension_index < dimension_;
-         dimension_index++) {
-      coords_values(node_index, dimension_index) =
-          coords.get(dimension_index);
+    for (size_t dimension_idx = 0; dimension_idx < dimension_;
+         dimension_idx++) {
+      coords_values(node_idx, dimension_idx) =
+          coords.get(dimension_idx);
     }
   }
   return coords_values;
@@ -73,13 +73,13 @@ Coordinates GeometricEntity::MapLocalToGlobal(
 Coordinates GeometricEntity::MapLocalToGlobal(
     const Eigen::MatrixXd &shape_functions_at_point) const {
   std::array<double, 3> xyz{};
-  for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
-    const auto &node = nodes_[node_index];
+  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+    const auto &node = nodes_[node_idx];
     const auto &coords = node->coords();
-    for (size_t dimension_index = 0; dimension_index < dimension_;
-         dimension_index++) {
-      xyz[dimension_index] += shape_functions_at_point(0, node_index) *
-                              coords.get(dimension_index);
+    for (size_t dimension_idx = 0; dimension_idx < dimension_;
+         dimension_idx++) {
+      xyz[dimension_idx] += shape_functions_at_point(0, node_idx) *
+                              coords.get(dimension_idx);
     }
   }
   return Coordinates(xyz);
@@ -92,8 +92,8 @@ Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
                          type_name);
 }
 
-Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
-  return nodes_[node_index]->coords();
+Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_idx) const {
+  return nodes_[node_idx]->coords();
 }
 
 const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }

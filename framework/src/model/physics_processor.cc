@@ -20,23 +20,23 @@ void PhysicsProcessor::Scatter(const Element &element,
                                Eigen::MatrixXd &global_stiffness,
                                Eigen::VectorXd &global_rhs) const {
   const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
-  for (size_t node_index = 0; node_index < element.GetNumberOfNodes();
-       node_index++) {
-    size_t local_i_index = 0;
-    for (const auto &global_i_index : dofs_map) {
-      size_t local_j_index = 0;
-      for (const auto &global_j_index : dofs_map) {
+  for (size_t node_idx = 0; node_idx < element.GetNumberOfNodes();
+       node_idx++) {
+    size_t local_i_idx = 0;
+    for (const auto &global_i_idx : dofs_map) {
+      size_t local_j_idx = 0;
+      for (const auto &global_j_idx : dofs_map) {
         if (element_system.stiffness_matrix) {
-          global_stiffness(global_i_index, global_j_index) +=
-              (*element_system.stiffness_matrix)(local_i_index, local_j_index);
+          global_stiffness(global_i_idx, global_j_idx) +=
+              (*element_system.stiffness_matrix)(local_i_idx, local_j_idx);
         }
-        local_j_index++;
+        local_j_idx++;
       }
       if (element_system.rhs_vector) {
-        global_rhs(global_i_index) +=
-            (*element_system.rhs_vector)(local_i_index);
+        global_rhs(global_i_idx) +=
+            (*element_system.rhs_vector)(local_i_idx);
       }
-      local_i_index++;
+      local_i_idx++;
     }
   }
 }

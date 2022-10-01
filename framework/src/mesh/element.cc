@@ -28,18 +28,18 @@ size_t Element::GetNumberOfDofsPerNode() const {
   return GetNumberOfDofs() / GetNumberOfNodes();
 }
 
-Coordinates &Element::GetCoordinatesOfNode(size_t node_index) const {
-  return geometric_entity_.GetCoordinatesOfNode(node_index);
+Coordinates &Element::GetCoordinatesOfNode(size_t node_idx) const {
+  return geometric_entity_.GetCoordinatesOfNode(node_idx);
 }
 
-Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_index) const {
+Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_idx) const {
   Eigen::VectorXd solution = Eigen::VectorXd::Zero(GetNumberOfNodes());
 
-  size_t dof_index = component_index;
-  for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
-    const auto &dof = dofs_[dof_index];
-    solution(node_index) = dof->value();
-    dof_index += 2;
+  size_t dof_idx = component_idx;
+  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+    const auto &dof = dofs_[dof_idx];
+    solution(node_idx) = dof->value();
+    dof_idx += 2;
   }
 
   return solution;
