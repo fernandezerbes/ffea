@@ -24,15 +24,28 @@ struct ElementSystem {
 
 class PhysicsProcessor {
  public:
+  PhysicsProcessor(const std::vector<Element> &elements);
+  void AddContribution(Eigen::MatrixXd &global_stiffness,
+                       Eigen::VectorXd &global_rhs) const;
+
+ protected:
   virtual ElementSystem ProcessElementSystem(const Element &element) const = 0;
+
+ private:
+  void Scatter(const Element &element, const ElementSystem &element_system,
+               Eigen::MatrixXd &global_stiffness,
+               Eigen::VectorXd &global_rhs) const;
+  const std::vector<Element> &elements_;
 };
 
 class ElasticityDomainProcessor : public PhysicsProcessor {
  public:
-  ElasticityDomainProcessor(const ConstitutiveModel &constitutive_model,
+  ElasticityDomainProcessor(const std::vector<Element> &elements,
+                            const ConstitutiveModel &constitutive_model,
                             ConditionFunction source,
                             DifferentialOperator B_operator);
-
+ 
+ protected:
   virtual ElementSystem ProcessElementSystem(
       const Element &element) const override;
 
@@ -44,8 +57,10 @@ class ElasticityDomainProcessor : public PhysicsProcessor {
 
 class ElasticityBoundaryProcessor : public PhysicsProcessor {
  public:
-  ElasticityBoundaryProcessor(size_t dimensions, ConditionFunction load);
+  ElasticityBoundaryProcessor(const std::vector<Element> &elements,
+                              size_t dimensions, ConditionFunction load);
 
+ protected:
   virtual ElementSystem ProcessElementSystem(
       const Element &element) const override;
 

@@ -17,7 +17,7 @@ namespace ffea {
 
 class BoundaryCondition {
  public:
-  BoundaryCondition(const std::vector<Element> &boundary_elements);
+  BoundaryCondition() = default;
   virtual ~BoundaryCondition() = default;
   BoundaryCondition(const BoundaryCondition &) = delete;
   BoundaryCondition &operator=(const BoundaryCondition &) = delete;
@@ -26,15 +26,11 @@ class BoundaryCondition {
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const = 0;
-
- protected:
-  const std::vector<Element> &boundary_elements_;
 };
 
 class NeumannBoundaryCondition : public BoundaryCondition {
  public:
-  NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
-                           std::unique_ptr<PhysicsProcessor> processor);
+  NeumannBoundaryCondition(std::unique_ptr<PhysicsProcessor> processor);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const override;
@@ -86,6 +82,7 @@ class DirichletBoundaryCondition : public BoundaryCondition {
                        Eigen::VectorXd &global_rhs) const override;
 
  private:
+  const std::vector<Element> &boundary_elements_;
   ConditionFunction boundary_function_;
   const std::unordered_set<size_t> &directions_to_consider_;
   const EnforcementStrategy &enforcement_strategy_;

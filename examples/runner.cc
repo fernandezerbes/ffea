@@ -110,9 +110,6 @@ int main() {
     return load;
   };
 
-  // auto domain_processor = ffea::ElasticityDomainProcessor(
-  //     constitutive_model, body_load, ffea::linear_B_operator_2D);
-
   ffea::Model model(mesh);
   model.AddComputationalDomain<ffea::ElasticityDomainProcessor>(
       surface_group_name, constitutive_model, body_load,

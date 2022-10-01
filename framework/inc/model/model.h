@@ -51,9 +51,9 @@ void Model::AddComputationalDomain(const std::string &domain_name,
                                    ConditionFunction source,
                                    DifferentialOperator B_operator) {
   const auto &domain_elements = mesh_.GetElementGroup(domain_name);
-  auto processor =
-      std::make_unique<ProcessorType>(constitutive_model, source, B_operator);
-  computational_domains_.emplace_back(domain_elements, std::move(processor));
+  auto processor = std::make_unique<ProcessorType>(
+      domain_elements, constitutive_model, source, B_operator);
+  computational_domains_.emplace_back(std::move(processor));
 }
 
 template <typename ProcessorType>
@@ -61,10 +61,10 @@ void Model::AddNeumannBoundaryCondition(const std::string &boundary_name,
                                         size_t dimensions,
                                         ConditionFunction boundary_load) {
   const auto &boundary_elements = mesh_.GetElementGroup(boundary_name);
-  auto processor = std::make_unique<ProcessorType>(dimensions, boundary_load);
+  auto processor = std::make_unique<ProcessorType>(boundary_elements,
+                                                   dimensions, boundary_load);
   boundary_conditions_.push_back(
-      std::make_unique<ffea::NeumannBoundaryCondition>(boundary_elements,
-                                                       std::move(processor)));
+      std::make_unique<ffea::NeumannBoundaryCondition>(std::move(processor)));
 }
 
 }  // namespace ffea
