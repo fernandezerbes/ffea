@@ -22,7 +22,7 @@
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
-#include "../framework/inc/model/integrand.h"
+#include "../framework/inc/model/physics_processor.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/model/operator.h"
 #include "../framework/inc/postprocessor/postprocessor.h"

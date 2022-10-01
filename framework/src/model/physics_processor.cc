@@ -1,4 +1,4 @@
-#include "../../inc/model/integrand.h"
+#include "../../inc/model/physics_processor.h"
 
 #include "../../inc/model/operator.h"
 

@@ -18,7 +18,7 @@ add_library(ffea
             src/model/boundary_condition.cc
             src/model/computational_domain.cc
             src/model/constitutive_model.cc
-            src/model/integrand.cc
+            src/model/physics_processor.cc
             src/model/model.cc
             src/fileio/output_writer.cc
             src/fileio/geometry_parser.cc

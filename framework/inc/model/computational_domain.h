@@ -6,7 +6,7 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "./integrand.h"
+#include "./physics_processor.h"
 
 namespace ffea {
 
