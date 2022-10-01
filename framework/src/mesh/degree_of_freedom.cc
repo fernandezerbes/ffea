@@ -4,7 +4,8 @@
 
 namespace ffea {
 
-DegreeOfFreedom::DegreeOfFreedom(size_t local_id, size_t number_of_auxiliary_values)
+DegreeOfFreedom::DegreeOfFreedom(size_t local_id,
+                                 size_t number_of_auxiliary_values)
     : value_(),
       auxiliary_values_(number_of_auxiliary_values),
       local_id_(local_id),

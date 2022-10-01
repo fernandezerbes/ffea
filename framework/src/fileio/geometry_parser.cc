@@ -188,16 +188,15 @@ void NodesParser::Parse(std::ifstream &file,
   int owner_shape_id;
   size_t parametric;
   size_t number_of_nodes_in_block;
-  for (size_t entity_block_idx = 0;
-       entity_block_idx < number_of_entity_blocks; entity_block_idx++) {
+  for (size_t entity_block_idx = 0; entity_block_idx < number_of_entity_blocks;
+       entity_block_idx++) {
     file >> owner_shape_dimension >> owner_shape_id >> parametric >>
         number_of_nodes_in_block;
 
     size_t node_id;
     std::vector<size_t> node_ids;
     node_ids.reserve(number_of_nodes_in_block);
-    for (size_t node_idx = 0; node_idx < number_of_nodes_in_block;
-         node_idx++) {
+    for (size_t node_idx = 0; node_idx < number_of_nodes_in_block; node_idx++) {
       file >> node_id;
       utilities::ConvertOneToZeroBased(node_id);
       node_ids.push_back(node_id);
@@ -206,8 +205,7 @@ void NodesParser::Parse(std::ifstream &file,
     double x;
     double y;
     double z;
-    for (size_t node_idx = 0; node_idx < number_of_nodes_in_block;
-         node_idx++) {
+    for (size_t node_idx = 0; node_idx < number_of_nodes_in_block; node_idx++) {
       file >> x >> y >> z;
       geometry_data.AddNode(node_ids[node_idx], {x, y, z});
     }
@@ -232,8 +230,8 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
   int owner_shape_id;
   size_t geometric_entity_type;
   size_t number_of_entities_in_block;
-  for (size_t entity_block_idx = 0;
-       entity_block_idx < number_of_entity_blocks; entity_block_idx++) {
+  for (size_t entity_block_idx = 0; entity_block_idx < number_of_entity_blocks;
+       entity_block_idx++) {
     file >> owner_shape_dimension >> owner_shape_id >> geometric_entity_type >>
         number_of_entities_in_block;
     utilities::ConvertOneToZeroBased(owner_shape_id);

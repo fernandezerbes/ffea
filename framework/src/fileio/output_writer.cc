@@ -25,8 +25,8 @@ void OutputWriter::WriteQuad(const std::string& filename) const {
 
   for (const auto& node : mesh_.nodes()) {
     const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t"
-         << coords.get(2) << std::endl;
+    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
+         << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("surface");
@@ -80,8 +80,8 @@ void OutputWriter::WriteTria(const std::string& filename) const {
 
   for (const auto& node : mesh_.nodes()) {
     const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t"
-         << coords.get(2) << std::endl;
+    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
+         << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("surface");
@@ -135,8 +135,8 @@ void OutputWriter::WriteTetra(const std::string& filename) const {
 
   for (const auto& node : mesh_.nodes()) {
     const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t"
-         << coords.get(2) << std::endl;
+    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
+         << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("body");
@@ -191,8 +191,8 @@ void OutputWriter::WriteTetraQuadratic(const std::string& filename) const {
 
   for (const auto& node : mesh_.nodes()) {
     const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t"
-         << coords.get(2) << std::endl;
+    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
+         << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("body");
@@ -206,7 +206,8 @@ void OutputWriter::WriteTetraQuadratic(const std::string& filename) const {
   for (auto& element : body_elements) {
     file << element.GetNumberOfNodes() << "\t";
     auto vtk_nodes = element.nodes();
-    std::swap(vtk_nodes[8], vtk_nodes[9]);    // Nodes 8 and 9 of vtk and Gmesh are different
+    std::swap(vtk_nodes[8],
+              vtk_nodes[9]);  // Nodes 8 and 9 of vtk and Gmesh are different
     for (auto& node : vtk_nodes) {
       file << node->id() << "\t";
     }

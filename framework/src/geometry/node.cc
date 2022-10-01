@@ -2,8 +2,7 @@
 
 namespace ffea {
 
-Node::Node(size_t id, const Coordinates &coords)
-    : id_(id), coords_(coords) {}
+Node::Node(size_t id, const Coordinates &coords) : id_(id), coords_(coords) {}
 
 size_t Node::id() const { return id_; }
 
