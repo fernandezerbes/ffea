@@ -12,11 +12,12 @@ using DifferentialOperator =
 const DifferentialOperator linear_B_operator_2D =
     [](const Eigen::MatrixXd &dN_dGlobal) -> const Eigen::MatrixXd {
   auto dimensions = 2;
-  auto columns = dN_dGlobal.cols() * dimensions;
+  auto number_of_shape_functions = dN_dGlobal.cols();
+  auto columns = number_of_shape_functions * dimensions;
   auto rows = 3;
   Eigen::MatrixXd B = Eigen::MatrixXd::Zero(rows, columns);
 
-  for (auto N_idx = 0; N_idx < columns; N_idx++) {
+  for (auto N_idx = 0; N_idx < number_of_shape_functions; N_idx++) {
     auto first_dof_idx = dimensions * N_idx;
     auto second_dof_idx = first_dof_idx + 1;
     B(0, first_dof_idx) = dN_dGlobal(0, N_idx);
@@ -31,11 +32,12 @@ const DifferentialOperator linear_B_operator_2D =
 const DifferentialOperator linear_B_operator_3D =
     [](const Eigen::MatrixXd &dN_dGlobal) -> const Eigen::MatrixXd {
   auto dimensions = 3;
-  auto columns = dN_dGlobal.cols() * dimensions;
+  auto number_of_shape_functions = dN_dGlobal.cols();
+  auto columns = number_of_shape_functions * dimensions;
   auto rows = 6;
   Eigen::MatrixXd B = Eigen::MatrixXd::Zero(rows, columns);
 
-  for (auto N_idx = 0; N_idx < columns; N_idx++) {
+  for (auto N_idx = 0; N_idx < number_of_shape_functions; N_idx++) {
     auto first_dof_idx = dimensions * N_idx;
     auto second_dof_idx = first_dof_idx + 1;
     auto third_dof_idx = second_dof_idx + 1;
