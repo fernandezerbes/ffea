@@ -66,9 +66,9 @@ void GeometryData::AddGeometricEntityData(size_t id,
   }
 }
 
-void GeometryData::RegisterShapeId(size_t dimension, size_t shape_id,
+void GeometryData::RegisterShapeId(size_t dimensions, size_t shape_id,
                                    size_t entity_group_id) {
-  auto &map = shape_id_to_entities_group_ids_maps_[dimension];
+  auto &map = shape_id_to_entities_group_ids_maps_[dimensions];
   if (map.contains(shape_id)) {
     auto &entity_group_ids = map.at(shape_id);
     entity_group_ids.push_back(entity_group_id);
@@ -117,11 +117,11 @@ void GroupNamesParser::Parse(std::ifstream &file,
   size_t number_of_groups;
   file >> number_of_groups;
 
-  size_t dimension;
+  size_t dimensions;
   int id;
   std::string name;
   for (size_t group_index = 0; group_index < number_of_groups; group_index++) {
-    file >> dimension >> id >> name;
+    file >> dimensions >> id >> name;
     utilities::ConvertOneToZeroBased(id);
     name.erase(std::remove(name.begin(), name.end(), '"'), name.end());
     geometry_data.AddGeometricEntityDataGroup(id, name);
@@ -131,20 +131,20 @@ void GroupNamesParser::Parse(std::ifstream &file,
 void ShapesParser::Parse(std::ifstream &file,
                          GeometryData &geometry_data) const {
   std::array<size_t, 4> shapes_per_dimension;
-  for (size_t dimension = 0; dimension < shapes_per_dimension.size();
-       dimension++) {
-    file >> shapes_per_dimension[dimension];
+  for (size_t dimensions = 0; dimensions < shapes_per_dimension.size();
+       dimensions++) {
+    file >> shapes_per_dimension[dimensions];
   }
 
-  for (size_t dimension = 0; dimension < shapes_per_dimension.size();
-       dimension++) {
-    for (size_t shape_index = 0; shape_index < shapes_per_dimension[dimension];
+  for (size_t dimensions = 0; dimensions < shapes_per_dimension.size();
+       dimensions++) {
+    for (size_t shape_index = 0; shape_index < shapes_per_dimension[dimensions];
          shape_index++) {
       int shape_id;
       file >> shape_id;  // column = 0
       utilities::ConvertOneToZeroBased(shape_id);
 
-      size_t end_coords_column = (dimension == 0) ? 4 : 7;
+      size_t end_coords_column = (dimensions == 0) ? 4 : 7;
       double coords;
       for (size_t column = 1; column < end_coords_column; column++) {
         file >> coords;
@@ -158,10 +158,10 @@ void ShapesParser::Parse(std::ifstream &file,
         int entity_group_id;
         file >> entity_group_id;
         utilities::ConvertOneToZeroBased(entity_group_id);
-        geometry_data.RegisterShapeId(dimension, shape_id, entity_group_id);
+        geometry_data.RegisterShapeId(dimensions, shape_id, entity_group_id);
       }
 
-      if (dimension > 0) {
+      if (dimensions > 0) {
         size_t number_of_bounding_shapes;
         file >> number_of_bounding_shapes;
         int bounding_shape_id;

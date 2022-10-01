@@ -24,6 +24,7 @@
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/integrand.h"
 #include "../framework/inc/model/model.h"
+#include "../framework/inc/model/operator.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
@@ -72,10 +73,11 @@ int main() {
     return load;
   };
 
-  auto integrand = ffea::Elasticity3DIntegrand(constitutive_model, body_load);
+  auto domain_processor = ffea::ElasticityDomainProcessor(
+      constitutive_model, body_load, ffea::linear_B_operator_3D);
 
   ffea::Model model(mesh);
-  model.AddComputationalDomain(body_group_name, integrand);
+  model.AddComputationalDomain(body_group_name, domain_processor);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
@@ -83,7 +85,11 @@ int main() {
     std::vector<double> load{0.0, 0.0, 1.0};
     return load;
   };
-  model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
+
+  auto boundary_processor =
+      ffea::ElasticityBoundaryProcessor(number_of_fields, load_function);
+
+  model.AddNeumannBoundaryCondition(neumann_group_name, boundary_processor);
 
   auto boundary_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {

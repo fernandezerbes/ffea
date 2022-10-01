@@ -7,10 +7,10 @@
 namespace ffea {
 
 using DifferentialOperator =
-    std::function<const Eigen::MatrixXd(const Eigen::MatrixXd &)>;
+    std::function<Eigen::MatrixXd(const Eigen::MatrixXd &)>;
 
 const DifferentialOperator linear_B_operator_2D =
-    [](const Eigen::MatrixXd &dN_dGlobal) -> const Eigen::MatrixXd {
+    [](const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
   auto dimensions = 2;
   auto number_of_shape_functions = dN_dGlobal.cols();
   auto columns = number_of_shape_functions * dimensions;
@@ -30,7 +30,7 @@ const DifferentialOperator linear_B_operator_2D =
 };
 
 const DifferentialOperator linear_B_operator_3D =
-    [](const Eigen::MatrixXd &dN_dGlobal) -> const Eigen::MatrixXd {
+    [](const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
   auto dimensions = 3;
   auto number_of_shape_functions = dN_dGlobal.cols();
   auto columns = number_of_shape_functions * dimensions;

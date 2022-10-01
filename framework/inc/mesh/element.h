@@ -9,10 +9,9 @@
 #include "../geometry/geometric_entity.h"
 #include "../geometry/node.h"
 #include "../model/constitutive_model.h"
-#include "../model/integrand.h"
+#include "../model/types.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"
-#include "../model/types.h"
 
 namespace ffea {
 
@@ -27,11 +26,22 @@ class Element {
   size_t GetNumberOfNodes() const;
   size_t GetNumberOfDofsPerNode() const;
   Coordinates &GetCoordinatesOfNode(size_t node_index) const;
-  Eigen::MatrixXd ComputeStiffness(const Integrand &integrand) const;
-  Eigen::VectorXd ComputeRhs(ConditionFunction load) const;
+  Eigen::MatrixXd EvaluateJacobian(
+      const Coordinates &local_coords,
+      const Eigen::MatrixXd &shape_functions_derivatives) const;
+  Eigen::MatrixXd EvaluateShapeFunctions(
+      const Coordinates &local_coords,
+      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
+  // TODO Reuse jacobian where possible in these functions
+  Eigen::VectorXd EvaluateNormalVector(const Coordinates &local_coords) const;
+  double EvaluateDifferential(const Coordinates &local_coords) const;
+  Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
+  Coordinates MapLocalToGlobal(
+      const Eigen::MatrixXd &shape_functions_at_point) const;
   void SetSolutionOnDofs(const Eigen::VectorXd &solution);
   Eigen::VectorXd GetSolutionFromDofs(size_t component_index) const;
   const std::vector<Node *> &nodes() const;
+  const IntegrationPointsGroup &integration_points() const;
 
  private:
   GeometricEntity &geometric_entity_;

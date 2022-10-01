@@ -13,14 +13,14 @@ namespace ffea {
 class ComputationalDomain {
  public:
   ComputationalDomain(const std::vector<Element> &domain_elements,
-                      const Integrand &integrand);
+                      const PhysicsProcessor &processor);
 
   void AddContribution(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const;
 
  private:
   const std::vector<Element> &domain_elements_;
-  const Integrand &integrand_;
+  const PhysicsProcessor &processor_;
 };
 
 }  // namespace ffea

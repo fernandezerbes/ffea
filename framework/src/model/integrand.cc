@@ -1,53 +1,73 @@
 #include "../../inc/model/integrand.h"
+
 #include "../../inc/model/operator.h"
 
 namespace ffea {
 
-Integrand::Integrand(size_t physical_dimension)
-    : physical_dimension_(physical_dimension) {}
+ElasticityDomainProcessor::ElasticityDomainProcessor(
+    const ConstitutiveModel &constitutive_model, ConditionFunction source,
+    DifferentialOperator B_operator)
+    : constitutive_model_(constitutive_model),
+      source_(source),
+      B_operator_(B_operator) {}
 
-ElasticityBaseIntegrand::ElasticityBaseIntegrand(
-    size_t physical_dimension, const ConstitutiveModel &constitutive_model,
-    ConditionFunction source)
-    : Integrand(physical_dimension),
-      constitutive_model_(constitutive_model),
-      source_(source) {}
+ElementSystem ElasticityDomainProcessor::ProcessElementSystem(
+    const Element &element) const {
+  ElementSystem system{};
+  const auto &number_of_dofs = element.GetNumberOfDofs();
+  system.stiffness_matrix =
+      Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
 
-const Eigen::MatrixXd ElasticityBaseIntegrand::Compute(
-    const GeometricEntity &geometric_entity,
-    const Coordinates &local_coordinates) const {
-  const auto &local_shape_functions_derivatives =
-      geometric_entity.EvaluateShapeFunctions(local_coordinates,
-                                              ffea::DerivativeOrder::kFirst);
-  const auto &jacobian = geometric_entity.EvaluateJacobian(
-      local_coordinates, local_shape_functions_derivatives);
-  const auto &global_shape_functions_derivatives =
-      jacobian.inverse() * local_shape_functions_derivatives;
-  Eigen::MatrixXd operator_matrix =
-      GetStrainDisplacementOperator(global_shape_functions_derivatives);
-  const auto &global_coordinates =
-      geometric_entity.MapLocalToGlobal(local_coordinates);
-  const auto &constitutive_matrix =
-      constitutive_model_.Evaluate(global_coordinates);
-  return operator_matrix.transpose() * constitutive_matrix * operator_matrix;
+  for (const auto &integration_point : element.integration_points()) {
+    const auto &local_coords = integration_point.local_coords();
+    const auto &differential = element.EvaluateDifferential(local_coords);
+    const auto &dN_dLocal = element.EvaluateShapeFunctions(
+        local_coords, ffea::DerivativeOrder::kFirst);
+    const auto &jacobian = element.EvaluateJacobian(local_coords, dN_dLocal);
+    const auto &dN_dGlobal = jacobian.inverse() * dN_dLocal;
+    Eigen::MatrixXd B = B_operator_(dN_dGlobal);
+    const auto &global_coords = element.MapLocalToGlobal(local_coords);
+    const auto &C = constitutive_model_.Evaluate(global_coords);
+
+    *(system.stiffness_matrix) +=
+        B.transpose() * C * B * integration_point.weight() * differential;
+  }
+
+  return system;
 }
 
-Elasticity2DIntegrand::Elasticity2DIntegrand(
-    const ConstitutiveModel &constitutive_model, ConditionFunction source)
-    : ElasticityBaseIntegrand(2, constitutive_model, source) {}
+ElasticityBoundaryProcessor::ElasticityBoundaryProcessor(size_t dimensions,
+                                                         ConditionFunction load)
+    : dimensions_(dimensions), load_(load) {}
 
-const Eigen::MatrixXd Elasticity2DIntegrand::GetStrainDisplacementOperator(
-    const Eigen::MatrixXd &shape_function_derivatives) const {
-  return ffea::linear_B_operator_2D(shape_function_derivatives);
-}
+ElementSystem ElasticityBoundaryProcessor::ProcessElementSystem(
+    const Element &element) const {
+  ElementSystem system{};
+  const auto &number_of_dofs = element.GetNumberOfDofs();
+  Eigen::VectorXd rhs_vector = Eigen::VectorXd::Zero(number_of_dofs);
 
-Elasticity3DIntegrand::Elasticity3DIntegrand(
-    const ConstitutiveModel &constitutive_model, ConditionFunction source)
-    : ElasticityBaseIntegrand(3, constitutive_model, source) {}
+  for (const auto &integration_point : element.integration_points()) {
+    const auto &local_coords = integration_point.local_coords();
+    const auto &N = element.EvaluateShapeFunctions(
+        local_coords, ffea::DerivativeOrder::kZeroth);
+    const auto &global_coords = element.MapLocalToGlobal(N);
+    const auto &load_vector = load_(global_coords);
+    const auto &number_of_nodes = element.GetNumberOfNodes();
+    const auto &number_of_dofs = dimensions_ * number_of_nodes;
+    const auto &differential = element.EvaluateDifferential(local_coords);
 
-const Eigen::MatrixXd Elasticity3DIntegrand::GetStrainDisplacementOperator(
-    const Eigen::MatrixXd &shape_function_derivatives) const {
-  return ffea::linear_B_operator_3D(shape_function_derivatives);
+    for (auto node_idx = 0; node_idx < number_of_nodes; node_idx++) {
+      for (auto dimension_idx = 0; dimension_idx < dimensions_;
+           dimension_idx++) {
+        const auto &dof_idx = node_idx * dimensions_ + dimension_idx;
+        rhs_vector(dof_idx) += N(0, node_idx) * load_vector[dimension_idx] *
+                               integration_point.weight() * differential;
+      }
+    }
+  }
+
+  system.rhs_vector = rhs_vector;  // TODO Fix this, directly set the values
+  return system;
 }
 
 }  // namespace ffea

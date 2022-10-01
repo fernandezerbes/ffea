@@ -3,26 +3,38 @@
 namespace ffea {
 
 BoundaryCondition::BoundaryCondition(
-    const std::vector<Element> &boundary_elements,
-    ConditionFunction boundary_function)
-    : boundary_elements_(boundary_elements),
-      boundary_function_(boundary_function) {}
+    const std::vector<Element> &boundary_elements)
+    : boundary_elements_(boundary_elements) {}
 
 NeumannBoundaryCondition::NeumannBoundaryCondition(
     const std::vector<Element> &boundary_elements,
-    ConditionFunction boundary_function)
-    : BoundaryCondition(boundary_elements, boundary_function) {}
+    const PhysicsProcessor &processor)
+    : BoundaryCondition(boundary_elements), processor_(processor) {}
 
 void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
   for (auto &element : boundary_elements_) {
-    const auto &element_rhs = element.ComputeRhs(boundary_function_);
+    const auto &system = processor_.ProcessElementSystem(element);
     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
+
     // Scatter coefficients
-    for (size_t local_i_index = 0; local_i_index < dofs_map.size();
-         local_i_index++) {
-      size_t global_i_index = dofs_map[local_i_index];
-      global_rhs(global_i_index) += element_rhs(local_i_index);
+    for (size_t node_index = 0; node_index < element.GetNumberOfNodes();
+         node_index++) {
+      size_t local_i_index = 0;
+      for (const auto &global_i_index : dofs_map) {
+        size_t local_j_index = 0;
+        for (const auto &global_j_index : dofs_map) {
+          if (system.stiffness_matrix) {
+            global_stiffness(global_i_index, global_j_index) +=
+                (*system.stiffness_matrix)(local_i_index, local_j_index);
+          }
+          local_j_index++;
+        }
+        if (system.rhs_vector) {
+          global_rhs(global_i_index) += (*system.rhs_vector)(local_i_index);
+        }
+        local_i_index++;
+      }
     }
   }
 }
@@ -84,7 +96,8 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
     ConditionFunction boundary_function,
     const std::unordered_set<size_t> &directions_to_consider,
     const EnforcementStrategy &enforcement_strategy)
-    : BoundaryCondition(boundary_elements, boundary_function),
+    : BoundaryCondition(boundary_elements),
+      boundary_function_(boundary_function),
       directions_to_consider_(directions_to_consider),
       enforcement_strategy_(enforcement_strategy) {}
 

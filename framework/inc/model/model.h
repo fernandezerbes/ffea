@@ -6,7 +6,7 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../model/integrand.h"
+#include "./integrand.h"
 #include "./boundary_condition.h"
 #include "./computational_domain.h"
 #include "./constitutive_model.h"
@@ -19,9 +19,9 @@ class Model {
   explicit Model(Mesh &mesh);
 
   void AddComputationalDomain(const std::string &domain_name,
-                              const Integrand &integrand);
+                              const PhysicsProcessor &processor);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
-                                   ConditionFunction boundary_function);
+                                   const PhysicsProcessor &processor);
   void AddDirichletBoundaryCondition(
       const std::string &boundary_name, ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,

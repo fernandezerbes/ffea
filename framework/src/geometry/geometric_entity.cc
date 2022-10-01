@@ -6,17 +6,17 @@
 namespace ffea {
 
 GeometricEntity::GeometricEntity(
-    GeometricEntityType type, size_t dimension,
+    GeometricEntityType type, size_t dimensions,
     const std::vector<Node *> &nodes,
     std::unique_ptr<ShapeFunctions> shape_functions)
     : type_(type),
-      dimension_(dimension),
+      dimension_(dimensions),
       nodes_(nodes),
       shape_functions_(std::move(shape_functions)) {}
 
 GeometricEntityType GeometricEntity::type() const { return type_; }
 
-size_t GeometricEntity::dimension() const { return dimension_; }
+size_t GeometricEntity::dimensions() const { return dimension_; }
 
 size_t GeometricEntity::GetNumberOfNodes() const { return nodes_.size(); }
 
@@ -30,9 +30,9 @@ std::vector<size_t> GeometricEntity::GetNodesIds() const {
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
-    const Coordinates &local_coordinates,
+    const Coordinates &local_coords,
     DerivativeOrder derivative_order) const {
-  return shape_functions_->Evaluate(local_coordinates, derivative_order);
+  return shape_functions_->Evaluate(local_coords, derivative_order);
 }
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
@@ -50,23 +50,23 @@ Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
-    const Coordinates &local_coordinates,
+    const Coordinates &local_coords,
     const Eigen::MatrixXd &shape_functions_derivatives) const {
   const auto &nodes_coordinates_values = GetNodesCoordinatesValues();
   return shape_functions_derivatives * nodes_coordinates_values;
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
-    const Coordinates &local_coordinates) const {
+    const Coordinates &local_coords) const {
   const auto &shape_functions_derivatives =
-      EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kFirst);
-  return EvaluateJacobian(local_coordinates, shape_functions_derivatives);
+      EvaluateShapeFunctions(local_coords, DerivativeOrder::kFirst);
+  return EvaluateJacobian(local_coords, shape_functions_derivatives);
 }
 
 Coordinates GeometricEntity::MapLocalToGlobal(
-    const Coordinates &local_coordinates) const {
+    const Coordinates &local_coords) const {
   const auto &shape_functions =
-      EvaluateShapeFunctions(local_coordinates, DerivativeOrder::kZeroth);
+      EvaluateShapeFunctions(local_coords, DerivativeOrder::kZeroth);
   return MapLocalToGlobal(shape_functions);
 }
 
@@ -86,7 +86,7 @@ Coordinates GeometricEntity::MapLocalToGlobal(
 }
 
 Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
-    const Coordinates &local_coordinates) const {
+    const Coordinates &local_coords) const {
   std::string type_name = typeid(*this).name();
   throw std::logic_error("Normal is undefined for geometric entity of type " +
                          type_name);
@@ -103,8 +103,8 @@ Line2D::Line2D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
 
 Eigen::VectorXd Line2D::EvaluateNormalVector(
-    const Coordinates &local_coordinates) const {
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+    const Coordinates &local_coords) const {
+  const auto &jacobian = EvaluateJacobian(local_coords);
   // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
   normal(0) = jacobian(0, 1);
@@ -113,8 +113,8 @@ Eigen::VectorXd Line2D::EvaluateNormalVector(
 }
 
 double Line2D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+    const Coordinates &local_coords) const {
+  const auto &jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant();
 }
 
@@ -123,7 +123,7 @@ Line3D::Line3D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
 Eigen::VectorXd Line3D::EvaluateNormalVector(
-    const Coordinates &local_coordinates) const {
+    const Coordinates &local_coords) const {
   /*
   - Jacobian has the form: [1x2] * [2x3] = [1x3] = [dx/dxi, dy/dxi, dz/dxi]
   - Line vector is u = [dx/dxi, dy/dxi, dz/dxi] = [a, b, c], which is
@@ -134,7 +134,7 @@ Eigen::VectorXd Line3D::EvaluateNormalVector(
   - Normal vector to lying on plane is n = [x, y, z] = [1, 0, -dx/dxi / dz/dxi]
   - Scale the vector to have the same length as u
   */
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+  const auto &jacobian = EvaluateJacobian(local_coords);
   double direction_vector_norm = jacobian(0, 0) * jacobian(0, 0) +
                                  jacobian(0, 1) * jacobian(0, 1) +
                                  jacobian(0, 2) * jacobian(0, 2);
@@ -148,8 +148,8 @@ Eigen::VectorXd Line3D::EvaluateNormalVector(
 }
 
 double Line3D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+    const Coordinates &local_coords) const {
+  const auto &jacobian = EvaluateJacobian(local_coords);
   double result = std::sqrt(jacobian(0, 0) * jacobian(0, 0) +
                             jacobian(0, 1) * jacobian(0, 1) +
                             jacobian(0, 2) * jacobian(0, 2));
@@ -161,8 +161,8 @@ Quad2D::Quad2D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
 
 double Quad2D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+    const Coordinates &local_coords) const {
+  const auto &jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant();
 }
 
@@ -171,10 +171,10 @@ Quad3D::Quad3D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
 Eigen::VectorXd Quad3D::EvaluateNormalVector(
-    const Coordinates &local_coordinates) const {
+    const Coordinates &local_coords) const {
   // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+  const auto &jacobian = EvaluateJacobian(local_coords);
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
@@ -183,8 +183,8 @@ Eigen::VectorXd Quad3D::EvaluateNormalVector(
 }
 
 double Quad3D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  Eigen::VectorXd normal = EvaluateNormalVector(local_coordinates);
+    const Coordinates &local_coords) const {
+  Eigen::VectorXd normal = EvaluateNormalVector(local_coords);
   return normal.norm();
 }
 
@@ -192,8 +192,8 @@ Hex3D::Hex3D(GeometricEntityType type, const std::vector<Node *> &nodes,
              std::unique_ptr<ShapeFunctions> shape_functions)
     : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
-double Hex3D::EvaluateDifferential(const Coordinates &local_coordinates) const {
-  const auto &jacobian = EvaluateJacobian(local_coordinates);
+double Hex3D::EvaluateDifferential(const Coordinates &local_coords) const {
+  const auto &jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant();
 }
 
@@ -202,8 +202,8 @@ Tria2D::Tria2D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
 
 double Tria2D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  const auto& jacobian = EvaluateJacobian(local_coordinates);
+    const Coordinates &local_coords) const {
+  const auto& jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant() / 2.0;
 }
 
@@ -212,10 +212,10 @@ Tria3D::Tria3D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
 Eigen::VectorXd Tria3D::EvaluateNormalVector(
-    const Coordinates &local_coordinates) const {
+    const Coordinates &local_coords) const {
   // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
-  const auto& jacobian = EvaluateJacobian(local_coordinates);
+  const auto& jacobian = EvaluateJacobian(local_coords);
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
@@ -224,8 +224,8 @@ Eigen::VectorXd Tria3D::EvaluateNormalVector(
 }
 
 double Tria3D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  Eigen::VectorXd normal = EvaluateNormalVector(local_coordinates);
+    const Coordinates &local_coords) const {
+  Eigen::VectorXd normal = EvaluateNormalVector(local_coords);
   return normal.norm() / 2.0;
 }
 
@@ -234,8 +234,8 @@ Tetra3D::Tetra3D(GeometricEntityType type, const std::vector<Node *> &nodes,
     : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
 
 double Tetra3D::EvaluateDifferential(
-    const Coordinates &local_coordinates) const {
-  const auto& jacobian = EvaluateJacobian(local_coordinates);
+    const Coordinates &local_coords) const {
+  const auto& jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant() / 6.0;
 }
 

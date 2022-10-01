@@ -13,7 +13,7 @@ class IntegrationPoint {
  public:
   IntegrationPoint(double x, double y, double z, double weight);
 
-  const Coordinates &local_coordinates() const;
+  const Coordinates &local_coords() const;
   double weight() const;
 
  private:

@@ -8,17 +8,17 @@ Model::Model(Mesh& mesh)
     : mesh_(mesh), computational_domains_(), boundary_conditions_() {}
 
 void Model::AddComputationalDomain(const std::string& domain_name,
-                                   const Integrand& integrand) {
+                                   const PhysicsProcessor &processor) {
   const auto& domain_elements = mesh_.GetElementGroup(domain_name);
-  computational_domains_.emplace_back(domain_elements, integrand);
+  computational_domains_.emplace_back(domain_elements, processor);
 }
 
 void Model::AddNeumannBoundaryCondition(const std::string& boundary_name,
-                                        ConditionFunction boundary_function) {
+                                        const PhysicsProcessor &processor) {
   const auto& boundary_elements = mesh_.GetElementGroup(boundary_name);
   boundary_conditions_.push_back(
       std::make_unique<ffea::NeumannBoundaryCondition>(boundary_elements,
-                                                       boundary_function));
+                                                       processor));
 }
 
 void Model::AddDirichletBoundaryCondition(

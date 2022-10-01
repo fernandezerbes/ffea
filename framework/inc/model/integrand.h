@@ -2,63 +2,56 @@
 #define FFEA_FRAMEWORK_MODEL_INTEGRAND_H_
 
 #include <eigen3/Eigen/Dense>
+#include <functional>
+#include <optional>
+#include <tuple>
 
 #include "../geometry/coordinates.h"
 #include "../geometry/geometric_entity.h"
+#include "../mesh/element.h"
 #include "./constitutive_model.h"
+#include "./operator.h"
 #include "./types.h"
 
 namespace ffea {
 
-class Integrand {
- public:
-  explicit Integrand(size_t physical_dimension);
-
-  virtual const Eigen::MatrixXd Compute(
-      const GeometricEntity &geometric_entity,
-      const Coordinates &local_coordinates) const = 0;
-
- protected:
-  size_t physical_dimension_;
+struct ElementSystem {
+  std::optional<Eigen::MatrixXd> mass_matrix;
+  std::optional<Eigen::MatrixXd> damping_matrix;
+  std::optional<Eigen::MatrixXd> stiffness_matrix;
+  std::optional<Eigen::VectorXd> rhs_vector;
 };
 
-class ElasticityBaseIntegrand : public Integrand {
+class PhysicsProcessor {
  public:
-  ElasticityBaseIntegrand(size_t physical_dimension,
-                          const ConstitutiveModel &constitutive_model,
-                          ConditionFunction source);
+  virtual ElementSystem ProcessElementSystem(const Element &element) const = 0;
+};
 
-  virtual const Eigen::MatrixXd Compute(
-      const GeometricEntity &geometric_entity,
-      const Coordinates &local_coordinates) const override;
+class ElasticityDomainProcessor : public PhysicsProcessor {
+ public:
+  ElasticityDomainProcessor(const ConstitutiveModel &constitutive_model,
+                            ConditionFunction source,
+                            DifferentialOperator B_operator);
 
- protected:
+  virtual ElementSystem ProcessElementSystem(
+      const Element &element) const override;
+
+ private:
   const ConstitutiveModel &constitutive_model_;
   ConditionFunction source_;
-
- private:
-  virtual const Eigen::MatrixXd GetStrainDisplacementOperator(
-      const Eigen::MatrixXd &shape_function_derivatives) const = 0;
+  DifferentialOperator B_operator_;
 };
 
-class Elasticity2DIntegrand : public ElasticityBaseIntegrand {
+class ElasticityBoundaryProcessor : public PhysicsProcessor {
  public:
-  Elasticity2DIntegrand(const ConstitutiveModel &constitutive_model,
-                        ConditionFunction source);
+  ElasticityBoundaryProcessor(size_t dimensions, ConditionFunction load);
+
+  virtual ElementSystem ProcessElementSystem(
+      const Element &element) const override;
 
  private:
-  virtual const Eigen::MatrixXd GetStrainDisplacementOperator(
-      const Eigen::MatrixXd &shape_function_derivatives) const override;
-};
-
-class Elasticity3DIntegrand : public ElasticityBaseIntegrand {
- public:
-  Elasticity3DIntegrand(const ConstitutiveModel &constitutive_model,
-                        ConditionFunction source);
-
- private:
-  virtual const Eigen::MatrixXd GetStrainDisplacementOperator(
-      const Eigen::MatrixXd &shape_function_derivatives) const override;
+  size_t dimensions_;
+  ConditionFunction load_;
 };
 
 }  // namespace ffea

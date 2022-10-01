@@ -11,13 +11,13 @@
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
 #include "./types.h"
+#include "./integrand.h"
 
 namespace ffea {
 
 class BoundaryCondition {
  public:
-  BoundaryCondition(const std::vector<Element> &boundary_elements,
-                    ConditionFunction boundary_function);
+  BoundaryCondition(const std::vector<Element> &boundary_elements);
   virtual ~BoundaryCondition() = default;
   BoundaryCondition(const BoundaryCondition &) = delete;
   BoundaryCondition &operator=(const BoundaryCondition &) = delete;
@@ -29,16 +29,18 @@ class BoundaryCondition {
 
  protected:
   const std::vector<Element> &boundary_elements_;
-  ConditionFunction boundary_function_;
 };
 
 class NeumannBoundaryCondition : public BoundaryCondition {
  public:
   NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
-                           ConditionFunction boundary_function);
+                           const PhysicsProcessor &processor);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const override;
+
+ private:
+  const PhysicsProcessor &processor_;
 };
 
 class EnforcementStrategy {
@@ -84,6 +86,7 @@ class DirichletBoundaryCondition : public BoundaryCondition {
                        Eigen::VectorXd &global_rhs) const override;
 
  private:
+  ConditionFunction boundary_function_;
   const std::unordered_set<size_t> &directions_to_consider_;
   const EnforcementStrategy &enforcement_strategy_;
 };
