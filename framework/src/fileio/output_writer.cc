@@ -24,9 +24,9 @@ void OutputWriter::WriteQuad(const std::string& filename) const {
        << "double " << std::endl;
 
   for (const auto& node : mesh_.nodes()) {
-    const auto& coordinates = node.coordinates();
-    file << coordinates.get(0) << "\t" << coordinates.get(1) << "\t"
-         << coordinates.get(2) << std::endl;
+    const auto& coords = node.coords();
+    file << coords.get(0) << "\t" << coords.get(1) << "\t"
+         << coords.get(2) << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("surface");
@@ -79,9 +79,9 @@ void OutputWriter::WriteTria(const std::string& filename) const {
        << "double " << std::endl;
 
   for (const auto& node : mesh_.nodes()) {
-    const auto& coordinates = node.coordinates();
-    file << coordinates.get(0) << "\t" << coordinates.get(1) << "\t"
-         << coordinates.get(2) << std::endl;
+    const auto& coords = node.coords();
+    file << coords.get(0) << "\t" << coords.get(1) << "\t"
+         << coords.get(2) << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("surface");
@@ -134,9 +134,9 @@ void OutputWriter::WriteTetra(const std::string& filename) const {
        << "double " << std::endl;
 
   for (const auto& node : mesh_.nodes()) {
-    const auto& coordinates = node.coordinates();
-    file << coordinates.get(0) << "\t" << coordinates.get(1) << "\t"
-         << coordinates.get(2) << std::endl;
+    const auto& coords = node.coords();
+    file << coords.get(0) << "\t" << coords.get(1) << "\t"
+         << coords.get(2) << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("body");
@@ -190,9 +190,9 @@ void OutputWriter::WriteTetraQuadratic(const std::string& filename) const {
        << "double " << std::endl;
 
   for (const auto& node : mesh_.nodes()) {
-    const auto& coordinates = node.coordinates();
-    file << coordinates.get(0) << "\t" << coordinates.get(1) << "\t"
-         << coordinates.get(2) << std::endl;
+    const auto& coords = node.coords();
+    file << coords.get(0) << "\t" << coords.get(1) << "\t"
+         << coords.get(2) << std::endl;
   }
 
   auto& body_elements = mesh_.GetElementGroup("body");

@@ -105,7 +105,7 @@ int main() {
                                                             poisson_ratio);
   // ********************** MODEL **********************
   auto body_load =
-      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+      [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };
@@ -117,7 +117,7 @@ int main() {
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
-      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+      [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{1.0, 0.0};
     return load;
   };
@@ -126,7 +126,7 @@ int main() {
       neumann_group_name, number_of_fields, load_function);
 
   auto boundary_function =
-      [](const ffea::Coordinates& coordinates) -> std::vector<double> {
+      [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };

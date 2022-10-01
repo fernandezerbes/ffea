@@ -12,10 +12,10 @@ namespace ffea {
 
 namespace utilities {
 
-void ConvertOneToZeroBased(size_t &index);
-void ConvertOneToZeroBased(int &index);
-void ConvertZeroToOneBased(size_t &index);
-void ConvertZeroToOneBased(int &index);
+void ConvertOneToZeroBased(size_t &idx);
+void ConvertOneToZeroBased(int &idx);
+void ConvertZeroToOneBased(size_t &idx);
+void ConvertZeroToOneBased(int &idx);
 
 }  // namespace utilities
 

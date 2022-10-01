@@ -11,7 +11,7 @@ namespace ffea {
 class PostProcessor {
  public:
   virtual Eigen::VectorXd GetValuesAtNode(const Element& element,
-                                size_t component_index) const = 0;
+                                size_t component_idx) const = 0;
 };
 
 class DisplacementsPostProcessor : public PostProcessor {
@@ -19,7 +19,7 @@ class DisplacementsPostProcessor : public PostProcessor {
   explicit DisplacementsPostProcessor(const Mesh& mesh);
   
   virtual Eigen::VectorXd GetValuesAtNode(const Element& element,
-                                size_t component_index) const override;
+                                size_t component_idx) const override;
 
  private:
   const Mesh& mesh_;

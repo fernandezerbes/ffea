@@ -40,7 +40,7 @@ class Mesh {
   size_t dofs_per_node_;
   std::vector<DegreeOfFreedom> dofs_;
   std::unordered_map<std::string, std::vector<Element>> element_groups_;
-  size_t GetDofId(size_t node_id, size_t component_index) const;
+  size_t GetDofId(size_t node_id, size_t component_idx) const;
   void AddDofs();
 };
 

@@ -25,7 +25,7 @@ class Element {
   size_t GetNumberOfDofs() const;
   size_t GetNumberOfNodes() const;
   size_t GetNumberOfDofsPerNode() const;
-  Coordinates &GetCoordinatesOfNode(size_t node_index) const;
+  Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
   Eigen::MatrixXd EvaluateJacobian(
       const Coordinates &local_coords,
       const Eigen::MatrixXd &shape_functions_derivatives) const;
@@ -39,7 +39,7 @@ class Element {
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
   void SetSolutionOnDofs(const Eigen::VectorXd &solution);
-  Eigen::VectorXd GetSolutionFromDofs(size_t component_index) const;
+  Eigen::VectorXd GetSolutionFromDofs(size_t component_idx) const;
   const std::vector<Node *> &nodes() const;
   const IntegrationPointsGroup &integration_points() const;
 

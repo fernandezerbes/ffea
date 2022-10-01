@@ -17,7 +17,7 @@ class IntegrationPoint {
   double weight() const;
 
  private:
-  Coordinates local_coordinates_;
+  Coordinates local_coords_;
   double weight_;
 };
 

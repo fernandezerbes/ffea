@@ -12,7 +12,7 @@ class ConstitutiveModel {
  public:
   ConstitutiveModel(size_t n_cols, size_t n_rows);
 
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coordinates) const = 0;
+  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const = 0;
 
  protected:
   Eigen::MatrixXd constitutive_matrix_;
@@ -23,7 +23,7 @@ class LinearElasticConstitutiveModel2D : public ConstitutiveModel {
   LinearElasticConstitutiveModel2D(double youngs_modulus, double poisson_ratio);
 
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coordinates) const override;
+      const Coordinates& coords) const override;
 };
 
 class LinearElasticConstitutiveModel3D : public ConstitutiveModel {
@@ -31,7 +31,7 @@ class LinearElasticConstitutiveModel3D : public ConstitutiveModel {
   LinearElasticConstitutiveModel3D(double youngs_modulus, double poisson_ratio);
 
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coordinates) const override;
+      const Coordinates& coords) const override;
 };
 
 class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
@@ -39,7 +39,7 @@ class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
   IsotropicConductivityConstitutiveModel2D(double kxx, double kyy, double kxy);
 
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coordinates) const override;
+      const Coordinates& coords) const override;
 };
 
 }  // namespace ffea

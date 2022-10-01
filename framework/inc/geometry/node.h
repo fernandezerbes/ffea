@@ -10,15 +10,15 @@ namespace ffea {
 
 class Node {
  public:
-  Node(size_t id, const Coordinates &coordinates);
+  Node(size_t id, const Coordinates &coords);
 
   size_t id() const;
-  Coordinates &coordinates();
-  const Coordinates &coordinates() const;
+  Coordinates &coords();
+  const Coordinates &coords() const;
 
  private:
   size_t id_;
-  Coordinates coordinates_;
+  Coordinates coords_;
 };
 
 }  // namespace ffea

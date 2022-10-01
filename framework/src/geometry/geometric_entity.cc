@@ -36,24 +36,24 @@ Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
 }
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
-  Eigen::MatrixXd coordinates_values(GetNumberOfNodes(), dimension_);
+  Eigen::MatrixXd coords_values(GetNumberOfNodes(), dimension_);
   for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
     const auto &node = nodes_[node_index];
-    const auto &coordinates = node->coordinates();
+    const auto &coords = node->coords();
     for (size_t dimension_index = 0; dimension_index < dimension_;
          dimension_index++) {
-      coordinates_values(node_index, dimension_index) =
-          coordinates.get(dimension_index);
+      coords_values(node_index, dimension_index) =
+          coords.get(dimension_index);
     }
   }
-  return coordinates_values;
+  return coords_values;
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
     const Coordinates &local_coords,
     const Eigen::MatrixXd &shape_functions_derivatives) const {
-  const auto &nodes_coordinates_values = GetNodesCoordinatesValues();
-  return shape_functions_derivatives * nodes_coordinates_values;
+  const auto &nodes_coords_values = GetNodesCoordinatesValues();
+  return shape_functions_derivatives * nodes_coords_values;
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
@@ -75,11 +75,11 @@ Coordinates GeometricEntity::MapLocalToGlobal(
   std::array<double, 3> xyz{};
   for (size_t node_index = 0; node_index < GetNumberOfNodes(); node_index++) {
     const auto &node = nodes_[node_index];
-    const auto &coordinates = node->coordinates();
+    const auto &coords = node->coords();
     for (size_t dimension_index = 0; dimension_index < dimension_;
          dimension_index++) {
       xyz[dimension_index] += shape_functions_at_point(0, node_index) *
-                              coordinates.get(dimension_index);
+                              coords.get(dimension_index);
     }
   }
   return Coordinates(xyz);
@@ -93,7 +93,7 @@ Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
 }
 
 Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_index) const {
-  return nodes_[node_index]->coordinates();
+  return nodes_[node_index]->coords();
 }
 
 const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }

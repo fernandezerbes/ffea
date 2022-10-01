@@ -27,9 +27,9 @@ void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
 //         continue;
 //       }
 //       size_t node_index = local_i_index /
-//       element.GetNumberOfDofsPerNode(); const auto &node_coordinates =
+//       element.GetNumberOfDofsPerNode(); const auto &node_coords =
 //       element.GetCoordinatesOfNode(node_index); auto boundary_values =
-//       boundary_function(node_coordinates); const auto &global_i_index =
+//       boundary_function(node_coords); const auto &global_i_index =
 //       dofs_map[local_i_index]; global_stiffness.coeffRef(global_i_index,
 //       global_i_index) = 1.0; global_rhs(global_i_index) =
 //       boundary_values[dof_direction] * penalty_;
@@ -54,8 +54,8 @@ void PenaltyEnforcementStrategy::Enforce(
         continue;
       }
       size_t node_index = local_i_index / element.GetNumberOfDofsPerNode();
-      const auto &node_coordinates = element.GetCoordinatesOfNode(node_index);
-      auto boundary_values = boundary_function(node_coordinates);
+      const auto &node_coords = element.GetCoordinatesOfNode(node_index);
+      auto boundary_values = boundary_function(node_coords);
       const auto &global_i_index = dofs_map[local_i_index];
       global_stiffness.coeffRef(global_i_index, global_i_index) += penalty_;
       global_rhs(global_i_index) += boundary_values[dof_direction] * penalty_;

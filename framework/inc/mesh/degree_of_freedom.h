@@ -16,8 +16,8 @@ class DegreeOfFreedom {
   double value() const;
   void set_value(double value);
   void set_value(const Eigen::VectorXd &solution);
-  double auxiliary_value(size_t index) const;
-  void set_auxiliary_value(size_t index, double value);
+  double auxiliary_value(size_t idx) const;
+  void set_auxiliary_value(size_t idx, double value);
 
  private:
   double value_;
@@ -25,7 +25,7 @@ class DegreeOfFreedom {
   size_t local_id_;
   size_t global_id_;
 
-  void check_auxiliary_value(size_t index) const;
+  void check_auxiliary_value(size_t idx) const;
 };
 
 }  // namespace ffea

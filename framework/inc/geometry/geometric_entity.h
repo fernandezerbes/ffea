@@ -43,7 +43,7 @@ class GeometricEntity {
   size_t dimensions() const;
   size_t GetNumberOfNodes() const;
   std::vector<size_t> GetNodesIds() const;
-  Coordinates &GetCoordinatesOfNode(size_t node_index) const;
+  Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
   Eigen::MatrixXd EvaluateJacobian(
       const Coordinates &local_coords,
       const Eigen::MatrixXd &shape_functions_derivatives) const;

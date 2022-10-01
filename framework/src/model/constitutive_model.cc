@@ -17,7 +17,7 @@ LinearElasticConstitutiveModel2D::LinearElasticConstitutiveModel2D(
 }
 
 Eigen::MatrixXd LinearElasticConstitutiveModel2D::Evaluate(
-    const Coordinates& coordinates) const {
+    const Coordinates& coords) const {
   return constitutive_matrix_;
 }
 
@@ -41,7 +41,7 @@ LinearElasticConstitutiveModel3D::LinearElasticConstitutiveModel3D(
 }
 
 Eigen::MatrixXd LinearElasticConstitutiveModel3D::Evaluate(
-    const Coordinates& coordinates) const {
+    const Coordinates& coords) const {
   return constitutive_matrix_;
 }
 
@@ -55,7 +55,7 @@ IsotropicConductivityConstitutiveModel2D::
 }
 
 Eigen::MatrixXd IsotropicConductivityConstitutiveModel2D::Evaluate(
-    const Coordinates& coordinates) const {
+    const Coordinates& coords) const {
   return constitutive_matrix_;
 }
 
