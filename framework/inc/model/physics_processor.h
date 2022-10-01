@@ -1,5 +1,5 @@
-#ifndef FFEA_FRAMEWORK_MODEL_INTEGRAND_H_
-#define FFEA_FRAMEWORK_MODEL_INTEGRAND_H_
+#ifndef FFEA_FRAMEWORK_MODEL_PHYSICSPROCESSOR_H_
+#define FFEA_FRAMEWORK_MODEL_PHYSICSPROCESSOR_H_
 
 #include <eigen3/Eigen/Dense>
 #include <functional>
@@ -56,4 +56,4 @@ class ElasticityBoundaryProcessor : public PhysicsProcessor {
 
 }  // namespace ffea
 
-#endif  // FFEA_FRAMEWORK_MODEL_INTEGRAND_H_
+#endif  // FFEA_FRAMEWORK_MODEL_PHYSICSPROCESSOR_H_

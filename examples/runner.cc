@@ -22,9 +22,9 @@
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
-#include "../framework/inc/model/physics_processor.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/model/operator.h"
+#include "../framework/inc/model/physics_processor.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
@@ -110,11 +110,13 @@ int main() {
     return load;
   };
 
-  auto domain_processor = ffea::ElasticityDomainProcessor(
-      constitutive_model, body_load, ffea::linear_B_operator_2D);
+  // auto domain_processor = ffea::ElasticityDomainProcessor(
+  //     constitutive_model, body_load, ffea::linear_B_operator_2D);
 
   ffea::Model model(mesh);
-  model.AddComputationalDomain(surface_group_name, domain_processor);
+  model.AddComputationalDomain<ffea::ElasticityDomainProcessor>(
+      surface_group_name, constitutive_model, body_load,
+      ffea::linear_B_operator_2D);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
@@ -123,10 +125,8 @@ int main() {
     return load;
   };
 
-  auto boundary_processor =
-      ffea::ElasticityBoundaryProcessor(number_of_fields, load_function);
-
-  model.AddNeumannBoundaryCondition(neumann_group_name, boundary_processor);
+  model.AddNeumannBoundaryCondition<ffea::ElasticityBoundaryProcessor>(
+      neumann_group_name, number_of_fields, load_function);
 
   auto boundary_function =
       [](const ffea::Coordinates& coordinates) -> std::vector<double> {

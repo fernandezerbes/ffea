@@ -34,13 +34,13 @@ class BoundaryCondition {
 class NeumannBoundaryCondition : public BoundaryCondition {
  public:
   NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
-                           const PhysicsProcessor &processor);
+                           std::unique_ptr<PhysicsProcessor> processor);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const override;
 
  private:
-  const PhysicsProcessor &processor_;
+  std::unique_ptr<PhysicsProcessor> processor_;
 };
 
 class EnforcementStrategy {

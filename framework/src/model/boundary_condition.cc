@@ -8,13 +8,13 @@ BoundaryCondition::BoundaryCondition(
 
 NeumannBoundaryCondition::NeumannBoundaryCondition(
     const std::vector<Element> &boundary_elements,
-    const PhysicsProcessor &processor)
-    : BoundaryCondition(boundary_elements), processor_(processor) {}
+    std::unique_ptr<PhysicsProcessor> processor)
+    : BoundaryCondition(boundary_elements), processor_(std::move(processor)) {}
 
 void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
   for (auto &element : boundary_elements_) {
-    const auto &system = processor_.ProcessElementSystem(element);
+    const auto &system = processor_->ProcessElementSystem(element);
     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
 
     // Scatter coefficients

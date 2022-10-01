@@ -4,13 +4,13 @@ namespace ffea {
 
 ComputationalDomain::ComputationalDomain(
     const std::vector<Element>& domain_elements,
-    const PhysicsProcessor& processor)
-    : domain_elements_(domain_elements), processor_(processor) {}
+    std::unique_ptr<PhysicsProcessor> processor)
+    : domain_elements_(domain_elements), processor_(std::move(processor)) {}
 
 void ComputationalDomain::AddContribution(Eigen::MatrixXd& global_stiffness,
                                           Eigen::VectorXd& global_rhs) const {
   for (auto& element : domain_elements_) {
-    const auto& system = processor_.ProcessElementSystem(element);
+    const auto& system = processor_->ProcessElementSystem(element);
     const auto& dofs_map = element.GetLocalToGlobalDofIndicesMap();
 
     // Scatter coefficients

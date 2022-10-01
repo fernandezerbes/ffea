@@ -7,20 +7,6 @@ namespace ffea {
 Model::Model(Mesh& mesh)
     : mesh_(mesh), computational_domains_(), boundary_conditions_() {}
 
-void Model::AddComputationalDomain(const std::string& domain_name,
-                                   const PhysicsProcessor &processor) {
-  const auto& domain_elements = mesh_.GetElementGroup(domain_name);
-  computational_domains_.emplace_back(domain_elements, processor);
-}
-
-void Model::AddNeumannBoundaryCondition(const std::string& boundary_name,
-                                        const PhysicsProcessor &processor) {
-  const auto& boundary_elements = mesh_.GetElementGroup(boundary_name);
-  boundary_conditions_.push_back(
-      std::make_unique<ffea::NeumannBoundaryCondition>(boundary_elements,
-                                                       processor));
-}
-
 void Model::AddDirichletBoundaryCondition(
     const std::string& boundary_name, ConditionFunction boundary_function,
     const std::unordered_set<size_t>& directions_to_consider,
