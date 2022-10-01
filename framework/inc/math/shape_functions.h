@@ -11,86 +11,85 @@ enum class DerivativeOrder { kZeroth, kFirst, kSecond };
 
 class ShapeFunctions {
  public:
-  Eigen::MatrixXd Evaluate(const Coordinates& coords,
+  Eigen::MatrixXd Evaluate(const Coordinates& local_coords,
                            DerivativeOrder derivative_order) const;
 
  private:
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const = 0;
+  virtual Eigen::MatrixXd Evaluate(const Coordinates& local_coords) const = 0;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const = 0;
+      const Coordinates& local_coords) const = 0;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const = 0;
+      const Coordinates& local_coords) const = 0;
 };
 
 class TwoNodeLineShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
 
 class ThreeNodeTriaShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
 
 class FourNodeQuadShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
 
 class FourNodeTetraShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
 class EightNodeHexShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
 
 class SixNodeTriaShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
 
 class TenNodeTetraShapeFunctions : public ShapeFunctions {
  private:
   virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate1stDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
   virtual Eigen::MatrixXd Evaluate2ndDerivative(
-      const Coordinates& coords) const override;
+      const Coordinates& local_coords) const override;
 };
-
 
 }  // namespace ffea
 
