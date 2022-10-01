@@ -1,0 +1,58 @@
+#ifndef FFEA_FRAMEWORK_MODEL_OPERATOR_H_
+#define FFEA_FRAMEWORK_MODEL_OPERATOR_H_
+
+#include <eigen3/Eigen/Dense>
+#include <functional>
+
+namespace ffea {
+
+using DifferentialOperator =
+    std::function<const Eigen::MatrixXd(const Eigen::MatrixXd &)>;
+
+const DifferentialOperator linear_B_operator_2D =
+    [](const Eigen::MatrixXd &dN_dGlobal) -> const Eigen::MatrixXd {
+  auto dimensions = 2;
+  auto columns = dN_dGlobal.cols() * dimensions;
+  auto rows = 3;
+  Eigen::MatrixXd B = Eigen::MatrixXd::Zero(rows, columns);
+
+  for (auto N_idx = 0; N_idx < columns; N_idx++) {
+    auto first_dof_idx = dimensions * N_idx;
+    auto second_dof_idx = first_dof_idx + 1;
+    B(0, first_dof_idx) = dN_dGlobal(0, N_idx);
+    B(1, second_dof_idx) = dN_dGlobal(1, N_idx);
+    B(2, first_dof_idx) = dN_dGlobal(1, N_idx);
+    B(2, second_dof_idx) = dN_dGlobal(0, N_idx);
+  }
+
+  return B;
+};
+
+const DifferentialOperator linear_B_operator_3D =
+    [](const Eigen::MatrixXd &dN_dGlobal) -> const Eigen::MatrixXd {
+  auto dimensions = 3;
+  auto columns = dN_dGlobal.cols() * dimensions;
+  auto rows = 6;
+  Eigen::MatrixXd B = Eigen::MatrixXd::Zero(rows, columns);
+
+  for (auto N_idx = 0; N_idx < columns; N_idx++) {
+    auto first_dof_idx = dimensions * N_idx;
+    auto second_dof_idx = first_dof_idx + 1;
+    auto third_dof_idx = second_dof_idx + 1;
+    B(0, first_dof_idx) = dN_dGlobal(0, N_idx);
+    B(1, second_dof_idx) = dN_dGlobal(1, N_idx);
+    B(2, third_dof_idx) = dN_dGlobal(2, N_idx);
+    B(3, second_dof_idx) = dN_dGlobal(2, N_idx);
+    B(3, third_dof_idx) = dN_dGlobal(1, N_idx);
+    B(4, first_dof_idx) = dN_dGlobal(2, N_idx);
+    B(4, third_dof_idx) = dN_dGlobal(0, N_idx);
+    B(5, first_dof_idx) = dN_dGlobal(1, N_idx);
+    B(5, second_dof_idx) = dN_dGlobal(0, N_idx);
+  }
+
+  return B;
+};
+
+}  // namespace ffea
+
+#endif  // FFEA_FRAMEWORK_MODEL_OPERATOR_H_
