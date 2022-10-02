@@ -40,6 +40,11 @@ class PhysicsProcessor {
       ConditionFunction source) const = 0;
   virtual ElementSystem ProcessBoundaryElementSystem(
       const Element &element, ConditionFunction load) const = 0;
+  void AddLoadContributionToElementSystem(size_t number_of_nodes, size_t number_of_components,
+                           const Eigen::MatrixXd &N,
+                           const std::vector<double> &load_vector,
+                           double weight, double differential,
+                           ElementSystem &system) const;
 
  private:
   void Scatter(const Element &element, const ElementSystem &element_system,
