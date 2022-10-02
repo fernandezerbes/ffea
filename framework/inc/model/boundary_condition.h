@@ -45,6 +45,22 @@ class NeumannBoundaryCondition : public BoundaryCondition {
   const PhysicsProcessor &processor_;
 };
 
+class RobinBoundaryCondition : public BoundaryCondition {
+ public:
+  RobinBoundaryCondition(const std::vector<Element> &boundary_elements,
+                         ConditionFunction boundary_load,
+                         ConditionFunction radiation,
+                         const PhysicsProcessor &processor);
+
+  virtual void Enforce(Eigen::MatrixXd &global_stiffness,
+                       Eigen::VectorXd &global_rhs) const override;
+
+ private:
+  ConditionFunction boundary_load_;
+  ConditionFunction radiation_;
+  const PhysicsProcessor &processor_;
+};
+
 class EnforcementStrategy {
  public:
   virtual void Enforce(

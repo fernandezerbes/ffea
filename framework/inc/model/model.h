@@ -22,6 +22,9 @@ class Model {
                               ConditionFunction source = nullptr);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
                                    ConditionFunction boundary_load);
+  void AddRobinBoundaryCondition(const std::string &boundary_name,
+                                 ConditionFunction boundary_load,
+                                 ConditionFunction radiation);
   void AddDirichletBoundaryCondition(
       const std::string &boundary_name, ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,

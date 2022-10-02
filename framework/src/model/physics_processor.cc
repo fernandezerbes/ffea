@@ -17,9 +17,11 @@ void PhysicsProcessor::AddDomainContribution(
 
 void PhysicsProcessor::AddBoundaryContribution(
     const std::vector<Element> &elements, ConditionFunction load,
-    Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs) const {
+    ConditionFunction radiation, Eigen::MatrixXd &global_stiffness,
+    Eigen::VectorXd &global_rhs) const {
   for (auto &element : elements) {
-    const auto &element_system = ProcessBoundaryElementSystem(element, load);
+    const auto &element_system =
+        ProcessBoundaryElementSystem(element, load, radiation);
     Scatter(element, element_system, global_stiffness, global_rhs);
   }
 }
@@ -36,6 +38,13 @@ void PhysicsProcessor::AddLoadContributionToElementSystem(
           N(0, node_idx) * load_vector[component_idx] * weight * differential;
     }
   }
+}
+
+void PhysicsProcessor::AddRadiationContributionToElementSystem(
+    const Eigen::MatrixXd &N, double radiation, double weight,
+    double differential, ElementSystem &system) const {
+  (*system.stiffness_matrix) +=
+      N.transpose() * radiation * N * weight * differential;
 }
 
 void PhysicsProcessor::Scatter(const Element &element,

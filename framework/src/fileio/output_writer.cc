@@ -222,14 +222,22 @@ void OutputWriter::WriteTetraQuadratic(const std::string& filename) const {
   }
 
   file << "POINT_DATA " << mesh_.number_of_nodes() << std::endl;
-  file << "VECTORS displacements double" << std::endl;
-  // file << "LOOKUP_TABLE default" << std::endl;
+  if (mesh_.dofs_per_node() == 3) {
+    file << "VECTORS displacements double" << std::endl;
+    // file << "LOOKUP_TABLE default" << std::endl;
 
-  for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs();
-       dof_id += mesh_.dofs_per_node()) {
-    file << mesh_.GetSolutionAtDof(dof_id) << "\t"
-         << mesh_.GetSolutionAtDof(dof_id + 1) << "\t"
-         << mesh_.GetSolutionAtDof(dof_id + 2) << std::endl;
+    for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs();
+         dof_id += mesh_.dofs_per_node()) {
+      file << mesh_.GetSolutionAtDof(dof_id) << "\t"
+           << mesh_.GetSolutionAtDof(dof_id + 1) << "\t"
+           << mesh_.GetSolutionAtDof(dof_id + 2) << std::endl;
+    }
+  } else if (mesh_.dofs_per_node() == 1) {
+    file << "SCALARS field_variable double" << std::endl;
+    file << "LOOKUP_TABLE default" << std::endl;
+    for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs(); dof_id++) {
+      file << mesh_.GetSolutionAtDof(dof_id) << std::endl;
+    }
   }
 
   file.close();

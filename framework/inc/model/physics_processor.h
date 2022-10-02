@@ -30,6 +30,7 @@ class PhysicsProcessor {
                              Eigen::VectorXd &global_rhs) const;
   void AddBoundaryContribution(const std::vector<Element> &elements,
                                ConditionFunction load,
+                               ConditionFunction radiation,
                                Eigen::MatrixXd &global_stiffness,
                                Eigen::VectorXd &global_rhs) const;
 
@@ -38,11 +39,16 @@ class PhysicsProcessor {
       const Element &element, const ConstitutiveModel &constitutive_model,
       ConditionFunction source) const = 0;
   virtual ElementSystem ProcessBoundaryElementSystem(
-      const Element &element, ConditionFunction load) const = 0;
+      const Element &element, ConditionFunction load,
+      ConditionFunction radiation) const = 0;
   void AddLoadContributionToElementSystem(
       size_t number_of_nodes, size_t number_of_components,
       const Eigen::MatrixXd &N, const std::vector<double> &load_vector,
       double weight, double differential, ElementSystem &system) const;
+  void AddRadiationContributionToElementSystem(const Eigen::MatrixXd &N,
+                                               double radiation, double weight,
+                                               double differential,
+                                               ElementSystem &system) const;
 
  private:
   void Scatter(const Element &element, const ElementSystem &element_system,

@@ -26,6 +26,15 @@ void Model::AddNeumannBoundaryCondition(const std::string& boundary_name,
           boundary_elements, boundary_load, processor_));
 }
 
+void Model::AddRobinBoundaryCondition(const std::string& boundary_name,
+                                      ConditionFunction boundary_load,
+                                      ConditionFunction radiation) {
+  const auto& boundary_elements = mesh_.GetElementGroup(boundary_name);
+  boundary_conditions_.push_back(
+      std::make_unique<ffea::RobinBoundaryCondition>(
+          boundary_elements, boundary_load, radiation, processor_));
+}
+
 void Model::AddDirichletBoundaryCondition(
     const std::string& boundary_name, ConditionFunction boundary_function,
     const std::unordered_set<size_t>& directions_to_consider,
