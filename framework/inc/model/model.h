@@ -16,16 +16,11 @@ namespace ffea {
 
 class Model {
  public:
-  explicit Model(Mesh &mesh);
-
-  template <typename ProcessorType>
+  explicit Model(Mesh &mesh, const PhysicsProcessor &processor);
   void AddComputationalDomain(const std::string &domain_name,
                               const ConstitutiveModel &constitutive_model,
-                              ConditionFunction source,
-                              DifferentialOperator B_operator);
-  template <typename ProcessorType>
+                              ConditionFunction source);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
-                                   size_t dimensions,
                                    ConditionFunction boundary_load);
   void AddDirichletBoundaryCondition(
       const std::string &boundary_name, ConditionFunction boundary_function,
@@ -41,31 +36,10 @@ class Model {
 
  private:
   Mesh &mesh_;
+  const PhysicsProcessor &processor_;
   std::vector<ComputationalDomain> computational_domains_;
   std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
 };
-
-template <typename ProcessorType>
-void Model::AddComputationalDomain(const std::string &domain_name,
-                                   const ConstitutiveModel &constitutive_model,
-                                   ConditionFunction source,
-                                   DifferentialOperator B_operator) {
-  const auto &domain_elements = mesh_.GetElementGroup(domain_name);
-  auto processor = std::make_unique<ProcessorType>(
-      domain_elements, constitutive_model, source, B_operator);
-  computational_domains_.emplace_back(std::move(processor));
-}
-
-template <typename ProcessorType>
-void Model::AddNeumannBoundaryCondition(const std::string &boundary_name,
-                                        size_t dimensions,
-                                        ConditionFunction boundary_load) {
-  const auto &boundary_elements = mesh_.GetElementGroup(boundary_name);
-  auto processor = std::make_unique<ProcessorType>(boundary_elements,
-                                                   dimensions, boundary_load);
-  boundary_conditions_.push_back(
-      std::make_unique<ffea::NeumannBoundaryCondition>(std::move(processor)));
-}
 
 }  // namespace ffea
 

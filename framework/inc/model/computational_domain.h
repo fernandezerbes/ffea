@@ -12,13 +12,19 @@ namespace ffea {
 
 class ComputationalDomain {
  public:
-  ComputationalDomain(std::unique_ptr<PhysicsProcessor> processor);
+  ComputationalDomain(const std::vector<Element> &elements,
+                      const ConstitutiveModel &constitutive_model,
+                      ConditionFunction source,
+                      const PhysicsProcessor &processor);
 
   void AddContribution(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const;
 
  private:
-  std::unique_ptr<PhysicsProcessor> processor_;
+  const std::vector<Element> &elements_;
+  const ConstitutiveModel &constitutive_model_;
+  ConditionFunction source_;
+  const PhysicsProcessor &processor_;
 };
 
 }  // namespace ffea

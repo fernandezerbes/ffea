@@ -104,16 +104,15 @@ int main() {
   ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus,
                                                             poisson_ratio);
   // ********************** MODEL **********************
-  auto body_load =
-      [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };
 
-  ffea::Model model(mesh);
-  model.AddComputationalDomain<ffea::ElasticityDomainProcessor>(
-      surface_group_name, constitutive_model, body_load,
-      ffea::linear_B_operator_2D);
+  const auto processor = ffea::ElasticityProcessor(ffea::linear_B_operator_2D);
+  ffea::Model model(mesh, processor);
+  model.AddComputationalDomain(surface_group_name, constitutive_model,
+                               body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
@@ -122,8 +121,7 @@ int main() {
     return load;
   };
 
-  model.AddNeumannBoundaryCondition<ffea::ElasticityBoundaryProcessor>(
-      neumann_group_name, number_of_fields, load_function);
+  model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
 
   auto boundary_function =
       [](const ffea::Coordinates& coords) -> std::vector<double> {

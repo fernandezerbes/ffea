@@ -24,49 +24,42 @@ struct ElementSystem {
 
 class PhysicsProcessor {
  public:
-  PhysicsProcessor(const std::vector<Element> &elements);
-  void AddContribution(Eigen::MatrixXd &global_stiffness,
-                       Eigen::VectorXd &global_rhs) const;
+  void AddDomainContribution(const std::vector<Element> &elements,
+                             const ConstitutiveModel &constitutive_model,
+                             ConditionFunction source,
+                             Eigen::MatrixXd &global_stiffness,
+                             Eigen::VectorXd &global_rhs) const;
+  void AddBoundaryContribution(const std::vector<Element> &elements,
+                               ConditionFunction load,
+                               Eigen::MatrixXd &global_stiffness,
+                               Eigen::VectorXd &global_rhs) const;
 
  protected:
-  virtual ElementSystem ProcessElementSystem(const Element &element) const = 0;
+  virtual ElementSystem ProcessDomainElementSystem(
+      const Element &element, const ConstitutiveModel &constitutive_model,
+      ConditionFunction source) const = 0;
+  virtual ElementSystem ProcessBoundaryElementSystem(
+      const Element &element, ConditionFunction load) const = 0;
 
  private:
   void Scatter(const Element &element, const ElementSystem &element_system,
                Eigen::MatrixXd &global_stiffness,
                Eigen::VectorXd &global_rhs) const;
-  const std::vector<Element> &elements_;
 };
 
-class ElasticityDomainProcessor : public PhysicsProcessor {
+class ElasticityProcessor : public PhysicsProcessor {
  public:
-  ElasticityDomainProcessor(const std::vector<Element> &elements,
-                            const ConstitutiveModel &constitutive_model,
-                            ConditionFunction source,
-                            DifferentialOperator B_operator);
- 
+  ElasticityProcessor(DifferentialOperator B_operator);
+
  protected:
-  virtual ElementSystem ProcessElementSystem(
-      const Element &element) const override;
+  virtual ElementSystem ProcessDomainElementSystem(
+      const Element &element, const ConstitutiveModel &constitutive_model,
+      ConditionFunction source) const override;
+  virtual ElementSystem ProcessBoundaryElementSystem(
+      const Element &element, ConditionFunction load) const override;
 
  private:
-  const ConstitutiveModel &constitutive_model_;
-  ConditionFunction source_;
   DifferentialOperator B_operator_;
-};
-
-class ElasticityBoundaryProcessor : public PhysicsProcessor {
- public:
-  ElasticityBoundaryProcessor(const std::vector<Element> &elements,
-                              size_t dimensions, ConditionFunction load);
-
- protected:
-  virtual ElementSystem ProcessElementSystem(
-      const Element &element) const override;
-
- private:
-  size_t dimensions_;
-  ConditionFunction load_;
 };
 
 }  // namespace ffea

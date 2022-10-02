@@ -2,13 +2,21 @@
 
 namespace ffea {
 
+BoundaryCondition::BoundaryCondition(
+    const std::vector<Element> &boundary_elements)
+    : boundary_elements_(boundary_elements) {}
+
 NeumannBoundaryCondition::NeumannBoundaryCondition(
-    std::unique_ptr<PhysicsProcessor> processor)
-    : processor_(std::move(processor)) {}
+    const std::vector<Element> &boundary_elements, ConditionFunction load,
+    const PhysicsProcessor &processor)
+    : BoundaryCondition(boundary_elements),
+      boundary_load_(load),
+      processor_(processor) {}
 
 void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
-  processor_->AddContribution(global_stiffness, global_rhs);
+  processor_.AddBoundaryContribution(boundary_elements_, boundary_load_,
+                                     global_stiffness, global_rhs);
 }
 
 // void DirectEnforcementStrategy::Enforce(
@@ -67,7 +75,7 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
     ConditionFunction boundary_function,
     const std::unordered_set<size_t> &directions_to_consider,
     const EnforcementStrategy &enforcement_strategy)
-    : boundary_elements_(boundary_elements),
+    : BoundaryCondition(boundary_elements),
       boundary_function_(boundary_function),
       directions_to_consider_(directions_to_consider),
       enforcement_strategy_(enforcement_strategy) {}
