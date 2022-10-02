@@ -55,6 +55,11 @@ const DifferentialOperator linear_B_operator_3D =
   return B;
 };
 
+const DifferentialOperator gradient_operator =
+    [](const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
+  return dN_dGlobal;
+};
+
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_MODEL_OPERATOR_H_
