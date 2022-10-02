@@ -24,7 +24,7 @@ Eigen::MatrixXd ShapeFunctions::Evaluate(
 Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate(
     const Coordinates& local_coords) const {
   double r = local_coords.get(0);
-  Eigen::MatrixXd result(1, 2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 2);
 
   result(0, 0) = 0.5 * (1.0 - r);
   result(0, 1) = 0.5 * (1.0 + r);
@@ -34,7 +34,7 @@ Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate(
 
 Eigen::MatrixXd TwoNodeLineShapeFunctions::Evaluate1stDerivative(
     const Coordinates& local_coords) const {
-  Eigen::MatrixXd result(1, 2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 2);
 
   result(0, 0) = -0.5;
   result(0, 1) = 0.5;
@@ -51,7 +51,7 @@ Eigen::MatrixXd ThreeNodeTriaShapeFunctions::Evaluate(
     const Coordinates& local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result(1, 3);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 3);
 
   result(0, 0) = 1.0 - r - s;
   result(0, 1) = r;
@@ -84,7 +84,7 @@ Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate(
     const Coordinates& local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result(1, 4);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 4);
 
   result(0, 0) = 0.25 * (1 - r) * (1 - s);
   result(0, 1) = 0.25 * (1 + r) * (1 - s);
@@ -98,7 +98,7 @@ Eigen::MatrixXd FourNodeQuadShapeFunctions::Evaluate1stDerivative(
     const Coordinates& local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result(2, 4);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 4);
 
   result(0, 0) = -0.25 * (1 - s);
   result(0, 1) = 0.25 * (1 - s);
@@ -132,7 +132,7 @@ Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate(
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result(1, 4);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 4);
 
   result(0, 0) = 1.0 - r - s - t;
   result(0, 1) = r;
@@ -147,7 +147,7 @@ Eigen::MatrixXd FourNodeTetraShapeFunctions::Evaluate1stDerivative(
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result(3, 4);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 4);
 
   result(0, 0) = -1.0;
   result(0, 1) = 1.0;
@@ -171,7 +171,7 @@ Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate(
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result(1, 8);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 8);
 
   result(0, 0) = 0.125 * (1 - r) * (1 - s) * (1 - t);
   result(0, 1) = 0.125 * (1 + r) * (1 - s) * (1 - t);
@@ -190,7 +190,7 @@ Eigen::MatrixXd EightNodeHexShapeFunctions::Evaluate1stDerivative(
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result(3, 8);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 8);
 
   result(0, 0) = -0.125 * (1 - s) * (1 - t);
   result(0, 1) = 0.125 * (1 - s) * (1 - t);
@@ -264,7 +264,7 @@ Eigen::MatrixXd SixNodeTriaShapeFunctions::Evaluate(
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = 1 - r - s;
-  Eigen::MatrixXd result(1, 6);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 6);
 
   result(0, 0) = (2.0 * t - 1.0) * t;
   result(0, 1) = (2.0 * r - 1.0) * r;
@@ -327,7 +327,7 @@ Eigen::MatrixXd TenNodeTetraShapeFunctions::Evaluate(
   double s = local_coords.get(1);
   double t = local_coords.get(2);
   double u = 1.0 - r - s - t;
-  Eigen::MatrixXd result(1, 10);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 10);
 
   result(0, 0) = (2.0 * u - 1.0) * u;
   result(0, 1) = (2.0 * r - 1.0) * r;
@@ -349,7 +349,7 @@ Eigen::MatrixXd TenNodeTetraShapeFunctions::Evaluate1stDerivative(
   double s = local_coords.get(1);
   double t = local_coords.get(2);
   double u = 1.0 - r - s - t;
-  Eigen::MatrixXd result(3, 10);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 10);
 
   result(0, 0) = 4.0 * (r + s + t) - 3.0;
   result(0, 1) = 4.0 * r - 1.0;
@@ -384,7 +384,7 @@ Eigen::MatrixXd TenNodeTetraShapeFunctions::Evaluate2ndDerivative(
   double s = local_coords.get(1);
   double t = local_coords.get(2);
   double u = 1.0 - r - s - t;
-  Eigen::MatrixXd result(6, 10);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 10);
 
   result(0, 0) = 4.0;
   result(0, 1) = 4.0;
