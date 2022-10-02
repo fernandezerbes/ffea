@@ -24,14 +24,6 @@ class LinearElasticConstitutiveModel3D : public ConstitutiveModel {
       const Coordinates& coords) const override;
 };
 
-class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
- public:
-  IsotropicConductivityConstitutiveModel2D(double kxx, double kyy, double kxy);
-
-  virtual Eigen::MatrixXd Evaluate(
-      const Coordinates& coords) const override;
-};
-
 }  // namespace ffea
 
 #endif  // FFEA_APPLICATIONS_ELASTICITY_INC_CONSTITUTIVEMODEL_H_
