@@ -8,6 +8,8 @@
 #include <memory>
 #include <unordered_set>
 
+#include "../applications/elasticity/inc/constitutive_model.h"
+#include "../applications/elasticity/inc/physics_processor.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"

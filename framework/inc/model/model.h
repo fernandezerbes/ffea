@@ -19,7 +19,7 @@ class Model {
   explicit Model(Mesh &mesh, const PhysicsProcessor &processor);
   void AddComputationalDomain(const std::string &domain_name,
                               const ConstitutiveModel &constitutive_model,
-                              ConditionFunction source);
+                              ConditionFunction source = nullptr);
   void AddNeumannBoundaryCondition(const std::string &boundary_name,
                                    ConditionFunction boundary_load);
   void AddDirichletBoundaryCondition(

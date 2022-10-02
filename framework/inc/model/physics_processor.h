@@ -4,7 +4,6 @@
 #include <eigen3/Eigen/Dense>
 #include <functional>
 #include <optional>
-#include <tuple>
 
 #include "../geometry/coordinates.h"
 #include "../geometry/geometric_entity.h"
@@ -40,31 +39,15 @@ class PhysicsProcessor {
       ConditionFunction source) const = 0;
   virtual ElementSystem ProcessBoundaryElementSystem(
       const Element &element, ConditionFunction load) const = 0;
-  void AddLoadContributionToElementSystem(size_t number_of_nodes, size_t number_of_components,
-                           const Eigen::MatrixXd &N,
-                           const std::vector<double> &load_vector,
-                           double weight, double differential,
-                           ElementSystem &system) const;
+  void AddLoadContributionToElementSystem(
+      size_t number_of_nodes, size_t number_of_components,
+      const Eigen::MatrixXd &N, const std::vector<double> &load_vector,
+      double weight, double differential, ElementSystem &system) const;
 
  private:
   void Scatter(const Element &element, const ElementSystem &element_system,
                Eigen::MatrixXd &global_stiffness,
                Eigen::VectorXd &global_rhs) const;
-};
-
-class ElasticityProcessor : public PhysicsProcessor {
- public:
-  ElasticityProcessor(DifferentialOperator B_operator);
-
- protected:
-  virtual ElementSystem ProcessDomainElementSystem(
-      const Element &element, const ConstitutiveModel &constitutive_model,
-      ConditionFunction source) const override;
-  virtual ElementSystem ProcessBoundaryElementSystem(
-      const Element &element, ConditionFunction load) const override;
-
- private:
-  DifferentialOperator B_operator_;
 };
 
 }  // namespace ffea
