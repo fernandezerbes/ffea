@@ -7,17 +7,16 @@
 
 namespace ffea {
 
-class IsotropicConductivityConstitutiveModel3D : public ConstitutiveModel {
+class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
  public:
-  IsotropicConductivityConstitutiveModel3D(double kxx, double kyy, double kzz,
-                                           double kxy, double kyz, double kxz);
+  IsotropicConductivityConstitutiveModel2D(double k);
 
   virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const override;
 };
 
-class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
+class IsotropicConductivityConstitutiveModel3D : public ConstitutiveModel {
  public:
-  IsotropicConductivityConstitutiveModel2D(double kxx, double kyy, double kxy);
+  IsotropicConductivityConstitutiveModel3D(double k);
 
   virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const override;
 };

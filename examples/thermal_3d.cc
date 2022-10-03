@@ -63,8 +63,7 @@ int main() {
   auto mesh = mesh_builder.Build(number_of_fields);
 
   // ********************** CONSTITUTIVE MODEL **********************
-  ffea::IsotropicConductivityConstitutiveModel3D constitutive_model(
-      1.0, 1.0, 1.0, 0.0, 0.0, 0.0);
+  ffea::IsotropicConductivityConstitutiveModel3D constitutive_model(1.0);
 
   // ********************** MODEL **********************
   auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
