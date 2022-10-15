@@ -5,14 +5,9 @@
 
 namespace ffea {
 
-GeometricEntity::GeometricEntity(
-    GeometricEntityType type, size_t dimensions,
-    const std::vector<Node *> &nodes,
-    std::unique_ptr<ShapeFunctions> shape_functions)
-    : type_(type),
-      dimension_(dimensions),
-      nodes_(nodes),
-      shape_functions_(std::move(shape_functions)) {}
+GeometricEntity::GeometricEntity(GeometricEntityType type, size_t dimensions,
+                                 const std::vector<Node *> &nodes)
+    : type_(type), dimension_(dimensions), nodes_(nodes) {}
 
 GeometricEntityType GeometricEntity::type() const { return type_; }
 
@@ -31,7 +26,19 @@ std::vector<size_t> GeometricEntity::GetNodesIds() const {
 
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
     const Coordinates &local_coords, DerivativeOrder derivative_order) const {
-  return shape_functions_->Evaluate(local_coords, derivative_order);
+  switch (derivative_order) {
+    case DerivativeOrder::kZeroth:
+      return EvaluateShapeFunctions0thDerivative(local_coords);
+      break;
+    case DerivativeOrder::kFirst:
+      return EvaluateShapeFunctions1stDerivative(local_coords);
+      break;
+    case DerivativeOrder::kSecond:
+      return EvaluateShapeFunctions2ndDerivative(local_coords);
+      break;
+    default:
+      throw std::runtime_error("Invalid order of derivative");
+  }
 }
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
@@ -96,12 +103,18 @@ Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_idx) const {
 
 const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }
 
-Line2D::Line2D(GeometricEntityType type, const std::vector<Node *> &nodes,
-               std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
+// Line entities
 
-Eigen::VectorXd Line2D::EvaluateNormalVector(
+Line::Line(GeometricEntityType type, size_t dimensions,
+           const std::vector<Node *> &nodes)
+    : GeometricEntity(type, dimensions, nodes) {}
+
+Eigen::VectorXd Line::EvaluateNormalVector(
     const Coordinates &local_coords) const {
+  if (dimensions() == 3) {
+    throw std::runtime_error("Lines are not supported in 3D");
+  }
+
   const auto &jacobian = EvaluateJacobian(local_coords);
   // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
@@ -110,101 +123,233 @@ Eigen::VectorXd Line2D::EvaluateNormalVector(
   return normal;
 }
 
-double Line2D::EvaluateDifferential(const Coordinates &local_coords) const {
-  const auto &jacobian = EvaluateJacobian(local_coords);
-  return jacobian.determinant();
+double Line::EvaluateDifferential(const Coordinates &local_coords) const {
+  const auto &normal = EvaluateNormalVector(local_coords);
+  return normal.norm();
 }
 
-Line3D::Line3D(GeometricEntityType type, const std::vector<Node *> &nodes,
-               std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
+TwoNodeLine::TwoNodeLine(size_t dimensions, const std::vector<Node *> &nodes)
+    : Line(GeometricEntityType::kTwoNodeLine, dimensions, nodes) {}
 
-Eigen::VectorXd Line3D::EvaluateNormalVector(
+Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  /*
-  - Jacobian has the form: [1x2] * [2x3] = [1x3] = [dx/dxi, dy/dxi, dz/dxi]
-  - Line vector is u = [dx/dxi, dy/dxi, dz/dxi] = [a, b, c], which is
-    perpendicular to a plane a * x + b * y + c * z = 0
-  - Replacing th dx/dxi * x + dy/dxi * y + dz/dxi * z = 0 and choosing any x and
-    y, e.g. x = 1 and y = 0 we find z as
-    z = - dx/dxi / dz/dxi
-  - Normal vector to lying on plane is n = [x, y, z] = [1, 0, -dx/dxi / dz/dxi]
-  - Scale the vector to have the same length as u
-  */
-  const auto &jacobian = EvaluateJacobian(local_coords);
-  double direction_vector_norm = jacobian(0, 0) * jacobian(0, 0) +
-                                 jacobian(0, 1) * jacobian(0, 1) +
-                                 jacobian(0, 2) * jacobian(0, 2);
+  double r = local_coords.get(0);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 2);
 
-  Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
-  normal(0) = 1.0;
-  normal(1) = 0.0;
-  normal(2) = -jacobian(0, 0) / jacobian(0, 1);
+  result(0, 0) = 0.5 * (1.0 - r);
+  result(0, 1) = 0.5 * (1.0 + r);
 
-  return normal * std::sqrt(direction_vector_norm / normal.squaredNorm());
-}
-
-double Line3D::EvaluateDifferential(const Coordinates &local_coords) const {
-  const auto &jacobian = EvaluateJacobian(local_coords);
-  double result = std::sqrt(jacobian(0, 0) * jacobian(0, 0) +
-                            jacobian(0, 1) * jacobian(0, 1) +
-                            jacobian(0, 2) * jacobian(0, 2));
   return result;
 }
 
-Quad2D::Quad2D(GeometricEntityType type, const std::vector<Node *> &nodes,
-               std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
+Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 2);
 
-double Quad2D::EvaluateDifferential(const Coordinates &local_coords) const {
-  const auto &jacobian = EvaluateJacobian(local_coords);
-  return jacobian.determinant();
+  result(0, 0) = -0.5;
+  result(0, 1) = 0.5;
+
+  return result;
 }
 
-Quad3D::Quad3D(GeometricEntityType type, const std::vector<Node *> &nodes,
-               std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
+Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  return Eigen::MatrixXd::Zero(1, 2);
+}
 
-Eigen::VectorXd Quad3D::EvaluateNormalVector(
+// Quad entities
+
+Quad::Quad(GeometricEntityType type, size_t dimensions,
+           const std::vector<Node *> &nodes)
+    : GeometricEntity(type, dimensions, nodes) {}
+
+Eigen::VectorXd Quad::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
+  // For 2D we don't have dz
   const auto &jacobian = EvaluateJacobian(local_coords);
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
-  normal(2) = jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
+
+  if (dimensions() == 3) {
+    normal(2) =
+        jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
+  }
+
   return normal;
 }
 
-double Quad3D::EvaluateDifferential(const Coordinates &local_coords) const {
+double Quad::EvaluateDifferential(const Coordinates &local_coords) const {
   Eigen::VectorXd normal = EvaluateNormalVector(local_coords);
   return normal.norm();
 }
 
-Hex3D::Hex3D(GeometricEntityType type, const std::vector<Node *> &nodes,
-             std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
+FourNodeQuad::FourNodeQuad(size_t dimensions, const std::vector<Node *> &nodes)
+    : Quad(GeometricEntityType::kFourNodeQuad, dimensions, nodes) {}
 
-double Hex3D::EvaluateDifferential(const Coordinates &local_coords) const {
+Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions0thDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 4);
+
+  result(0, 0) = 0.25 * (1 - r) * (1 - s);
+  result(0, 1) = 0.25 * (1 + r) * (1 - s);
+  result(0, 2) = 0.25 * (1 + r) * (1 + s);
+  result(0, 3) = 0.25 * (1 - r) * (1 + s);
+
+  return result;
+}
+
+Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 4);
+
+  result(0, 0) = -0.25 * (1 - s);
+  result(0, 1) = 0.25 * (1 - s);
+  result(0, 2) = 0.25 * (1 + s);
+  result(0, 3) = -0.25 * (1 + s);
+
+  result(1, 0) = -0.25 * (1 - r);
+  result(1, 1) = -0.25 * (1 + r);
+  result(1, 2) = 0.25 * (1 + r);
+  result(1, 3) = 0.25 * (1 - r);
+
+  return result;
+}
+
+Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 4);
+
+  result(2, 0) = 0.25;
+  result(2, 1) = -0.25;
+  result(2, 2) = 0.25;
+  result(2, 3) = -0.25;
+
+  return result;
+}
+
+// Hex entities
+
+Hex::Hex(GeometricEntityType type, size_t dimensions,
+         const std::vector<Node *> &nodes)
+    : GeometricEntity(type, dimensions, nodes) {}
+
+double Hex::EvaluateDifferential(const Coordinates &local_coords) const {
   const auto &jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant();
 }
 
-Tria2D::Tria2D(GeometricEntityType type, const std::vector<Node *> &nodes,
-               std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 2, nodes, std::move(shape_functions)) {}
+EightNodeHex::EightNodeHex(const std::vector<Node *> &nodes)
+    : Hex(GeometricEntityType::kEightNodeHex, 3, nodes) {}
 
-double Tria2D::EvaluateDifferential(const Coordinates &local_coords) const {
-  const auto &jacobian = EvaluateJacobian(local_coords);
-  return jacobian.determinant() / 2.0;
+Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions0thDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 8);
+
+  result(0, 0) = 0.125 * (1 - r) * (1 - s) * (1 - t);
+  result(0, 1) = 0.125 * (1 + r) * (1 - s) * (1 - t);
+  result(0, 2) = 0.125 * (1 + r) * (1 + s) * (1 - t);
+  result(0, 3) = 0.125 * (1 - r) * (1 + s) * (1 - t);
+  result(0, 4) = 0.125 * (1 - r) * (1 - s) * (1 + t);
+  result(0, 5) = 0.125 * (1 + r) * (1 - s) * (1 + t);
+  result(0, 6) = 0.125 * (1 + r) * (1 + s) * (1 + t);
+  result(0, 7) = 0.125 * (1 - r) * (1 + s) * (1 + t);
+
+  return result;
 }
 
-Tria3D::Tria3D(GeometricEntityType type, const std::vector<Node *> &nodes,
-               std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
+Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 8);
 
-Eigen::VectorXd Tria3D::EvaluateNormalVector(
+  result(0, 0) = -0.125 * (1 - s) * (1 - t);
+  result(0, 1) = 0.125 * (1 - s) * (1 - t);
+  result(0, 2) = 0.125 * (1 + s) * (1 - t);
+  result(0, 3) = -0.125 * (1 + s) * (1 - t);
+  result(0, 4) = -0.125 * (1 - s) * (1 + t);
+  result(0, 5) = 0.125 * (1 - s) * (1 + t);
+  result(0, 6) = 0.125 * (1 + s) * (1 + t);
+  result(0, 7) = -0.125 * (1 + s) * (1 + t);
+
+  result(1, 0) = -0.125 * (1 - r) * (1 - t);
+  result(1, 1) = -0.125 * (1 + r) * (1 - t);
+  result(1, 2) = 0.125 * (1 + r) * (1 - t);
+  result(1, 3) = 0.125 * (1 - r) * (1 - t);
+  result(1, 4) = -0.125 * (1 - r) * (1 + t);
+  result(1, 5) = -0.125 * (1 + r) * (1 + t);
+  result(1, 6) = 0.125 * (1 + r) * (1 + t);
+  result(1, 7) = 0.125 * (1 - r) * (1 + t);
+
+  result(2, 0) = -0.125 * (1 - r) * (1 - s);
+  result(2, 1) = -0.125 * (1 + r) * (1 - s);
+  result(2, 2) = -0.125 * (1 + r) * (1 + s);
+  result(2, 3) = -0.125 * (1 - r) * (1 + s);
+  result(2, 4) = 0.125 * (1 - r) * (1 - s);
+  result(2, 5) = 0.125 * (1 + r) * (1 - s);
+  result(2, 6) = 0.125 * (1 + r) * (1 + s);
+  result(2, 7) = 0.125 * (1 - r) * (1 + s);
+
+  return result;
+}
+
+Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 8);
+
+  result(3, 0) = 0.125 * (1 - t);
+  result(3, 1) = -0.125 * (1 - t);
+  result(3, 2) = 0.125 * (1 - t);
+  result(3, 3) = -0.125 * (1 - t);
+  result(3, 4) = 0.125 * (1 + t);
+  result(3, 5) = -0.125 * (1 + t);
+  result(3, 6) = 0.125 * (1 + t);
+  result(3, 7) = -0.125 * (1 + t);
+
+  result(4, 0) = 0.125 * (1 - r);
+  result(4, 1) = 0.125 * (1 + r);
+  result(4, 2) = -0.125 * (1 + r);
+  result(4, 3) = -0.125 * (1 - r);
+  result(4, 4) = -0.125 * (1 - r);
+  result(4, 5) = -0.125 * (1 + r);
+  result(4, 6) = 0.125 * (1 + r);
+  result(4, 7) = 0.125 * (1 - r);
+
+  result(5, 0) = 0.125 * (1 - s);
+  result(5, 1) = -0.125 * (1 - s);
+  result(5, 2) = -0.125 * (1 + s);
+  result(5, 3) = 0.125 * (1 + s);
+  result(5, 4) = -0.125 * (1 - s);
+  result(5, 5) = 0.125 * (1 - s);
+  result(5, 6) = 0.125 * (1 + s);
+  result(5, 7) = -0.125 * (1 + s);
+
+  return result;
+}
+
+// Tria entities
+
+Tria::Tria(GeometricEntityType type, size_t dimensions,
+           const std::vector<Node *> &nodes)
+    : GeometricEntity(type, dimensions, nodes) {}
+
+Eigen::VectorXd Tria::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
@@ -212,22 +357,271 @@ Eigen::VectorXd Tria3D::EvaluateNormalVector(
   Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
-  normal(2) = jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
+
+  if (dimensions() == 3) {
+    normal(2) =
+        jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
+  }
+
   return normal;
 }
 
-double Tria3D::EvaluateDifferential(const Coordinates &local_coords) const {
+double Tria::EvaluateDifferential(const Coordinates &local_coords) const {
   Eigen::VectorXd normal = EvaluateNormalVector(local_coords);
   return normal.norm() / 2.0;
 }
 
-Tetra3D::Tetra3D(GeometricEntityType type, const std::vector<Node *> &nodes,
-                 std::unique_ptr<ShapeFunctions> shape_functions)
-    : GeometricEntity(type, 3, nodes, std::move(shape_functions)) {}
+ThreeNodeTria::ThreeNodeTria(size_t dimensions,
+                             const std::vector<Node *> &nodes)
+    : Tria(GeometricEntityType::kThreeNodeTria, dimensions, nodes) {}
 
-double Tetra3D::EvaluateDifferential(const Coordinates &local_coords) const {
+Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 3);
+
+  result(0, 0) = 1.0 - r - s;
+  result(0, 1) = r;
+  result(0, 2) = s;
+
+  return result;
+}
+
+Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 3);
+
+  result(0, 0) = -1.0;
+  result(0, 1) = 1.0;
+
+  result(1, 0) = -1.0;
+  result(1, 2) = 1.0;
+
+  return result;
+}
+
+Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  return Eigen::MatrixXd::Zero(3, 3);
+}
+
+SixNodeTria::SixNodeTria(size_t dimensions, const std::vector<Node *> &nodes)
+    : Tria(GeometricEntityType::kSixNodeTria, dimensions, nodes) {}
+
+Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions0thDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = 1 - r - s;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 6);
+
+  result(0, 0) = (2.0 * t - 1.0) * t;
+  result(0, 1) = (2.0 * r - 1.0) * r;
+  result(0, 2) = (2.0 * s - 1.0) * s;
+  result(0, 3) = 4.0 * t * r;
+  result(0, 4) = 4.0 * r * s;
+  result(0, 5) = 4.0 * s * t;
+
+  return result;
+}
+
+Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = 1 - r - s;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 6);
+
+  result(0, 0) = -3.0 + 4.0 * (r + s);
+  result(0, 1) = 4.0 * r - 1.0;
+  result(0, 3) = 4.0 - 8.0 * r - 4.0 * s;
+  result(0, 4) = 4.0 * s;
+  result(0, 5) = -4.0 * s;
+
+  result(1, 0) = -3.0 + 4.0 * (r + s);
+  result(1, 2) = 4.0 * s - 1.0;
+  result(1, 3) = -4.0 * r;
+  result(1, 4) = 4.0 * r;
+  result(1, 5) = 4.0 - 4.0 * r - 8.0 * s;
+
+  return result;
+}
+
+Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = 1 - r - s;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 6);
+
+  result(0, 0) = 4.0;
+  result(0, 1) = 4.0;
+  result(0, 3) = -8.0;
+
+  result(1, 0) = 4.0;
+  result(1, 2) = 4.0;
+  result(1, 5) = -8.0;
+
+  result(2, 0) = 4.0;
+  result(2, 3) = -4.0;
+  result(2, 4) = 4.0;
+  result(2, 5) = -4.0;
+
+  return result;
+}
+
+// Tetra entities
+
+Tetra::Tetra(GeometricEntityType type, size_t dimensions,
+             const std::vector<Node *> &nodes)
+    : GeometricEntity(type, dimensions, nodes) {}
+
+double Tetra::EvaluateDifferential(const Coordinates &local_coords) const {
   const auto &jacobian = EvaluateJacobian(local_coords);
   return jacobian.determinant() / 6.0;
+}
+
+FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
+    : Tetra(GeometricEntityType::kFourNodeTetra, 3, nodes) {}
+
+Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions0thDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 4);
+
+  result(0, 0) = 1.0 - r - s - t;
+  result(0, 1) = r;
+  result(0, 2) = s;
+  result(0, 3) = t;
+
+  return result;
+}
+
+Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 4);
+
+  result(0, 0) = -1.0;
+  result(0, 1) = 1.0;
+
+  result(1, 0) = -1.0;
+  result(1, 2) = 1.0;
+
+  result(2, 0) = -1.0;
+  result(2, 3) = 1.0;
+
+  return result;
+}
+
+Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  return Eigen::MatrixXd::Zero(6, 4);
+}
+
+TenNodeTetra::TenNodeTetra(const std::vector<Node *> &nodes)
+    : Tetra(GeometricEntityType::kTenNodeTetra, 3, nodes) {}
+
+Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions0thDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  double u = 1.0 - r - s - t;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 10);
+
+  result(0, 0) = (2.0 * u - 1.0) * u;
+  result(0, 1) = (2.0 * r - 1.0) * r;
+  result(0, 2) = (2.0 * s - 1.0) * s;
+  result(0, 3) = (2.0 * t - 1.0) * t;
+  result(0, 4) = 4.0 * r * u;
+  result(0, 5) = 4.0 * r * s;
+  result(0, 6) = 4.0 * s * u;
+  result(0, 7) = 4.0 * t * u;
+  result(0, 8) = 4.0 * s * t;
+  result(0, 9) = 4.0 * r * t;
+
+  return result;
+}
+
+Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions1stDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  double u = 1.0 - r - s - t;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 10);
+
+  result(0, 0) = 4.0 * (r + s + t) - 3.0;
+  result(0, 1) = 4.0 * r - 1.0;
+  result(0, 4) = -8.0 * r - 4.0 * (s + t) + 4.0;
+  result(0, 5) = 4.0 * s;
+  result(0, 6) = -4.0 * s;
+  result(0, 7) = -4.0 * t;
+  result(0, 9) = 4.0 * t;
+
+  result(1, 0) = 4.0 * (r + s + t) - 3.0;
+  result(1, 2) = 4.0 * s - 1.0;
+  result(1, 4) = -4.0 * r;
+  result(1, 5) = 4.0 * r;
+  result(1, 6) = -8.0 * s - 4.0 * (r + t) + 4.0;
+  result(1, 7) = -4.0 * t;
+  result(1, 8) = 4.0 * t;
+
+  result(2, 0) = 4.0 * (r + s + t) - 3.0;
+  result(2, 3) = 4.0 * t - 1.0;
+  result(2, 4) = -4.0 * r;
+  result(2, 6) = -4.0 * s;
+  result(2, 7) = -8.0 * t - 4.0 * (r + s) + 4.0;
+  result(2, 8) = 4.0 * s;
+  result(2, 9) = 4.0 * r;
+
+  return result;
+}
+
+Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates &local_coords) const {
+  double r = local_coords.get(0);
+  double s = local_coords.get(1);
+  double t = local_coords.get(2);
+  double u = 1.0 - r - s - t;
+  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 10);
+
+  result(0, 0) = 4.0;
+  result(0, 1) = 4.0;
+  result(0, 4) = -8.0;
+
+  result(1, 0) = 4.0;
+  result(1, 2) = 4.0;
+  result(1, 6) = -8.0;
+
+  result(2, 0) = 4.0;
+  result(2, 3) = 4.0;
+  result(2, 7) = -8.0;
+
+  result(3, 0) = 4.0;
+  result(3, 4) = -4.0;
+  result(3, 5) = 4.0;
+  result(3, 6) = -4.0;
+
+  result(4, 0) = 4.0;
+  result(4, 6) = -4.0;
+  result(4, 7) = -4.0;
+  result(4, 8) = 4.0;
+
+  result(5, 0) = 4.0;
+  result(5, 4) = -4.0;
+  result(5, 7) = -4.0;
+  result(5, 9) = 4.0;
+
+  return result;
 }
 
 }  // namespace ffea

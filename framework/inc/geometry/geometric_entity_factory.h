@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../math/shape_functions.h"
 #include "./geometric_entity.h"
 #include "./node.h"
 

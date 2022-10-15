@@ -15,7 +15,6 @@
 #include "../framework/inc/geometry/coordinates.h"
 #include "../framework/inc/geometry/geometry_builder.h"
 #include "../framework/inc/geometry/node.h"
-#include "../framework/inc/math/shape_functions.h"
 #include "../framework/inc/math/utils.h"
 #include "../framework/inc/mesh/degree_of_freedom.h"
 #include "../framework/inc/mesh/element.h"

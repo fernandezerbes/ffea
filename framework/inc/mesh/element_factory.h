@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "../math/shape_functions.h"
 #include "./degree_of_freedom.h"
 #include "./element.h"
 #include "./integration_points_provider.h"

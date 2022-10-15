@@ -9,17 +9,13 @@ GeometricEntityFactory2D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
   switch (type) {
     case GeometricEntityType::kTwoNodeLine:
-      return std::make_unique<Line2D>(
-          type, nodes, std::make_unique<TwoNodeLineShapeFunctions>());
+      return std::make_unique<TwoNodeLine>(2, nodes);
     case GeometricEntityType::kThreeNodeTria:
-      return std::make_unique<Tria2D>(
-          type, nodes, std::make_unique<ThreeNodeTriaShapeFunctions>());
+      return std::make_unique<ThreeNodeTria>(2, nodes);
     case GeometricEntityType::kFourNodeQuad:
-      return std::make_unique<Quad2D>(
-          type, nodes, std::make_unique<FourNodeQuadShapeFunctions>());
+      return std::make_unique<FourNodeQuad>(2, nodes);
     case GeometricEntityType::kSixNodeTria:
-      return std::make_unique<Tria2D>(
-          type, nodes, std::make_unique<SixNodeTriaShapeFunctions>());
+      return std::make_unique<SixNodeTria>(2, nodes);
     default:
       throw std::runtime_error("Unsupported GeometricEntityType");
   }
@@ -30,26 +26,19 @@ GeometricEntityFactory3D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
   switch (type) {
     case GeometricEntityType::kTwoNodeLine:
-      return std::make_unique<Line3D>(
-          type, nodes, std::make_unique<TwoNodeLineShapeFunctions>());
+      return std::make_unique<TwoNodeLine>(3, nodes);
     case GeometricEntityType::kThreeNodeTria:
-      return std::make_unique<Tria3D>(
-          type, nodes, std::make_unique<ThreeNodeTriaShapeFunctions>());
+      return std::make_unique<ThreeNodeTria>(3, nodes);
     case GeometricEntityType::kFourNodeQuad:
-      return std::make_unique<Quad3D>(
-          type, nodes, std::make_unique<FourNodeQuadShapeFunctions>());
+      return std::make_unique<FourNodeQuad>(3, nodes);
     case GeometricEntityType::kFourNodeTetra:
-      return std::make_unique<Tetra3D>(
-          type, nodes, std::make_unique<FourNodeTetraShapeFunctions>());
+      return std::make_unique<FourNodeTetra>(nodes);
     case GeometricEntityType::kEightNodeHex:
-      return std::make_unique<Hex3D>(
-          type, nodes, std::make_unique<EightNodeHexShapeFunctions>());
+      return std::make_unique<EightNodeHex>(nodes);
     case GeometricEntityType::kSixNodeTria:
-      return std::make_unique<Tria3D>(
-          type, nodes, std::make_unique<SixNodeTriaShapeFunctions>());
+      return std::make_unique<SixNodeTria>(3, nodes);
     case GeometricEntityType::kTenNodeTetra:
-      return std::make_unique<Tetra3D>(
-          type, nodes, std::make_unique<TenNodeTetraShapeFunctions>());
+      return std::make_unique<TenNodeTetra>(nodes);
     default:
       throw std::runtime_error("Unsupported GeometricEntityType");
   }

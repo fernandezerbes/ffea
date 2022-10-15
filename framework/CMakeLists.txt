@@ -1,7 +1,6 @@
 add_library(ffea
             src/analysis/analysis.cc
             src/math/utils.cc
-            src/math/shape_functions.cc
             src/geometry/coordinates.cc
             src/geometry/geometry.cc
             src/geometry/geometric_entity.cc
