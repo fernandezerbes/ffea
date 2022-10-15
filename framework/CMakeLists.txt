@@ -37,3 +37,5 @@ target_include_directories(ffea INTERFACE
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 
 target_link_libraries(ffea Eigen3::Eigen)
+
+target_link_libraries(ffea vtu11::vtu11)
