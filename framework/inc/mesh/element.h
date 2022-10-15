@@ -21,6 +21,7 @@ class Element {
           const std::vector<DegreeOfFreedom *> &dofs,
           const IntegrationPointsGroup &integration_points);
 
+  GeometricEntityType GetGeometricEntityType() const;
   std::vector<size_t> GetLocalToGlobalDofIndicesMap() const;
   size_t GetNumberOfDofs() const;
   size_t GetNumberOfNodes() const;

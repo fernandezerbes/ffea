@@ -10,237 +10,61 @@ void OutputWriter::RegisterPostProcessor(const PostProcessor& postprocessor) {
   postprocessors_.push_back(&postprocessor);
 }
 
-void OutputWriter::WriteQuad(const std::string& filename) const {
-  std::ofstream file;
-
-  file.open(filename);
-
-  file << "# vtk DataFile Version 4.2" << std::endl;
-  file << "Test Data                 " << std::endl;
-  file << "ASCII                     " << std::endl;
-  file << "DATASET UNSTRUCTURED_GRID " << std::endl;
-
-  file << "POINTS " << mesh_.number_of_nodes() << " "
-       << "double " << std::endl;
-
+void OutputWriter::Write(const std::string& filename,
+                            const std::string& group_name) const {
+  std::vector<double> points;
   for (const auto& node : mesh_.nodes()) {
-    const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
-         << std::endl;
+    points.push_back(node.coords().get(0));
+    points.push_back(node.coords().get(1));
+    points.push_back(node.coords().get(2));
   }
 
-  auto& body_elements = mesh_.GetElementGroup("surface");
+  std::vector<vtu11::VtkIndexType> connectivity;
+  std::vector<vtu11::VtkIndexType> offsets;
+  std::vector<vtu11::VtkCellType> types;
+  vtu11::VtkIndexType offset = 0;
+  const auto& elements = mesh_.GetElementGroup(group_name);
+  for (const auto& element : elements) {
+    offset += element.GetNumberOfNodes();
+    offsets.push_back(offset);
 
-  size_t integers_per_element = 5;
-  size_t cell_list_size = body_elements.size() * integers_per_element;
+    const auto& entity_type = element.GetGeometricEntityType();
+    const auto& vtk_cell_type =
+        geometric_entity_to_vtk_cell_map.at(entity_type);
+    types.push_back(vtk_cell_type);
 
-  file << "CELLS " << body_elements.size() << " " << cell_list_size
-       << std::endl;
-
-  for (auto& element : body_elements) {
-    file << element.GetNumberOfNodes() << "\t";
-    for (auto& node : element.nodes()) {
-      file << node->id() << "\t";
+    const auto &nodes = element.nodes();
+    for (size_t node_idx = 0; node_idx < element.GetNumberOfNodes();
+         node_idx++) {
+      const auto& vtk_node_idx = MapToVtkIdx(entity_type, node_idx);
+      connectivity.push_back(nodes[vtk_node_idx]->id());
     }
-    file << std::endl;
   }
 
-  file << "CELL_TYPES " << body_elements.size() << std::endl;
-  size_t cell_type = 9;
+  vtu11::Vtu11UnstructuredMesh vtu_mesh{points, connectivity, offsets, types};
 
-  for (size_t i = 0; i < body_elements.size(); i++) {
-    file << cell_type << std::endl;
+  std::vector<double> displacements;
+  for (const auto& dof : mesh_.dofs()) {
+    displacements.push_back(dof.value());
   }
 
-  file << "POINT_DATA " << mesh_.number_of_nodes() << std::endl;
-  file << "VECTORS displacements double" << std::endl;
-  // file << "LOOKUP_TABLE default" << std::endl;
+  std::vector<vtu11::DataSetInfo> data_set_info{
+      {"Displacements", vtu11::DataSetType::PointData, mesh_.dofs_per_node()}};
 
-  for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs();
-       dof_id += mesh_.dofs_per_node()) {
-    file << mesh_.GetSolutionAtDof(dof_id) << "\t"
-         << mesh_.GetSolutionAtDof(dof_id + 1) << "\t0" << std::endl;
-  }
-
-  file.close();
+  vtu11::writeVtu(filename, vtu_mesh, data_set_info, {displacements}, "Ascii");
 }
 
-void OutputWriter::WriteTria(const std::string& filename) const {
-  std::ofstream file;
-
-  file.open(filename);
-
-  file << "# vtk DataFile Version 4.2" << std::endl;
-  file << "Test Data                 " << std::endl;
-  file << "ASCII                     " << std::endl;
-  file << "DATASET UNSTRUCTURED_GRID " << std::endl;
-
-  file << "POINTS " << mesh_.number_of_nodes() << " "
-       << "double " << std::endl;
-
-  for (const auto& node : mesh_.nodes()) {
-    const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
-         << std::endl;
-  }
-
-  auto& body_elements = mesh_.GetElementGroup("surface");
-
-  size_t integers_per_element = 4;
-  size_t cell_list_size = body_elements.size() * integers_per_element;
-
-  file << "CELLS " << body_elements.size() << " " << cell_list_size
-       << std::endl;
-
-  for (auto& element : body_elements) {
-    file << element.GetNumberOfNodes() << "\t";
-    for (auto& node : element.nodes()) {
-      file << node->id() << "\t";
-    }
-    file << std::endl;
-  }
-
-  file << "CELL_TYPES " << body_elements.size() << std::endl;
-  size_t cell_type = 5;
-
-  for (size_t i = 0; i < body_elements.size(); i++) {
-    file << cell_type << std::endl;
-  }
-
-  file << "POINT_DATA " << mesh_.number_of_nodes() << std::endl;
-  file << "VECTORS displacements double" << std::endl;
-  // file << "LOOKUP_TABLE default" << std::endl;
-
-  for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs();
-       dof_id += mesh_.dofs_per_node()) {
-    file << mesh_.GetSolutionAtDof(dof_id) << "\t"
-         << mesh_.GetSolutionAtDof(dof_id + 1) << "\t0" << std::endl;
-  }
-
-  file.close();
-}
-
-void OutputWriter::WriteTetra(const std::string& filename) const {
-  std::ofstream file;
-
-  file.open(filename);
-
-  file << "# vtk DataFile Version 4.2" << std::endl;
-  file << "Test Data                 " << std::endl;
-  file << "ASCII                     " << std::endl;
-  file << "DATASET UNSTRUCTURED_GRID " << std::endl;
-
-  file << "POINTS " << mesh_.number_of_nodes() << " "
-       << "double " << std::endl;
-
-  for (const auto& node : mesh_.nodes()) {
-    const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
-         << std::endl;
-  }
-
-  auto& body_elements = mesh_.GetElementGroup("body");
-
-  size_t integers_per_element = 5;
-  size_t cell_list_size = body_elements.size() * integers_per_element;
-
-  file << "CELLS " << body_elements.size() << " " << cell_list_size
-       << std::endl;
-
-  for (auto& element : body_elements) {
-    file << element.GetNumberOfNodes() << "\t";
-    for (auto& node : element.nodes()) {
-      file << node->id() << "\t";
-    }
-    file << std::endl;
-  }
-
-  file << "CELL_TYPES " << body_elements.size() << std::endl;
-  size_t cell_type = 10;
-
-  for (size_t i = 0; i < body_elements.size(); i++) {
-    file << cell_type << std::endl;
-  }
-
-  file << "POINT_DATA " << mesh_.number_of_nodes() << std::endl;
-  file << "VECTORS displacements double" << std::endl;
-  // file << "LOOKUP_TABLE default" << std::endl;
-
-  for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs();
-       dof_id += mesh_.dofs_per_node()) {
-    file << mesh_.GetSolutionAtDof(dof_id) << "\t"
-         << mesh_.GetSolutionAtDof(dof_id + 1) << "\t"
-         << mesh_.GetSolutionAtDof(dof_id + 2) << std::endl;
-  }
-
-  file.close();
-}
-
-void OutputWriter::WriteTetraQuadratic(const std::string& filename) const {
-  std::ofstream file;
-
-  file.open(filename);
-
-  file << "# vtk DataFile Version 4.2" << std::endl;
-  file << "Test Data                 " << std::endl;
-  file << "ASCII                     " << std::endl;
-  file << "DATASET UNSTRUCTURED_GRID " << std::endl;
-
-  file << "POINTS " << mesh_.number_of_nodes() << " "
-       << "double " << std::endl;
-
-  for (const auto& node : mesh_.nodes()) {
-    const auto& coords = node.coords();
-    file << coords.get(0) << "\t" << coords.get(1) << "\t" << coords.get(2)
-         << std::endl;
-  }
-
-  auto& body_elements = mesh_.GetElementGroup("body");
-
-  size_t integers_per_element = 11;
-  size_t cell_list_size = body_elements.size() * integers_per_element;
-
-  file << "CELLS " << body_elements.size() << " " << cell_list_size
-       << std::endl;
-
-  for (auto& element : body_elements) {
-    file << element.GetNumberOfNodes() << "\t";
-    auto vtk_nodes = element.nodes();
-    std::swap(vtk_nodes[8],
-              vtk_nodes[9]);  // Nodes 8 and 9 of vtk and Gmesh are different
-    for (auto& node : vtk_nodes) {
-      file << node->id() << "\t";
-    }
-    file << std::endl;
-  }
-
-  file << "CELL_TYPES " << body_elements.size() << std::endl;
-  size_t cell_type = 24;
-
-  for (size_t i = 0; i < body_elements.size(); i++) {
-    file << cell_type << std::endl;
-  }
-
-  file << "POINT_DATA " << mesh_.number_of_nodes() << std::endl;
-  if (mesh_.dofs_per_node() == 3) {
-    file << "VECTORS displacements double" << std::endl;
-    // file << "LOOKUP_TABLE default" << std::endl;
-
-    for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs();
-         dof_id += mesh_.dofs_per_node()) {
-      file << mesh_.GetSolutionAtDof(dof_id) << "\t"
-           << mesh_.GetSolutionAtDof(dof_id + 1) << "\t"
-           << mesh_.GetSolutionAtDof(dof_id + 2) << std::endl;
-    }
-  } else if (mesh_.dofs_per_node() == 1) {
-    file << "SCALARS field_variable double" << std::endl;
-    file << "LOOKUP_TABLE default" << std::endl;
-    for (size_t dof_id = 0; dof_id < mesh_.number_of_dofs(); dof_id++) {
-      file << mesh_.GetSolutionAtDof(dof_id) << std::endl;
+vtu11::VtkIndexType MapToVtkIdx(GeometricEntityType entity_type,
+                                size_t node_idx) {
+  if (entity_type == GeometricEntityType::kTenNodeTetra) {
+    if (node_idx == 9) {
+      return 8;
+    } else if (node_idx == 8) {
+      return 9;
     }
   }
 
-  file.close();
+  return node_idx;
 }
 
 }  // namespace ffea

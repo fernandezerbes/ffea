@@ -9,6 +9,10 @@ Element::Element(GeometricEntity &geometric_entity,
       dofs_(dofs),
       integration_points_(integration_points) {}
 
+GeometricEntityType Element::GetGeometricEntityType() const {
+  return geometric_entity_.type();
+}
+
 std::vector<size_t> Element::GetLocalToGlobalDofIndicesMap() const {
   std::vector<size_t> indices_map;
   indices_map.reserve(GetNumberOfDofs());

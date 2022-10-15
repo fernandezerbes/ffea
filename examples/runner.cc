@@ -144,8 +144,7 @@ int main() {
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
-  // writer.WriteQuad("ffea_output_quad.vtk");
-  writer.WriteTria("ffea_output_tria.vtk");
+  writer.Write("ffea_output_tria_vtu11.vtu", surface_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration = stop - start;

@@ -106,8 +106,7 @@ int main() {
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(*displacement_postprocessor);
-  // writer.WriteTetra("ffea_output_tetra_3d.vtk");
-  writer.WriteTetraQuadratic("ffea_output_tetra_3d_quadratic.vtk");
+  writer.Write("ffea_output_tetra_3d_quadratic_vtu11.vtu", body_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration =
