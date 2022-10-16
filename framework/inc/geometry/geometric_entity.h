@@ -60,6 +60,7 @@ class GeometricEntity {
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
   size_t GetNodeId(size_t local_node_idx) const;
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const = 0;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -92,6 +93,8 @@ class TwoNodeLine : public Line {
  public:
   TwoNodeLine(size_t dimensions, const std::vector<Node *> &nodes);
 
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
@@ -118,6 +121,8 @@ class FourNodeQuad : public Quad {
  public:
   FourNodeQuad(size_t dimensions, const std::vector<Node *> &nodes);
 
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
@@ -141,6 +146,8 @@ class Hex : public GeometricEntity {
 class EightNodeHex : public Hex {
  public:
   EightNodeHex(const std::vector<Node *> &nodes);
+
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -167,6 +174,8 @@ class ThreeNodeTria : public Tria {
  public:
   ThreeNodeTria(size_t dimensions, const std::vector<Node *> &nodes);
 
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
@@ -179,6 +188,8 @@ class ThreeNodeTria : public Tria {
 class SixNodeTria : public Tria {
  public:
   SixNodeTria(size_t dimensions, const std::vector<Node *> &nodes);
+
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -204,6 +215,8 @@ class FourNodeTetra : public Tetra {
  public:
   FourNodeTetra(const std::vector<Node *> &nodes);
 
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
@@ -216,6 +229,8 @@ class FourNodeTetra : public Tetra {
 class TenNodeTetra : public Tetra {
  public:
   TenNodeTetra(const std::vector<Node *> &nodes);
+
+  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(

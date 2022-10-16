@@ -133,6 +133,10 @@ double Line::EvaluateDifferential(const Coordinates &local_coords) const {
 TwoNodeLine::TwoNodeLine(size_t dimensions, const std::vector<Node *> &nodes)
     : Line(GeometricEntityType::kTwoNodeLine, dimensions, nodes) {}
 
+std::vector<Coordinates> TwoNodeLine::GetNodalParametricCoords() const {
+  return {{-1.0, 0.0, 0.0}, {1.0, 0.0, 0.0}};
+}
+
 Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
@@ -190,6 +194,11 @@ double Quad::EvaluateDifferential(const Coordinates &local_coords) const {
 
 FourNodeQuad::FourNodeQuad(size_t dimensions, const std::vector<Node *> &nodes)
     : Quad(GeometricEntityType::kFourNodeQuad, dimensions, nodes) {}
+
+std::vector<Coordinates> FourNodeQuad::GetNodalParametricCoords() const {
+  return {
+      {-1.0, -1.0, 0.0}, {1.0, -1.0, 0.0}, {1.0, 1.0, 0.0}, {-1.0, 1.0, 0.0}};
+}
 
 Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
@@ -251,6 +260,12 @@ double Hex::EvaluateDifferential(const Coordinates &local_coords) const {
 
 EightNodeHex::EightNodeHex(const std::vector<Node *> &nodes)
     : Hex(GeometricEntityType::kEightNodeHex, 3, nodes) {}
+
+std::vector<Coordinates> EightNodeHex::GetNodalParametricCoords() const {
+  return {{-1.0, -1.0, -1.0}, {1.0, -1.0, -1.0}, {1.0, 1.0, -1.0},
+          {-1.0, 1.0, -1.0},  {-1.0, -1.0, 1.0}, {1.0, -1.0, 1.0},
+          {1.0, 1.0, 1.0},    {-1.0, 1.0, 1.0}};
+}
 
 Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
@@ -377,6 +392,10 @@ ThreeNodeTria::ThreeNodeTria(size_t dimensions,
                              const std::vector<Node *> &nodes)
     : Tria(GeometricEntityType::kThreeNodeTria, dimensions, nodes) {}
 
+std::vector<Coordinates> ThreeNodeTria::GetNodalParametricCoords() const {
+  return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}};
+}
+
 Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
@@ -412,6 +431,11 @@ Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions2ndDerivative(
 
 SixNodeTria::SixNodeTria(size_t dimensions, const std::vector<Node *> &nodes)
     : Tria(GeometricEntityType::kSixNodeTria, dimensions, nodes) {}
+
+std::vector<Coordinates> SixNodeTria::GetNodalParametricCoords() const {
+  return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0},
+          {0.5, 0.0, 0.0}, {0.5, 0.5, 0.0}, {0.0, 0.5, 0.0}};
+}
 
 Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
@@ -489,6 +513,15 @@ double Tetra::EvaluateDifferential(const Coordinates &local_coords) const {
 FourNodeTetra::FourNodeTetra(const std::vector<Node *> &nodes)
     : Tetra(GeometricEntityType::kFourNodeTetra, 3, nodes) {}
 
+std::vector<Coordinates> FourNodeTetra::GetNodalParametricCoords() const {
+  return {
+      {0.0, 0.0, 0.0},
+      {1.0, 0.0, 0.0},
+      {0.0, 1.0, 0.0},
+      {0.0, 0.0, 1.0},
+  };
+}
+
 Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
@@ -530,6 +563,12 @@ Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions2ndDerivative(
 
 TenNodeTetra::TenNodeTetra(const std::vector<Node *> &nodes)
     : Tetra(GeometricEntityType::kTenNodeTetra, 3, nodes) {}
+
+std::vector<Coordinates> TenNodeTetra::GetNodalParametricCoords() const {
+  return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0},
+          {0.5, 0.0, 0.0}, {0.5, 0.5, 0.0}, {0.0, 0.5, 0.0}, {0.0, 0.0, 0.5},
+          {0.0, 0.5, 0.5}, {0.5, 0.0, 0.5}};
+}
 
 Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {

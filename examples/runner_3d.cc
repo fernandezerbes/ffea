@@ -98,12 +98,12 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
-      std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
+  const auto& displacement_postprocessor =
+      ffea::utilities::MakeDisplacementProcessor3D(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
-  writer.RegisterPostProcessor(*displacement_postprocessor);
+  writer.RegisterPostProcessor(displacement_postprocessor);
   writer.Write("ffea_output_tetra_3d_quadratic_vtu11.vtu", body_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();

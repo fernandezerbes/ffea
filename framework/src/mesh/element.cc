@@ -36,14 +36,11 @@ Coordinates &Element::GetCoordinatesOfNode(size_t node_idx) const {
   return geometric_entity_.GetCoordinatesOfNode(node_idx);
 }
 
-Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_idx) const {
-  Eigen::VectorXd solution = Eigen::VectorXd::Zero(GetNumberOfNodes());
+Eigen::VectorXd Element::GetSolution() const {
+  Eigen::VectorXd solution = Eigen::VectorXd::Zero(GetNumberOfDofs());
 
-  size_t dof_idx = component_idx;
-  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
-    const auto &dof = dofs_[dof_idx];
-    solution(node_idx) = dof->value();
-    dof_idx += 2;
+  for (size_t dof_idx = 0; dof_idx < GetNumberOfDofs(); dof_idx++) {
+    solution(dof_idx) = dofs_[dof_idx]->value();
   }
 
   return solution;
@@ -52,6 +49,33 @@ Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_idx) const {
 size_t Element::GetNodeId(size_t local_node_idx) const {
   return geometric_entity_.GetNodeId(local_node_idx);
 }
+
+void Element::AddNodalQuantities(
+    QuantityProcessor quantity_processor,
+    std::vector<std::vector<std::vector<double>>> &data) const {
+  const auto &nodal_parametric_coords =
+      geometric_entity_.GetNodalParametricCoords();
+  const auto &solution = GetSolution();
+  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+    const auto &local_coords = nodal_parametric_coords[node_idx];
+    const auto &N =
+        EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
+    const auto &global_coords = MapLocalToGlobal(N);
+    const auto &dN_dLocal =
+        EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kFirst);
+    const auto &jacobian = EvaluateJacobian(local_coords, dN_dLocal);
+    const auto &dN_dGlobal = jacobian.inverse() * dN_dLocal;
+    const auto &quantity =
+        quantity_processor(solution, global_coords, dN_dGlobal);
+    std::vector<double> quantity_as_vector(quantity.data(),
+                                           quantity.data() + quantity.size());
+    const auto &node_id = geometric_entity_.GetNodeId(node_idx);
+    data[node_id].emplace_back(quantity.data(),
+                               quantity.data() + quantity.size());
+  }
+}
+
+std::vector<DegreeOfFreedom *> Element::dofs() const { return dofs_; }
 
 Eigen::MatrixXd Element::EvaluateJacobian(
     const Coordinates &local_coords,

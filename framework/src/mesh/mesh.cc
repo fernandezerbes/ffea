@@ -1,7 +1,5 @@
 #include "../../inc/mesh/mesh.h"
 
-#include <unordered_set>
-
 namespace ffea {
 
 Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
@@ -88,6 +86,17 @@ size_t Mesh::dofs_per_node() const { return dofs_per_node_; }
 
 double Mesh::GetSolutionAtDof(size_t dof_id) const {
   return dofs_[dof_id].value();
+}
+
+const std::unordered_set<const DegreeOfFreedom*> Mesh::GetElementGroupDofs(
+    const std::string& group_name) const {
+  const auto& element_group = GetElementGroup(group_name);
+  std::unordered_set<const DegreeOfFreedom*> group_dofs;
+  for (const auto& element: element_group) {
+    const auto &element_dofs = element.dofs();
+    group_dofs.insert(element_dofs.begin(), element_dofs.end());
+  }
+  return group_dofs;
 }
 
 }  // namespace ffea

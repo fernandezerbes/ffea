@@ -135,12 +135,12 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
-      std::make_shared<ffea::DisplacementsPostProcessor>(mesh);
+  // std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
+  //     std::make_shared<ffea::PrimaryVariablePostProcessor>(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
-  writer.RegisterPostProcessor(*displacement_postprocessor);
+  // writer.RegisterPostProcessor(*displacement_postprocessor);
   writer.Write("ffea_output_tria_vtu11.vtu", surface_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();

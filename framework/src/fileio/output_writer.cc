@@ -11,7 +11,7 @@ void OutputWriter::RegisterPostProcessor(const PostProcessor& postprocessor) {
 }
 
 void OutputWriter::Write(const std::string& filename,
-                            const std::string& group_name) const {
+                         const std::string& group_name) const {
   std::vector<double> points;
   for (const auto& node : mesh_.nodes()) {
     points.push_back(node.coords().get(0));
@@ -42,15 +42,20 @@ void OutputWriter::Write(const std::string& filename,
 
   vtu11::Vtu11UnstructuredMesh vtu_mesh{points, connectivity, offsets, types};
 
-  std::vector<double> displacements;
-  for (const auto& dof : mesh_.dofs()) {
-    displacements.push_back(dof.value());
+  std::vector<vtu11::DataSetData> data_set_data;
+  data_set_data.reserve(postprocessors_.size());
+
+  std::vector<vtu11::DataSetInfo> data_set_info;
+  data_set_info.reserve(postprocessors_.size());
+
+  for (const auto& postprocessor : postprocessors_) {
+    data_set_data.push_back(postprocessor->Process(group_name));
+    data_set_info.emplace_back(postprocessor->variable_name(),
+                               vtu11::DataSetType::PointData,
+                               postprocessor->components_per_node());
   }
 
-  std::vector<vtu11::DataSetInfo> data_set_info{
-      {"Displacements", vtu11::DataSetType::PointData, mesh_.dofs_per_node()}};
-
-  vtu11::writeVtu(filename, vtu_mesh, data_set_info, {displacements}, "Ascii");
+  vtu11::writeVtu(filename, vtu_mesh, data_set_info, data_set_data, "Ascii");
 }
 
 vtu11::VtkIndexType MapToVtkIdx(GeometricEntityType entity_type,

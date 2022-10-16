@@ -4,6 +4,7 @@
 #include <array>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "../geometry/coordinates.h"
@@ -34,6 +35,8 @@ class Mesh {
   const std::vector<Node>& nodes() const;
   const std::vector<DegreeOfFreedom>& dofs() const;
   size_t dofs_per_node() const;
+  const std::unordered_set<const DegreeOfFreedom*> GetElementGroupDofs(
+      const std::string& group_name) const;
 
  private:
   Geometry& geometry_;

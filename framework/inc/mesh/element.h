@@ -42,8 +42,12 @@ class Element {
   void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
                            Eigen::MatrixXd &global_stiffness,
                            Eigen::VectorXd &global_rhs) const;
-  Eigen::VectorXd GetSolutionFromDofs(size_t component_idx) const;
+  Eigen::VectorXd GetSolution() const;
   size_t GetNodeId(size_t local_node_idx) const;
+  void AddNodalQuantities(
+      QuantityProcessor quantity_processor,
+      std::vector<std::vector<std::vector<double>>> &data) const;
+  std::vector<DegreeOfFreedom *> dofs() const;
 
  private:
   Eigen::MatrixXd EvaluateShapeFunctions(
