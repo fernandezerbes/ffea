@@ -3,6 +3,7 @@
 
 #include <eigen3/Eigen/Dense>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "../geometry/coordinates.h"
@@ -14,6 +15,13 @@
 #include "./integration_point.h"
 
 namespace ffea {
+
+struct ElementSystem {
+  std::optional<Eigen::MatrixXd> mass_matrix;
+  std::optional<Eigen::MatrixXd> damping_matrix;
+  std::optional<Eigen::MatrixXd> stiffness_matrix;
+  std::optional<Eigen::VectorXd> rhs_vector;
+};
 
 class Element {
  public:
@@ -35,6 +43,13 @@ class Element {
       DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   // TODO Reuse jacobian where possible in these functions
   Eigen::VectorXd EvaluateNormalVector(const Coordinates &local_coords) const;
+  void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
+                         Integrand integrand, ConditionFunction source,
+                         Eigen::MatrixXd &global_stiffness,
+                         Eigen::VectorXd &global_rhs) const;
+  void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
+                           Eigen::MatrixXd &global_stiffness,
+                           Eigen::VectorXd &global_rhs) const;
   double EvaluateDifferential(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(
@@ -45,6 +60,16 @@ class Element {
   const IntegrationPointsGroup &integration_points() const;
 
  private:
+  void AddLoadContribution(const std::vector<double> &load_vector,
+                           const Eigen::MatrixXd &N, double weight,
+                           double differential, ElementSystem &system) const;
+  void AddRadiationContribution(double radiation, const Eigen::MatrixXd &N,
+                                double weight, double differential,
+                                ElementSystem &system) const;
+  void Scatter(const ElementSystem &element_system,
+               Eigen::MatrixXd &global_stiffness,
+               Eigen::VectorXd &global_rhs) const;
+
   GeometricEntity &geometric_entity_;
   std::vector<DegreeOfFreedom *> dofs_;
   const IntegrationPointsGroup &integration_points_;

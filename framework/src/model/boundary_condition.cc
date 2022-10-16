@@ -6,31 +6,19 @@ BoundaryCondition::BoundaryCondition(
     const std::vector<Element> &boundary_elements)
     : boundary_elements_(boundary_elements) {}
 
-NeumannBoundaryCondition::NeumannBoundaryCondition(
-    const std::vector<Element> &boundary_elements, ConditionFunction load,
-    const PhysicsProcessor &processor)
+NaturalBoundaryCondition::NaturalBoundaryCondition(
+    const std::vector<Element> &boundary_elements,
+    ConditionFunction boundary_load, ConditionFunction radiation)
     : BoundaryCondition(boundary_elements),
-      boundary_load_(load),
-      processor_(processor) {}
+      boundary_load_(boundary_load),
+      radiation_(radiation) {}
 
-void NeumannBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
+void NaturalBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
-  processor_.AddBoundaryContribution(boundary_elements_, boundary_load_,
-                                     nullptr, global_stiffness, global_rhs);
-}
-
-RobinBoundaryCondition::RobinBoundaryCondition(
-    const std::vector<Element> &boundary_elements, ConditionFunction load,
-    ConditionFunction radiation, const PhysicsProcessor &processor)
-    : BoundaryCondition(boundary_elements),
-      boundary_load_(load),
-      radiation_(radiation),
-      processor_(processor) {}
-
-void RobinBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
-                                     Eigen::VectorXd &global_rhs) const {
-  processor_.AddBoundaryContribution(boundary_elements_, boundary_load_,
-                                     radiation_, global_stiffness, global_rhs);
+  for (auto &element : boundary_elements_) {
+    element.ProcessOverBoundary(boundary_load_, radiation_, global_stiffness,
+                                global_rhs);
+  }
 }
 
 // void DirectEnforcementStrategy::Enforce(

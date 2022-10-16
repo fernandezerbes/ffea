@@ -2,6 +2,7 @@
 #define FFEA_FRAMEWORK_INC_MODEL_TYPES_H_
 
 #include <functional>
+
 #include "../geometry/coordinates.h"
 
 namespace ffea {
@@ -9,6 +10,9 @@ namespace ffea {
 using ConditionFunction =
     std::function<std::vector<double>(const Coordinates &)>;
 
-} // namespace ffea
+using Integrand = std::function<Eigen::MatrixXd(const Eigen::MatrixXd &,
+                                                const Eigen::MatrixXd &)>;
 
-#endif // FFEA_FRAMEWORK_INC_MODEL_TYPES_H_
+}  // namespace ffea
+
+#endif  // FFEA_FRAMEWORK_INC_MODEL_TYPES_H_

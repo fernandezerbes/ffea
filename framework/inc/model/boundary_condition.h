@@ -10,7 +10,6 @@
 #include "../geometry/coordinates.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "./physics_processor.h"
 #include "./types.h"
 
 namespace ffea {
@@ -31,26 +30,11 @@ class BoundaryCondition {
   const std::vector<Element> &boundary_elements_;
 };
 
-class NeumannBoundaryCondition : public BoundaryCondition {
+class NaturalBoundaryCondition : public BoundaryCondition {
  public:
-  NeumannBoundaryCondition(const std::vector<Element> &boundary_elements,
+  NaturalBoundaryCondition(const std::vector<Element> &boundary_elements,
                            ConditionFunction boundary_load,
-                           const PhysicsProcessor &processor);
-
-  virtual void Enforce(Eigen::MatrixXd &global_stiffness,
-                       Eigen::VectorXd &global_rhs) const override;
-
- private:
-  ConditionFunction boundary_load_;
-  const PhysicsProcessor &processor_;
-};
-
-class RobinBoundaryCondition : public BoundaryCondition {
- public:
-  RobinBoundaryCondition(const std::vector<Element> &boundary_elements,
-                         ConditionFunction boundary_load,
-                         ConditionFunction radiation,
-                         const PhysicsProcessor &processor);
+                           ConditionFunction radiation);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const override;
@@ -58,7 +42,6 @@ class RobinBoundaryCondition : public BoundaryCondition {
  private:
   ConditionFunction boundary_load_;
   ConditionFunction radiation_;
-  const PhysicsProcessor &processor_;
 };
 
 class EnforcementStrategy {

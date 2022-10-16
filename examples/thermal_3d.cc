@@ -9,7 +9,6 @@
 #include <unordered_set>
 
 #include "../applications/quasi_harmonic/inc/constitutive_model.h"
-#include "../applications/quasi_harmonic/inc/physics_processor.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -25,7 +24,6 @@
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/model/operator.h"
-#include "../framework/inc/model/physics_processor.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
@@ -75,9 +73,9 @@ int main() {
     return load;
   };
 
-  const auto processor = ffea::QuasiHarmonicProcessor();
-  ffea::Model model(mesh, processor);
-  model.AddComputationalDomain(body_group_name, constitutive_model, body_load);
+  ffea::Model model(mesh);
+  model.AddComputationalDomain(body_group_name, constitutive_model,
+                               ffea::quasi_harmonic_integrand, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto radiation = [](const ffea::Coordinates& coords) -> std::vector<double> {
@@ -93,7 +91,8 @@ int main() {
     return load;
   };
 
-  model.AddRobinBoundaryCondition(neumann_group_name, load_function, radiation);
+  model.AddNaturalBoundaryCondition(neumann_group_name, load_function,
+                                    radiation);
 
   auto boundary_function =
       [](const ffea::Coordinates& coords) -> std::vector<double> {

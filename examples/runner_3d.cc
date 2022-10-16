@@ -9,7 +9,6 @@
 #include <unordered_set>
 
 #include "../applications/elasticity/inc/constitutive_model.h"
-#include "../applications/elasticity/inc/physics_processor.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -25,7 +24,6 @@
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/model/operator.h"
-#include "../framework/inc/model/physics_processor.h"
 #include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
@@ -73,9 +71,9 @@ int main() {
     return load;
   };
 
-  const auto processor = ffea::ElasticityProcessor(ffea::linear_B_operator_3D);
-  ffea::Model model(mesh, processor);
-  model.AddComputationalDomain(body_group_name, constitutive_model, body_load);
+  ffea::Model model(mesh);
+  model.AddComputationalDomain(body_group_name, constitutive_model,
+                               ffea::elasticity_integrand_3D, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
@@ -84,7 +82,7 @@ int main() {
     return load;
   };
 
-  model.AddNeumannBoundaryCondition(neumann_group_name, load_function);
+  model.AddNaturalBoundaryCondition(neumann_group_name, load_function, nullptr);
 
   auto boundary_function =
       [](const ffea::Coordinates& coords) -> std::vector<double> {

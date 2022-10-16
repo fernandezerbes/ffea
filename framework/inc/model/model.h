@@ -9,22 +9,20 @@
 #include "./boundary_condition.h"
 #include "./computational_domain.h"
 #include "./constitutive_model.h"
-#include "./physics_processor.h"
 #include "./types.h"
 
 namespace ffea {
 
 class Model {
  public:
-  explicit Model(Mesh &mesh, const PhysicsProcessor &processor);
+  explicit Model(Mesh &mesh);
   void AddComputationalDomain(const std::string &domain_name,
                               const ConstitutiveModel &constitutive_model,
+                              Integrand integrand,
                               ConditionFunction source = nullptr);
-  void AddNeumannBoundaryCondition(const std::string &boundary_name,
-                                   ConditionFunction boundary_load);
-  void AddRobinBoundaryCondition(const std::string &boundary_name,
-                                 ConditionFunction boundary_load,
-                                 ConditionFunction radiation);
+  void AddNaturalBoundaryCondition(const std::string &boundary_name,
+                                   ConditionFunction boundary_load,
+                                   ConditionFunction radiation);
   void AddDirichletBoundaryCondition(
       const std::string &boundary_name, ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,
@@ -39,7 +37,6 @@ class Model {
 
  private:
   Mesh &mesh_;
-  const PhysicsProcessor &processor_;
   std::vector<ComputationalDomain> computational_domains_;
   std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
 };
