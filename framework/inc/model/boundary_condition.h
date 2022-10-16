@@ -75,9 +75,9 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
   double penalty_;
 };
 
-class DirichletBoundaryCondition : public BoundaryCondition {
+class EssentialBoundaryCondition : public BoundaryCondition {
  public:
-  DirichletBoundaryCondition(
+  EssentialBoundaryCondition(
       const std::vector<Element> &boundary_elements,
       ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,

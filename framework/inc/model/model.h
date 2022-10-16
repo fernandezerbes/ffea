@@ -23,7 +23,7 @@ class Model {
   void AddNaturalBoundaryCondition(const std::string &boundary_name,
                                    ConditionFunction boundary_load,
                                    ConditionFunction radiation);
-  void AddDirichletBoundaryCondition(
+  void AddEssentialBoundaryCondition(
       const std::string &boundary_name, ConditionFunction boundary_function,
       const std::unordered_set<size_t> &directions_to_consider,
       const EnforcementStrategy &enforcement_strategy =

@@ -72,7 +72,7 @@ void PenaltyEnforcementStrategy::Enforce(
   }
 }
 
-DirichletBoundaryCondition::DirichletBoundaryCondition(
+EssentialBoundaryCondition::EssentialBoundaryCondition(
     const std::vector<Element> &boundary_elements,
     ConditionFunction boundary_function,
     const std::unordered_set<size_t> &directions_to_consider,
@@ -82,7 +82,7 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
       directions_to_consider_(directions_to_consider),
       enforcement_strategy_(enforcement_strategy) {}
 
-void DirichletBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
+void EssentialBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
                                          Eigen::VectorXd &global_rhs) const {
   enforcement_strategy_.Enforce(global_stiffness, global_rhs,
                                 boundary_function_, boundary_elements_,

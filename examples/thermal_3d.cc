@@ -100,7 +100,7 @@ int main() {
     return load;
   };
   std::unordered_set<size_t> directions_to_consider = {0};
-  model.AddDirichletBoundaryCondition(dirichlet_group_name, boundary_function,
+  model.AddEssentialBoundaryCondition(dirichlet_group_name, boundary_function,
                                       directions_to_consider);
 
   // ********************** ANALYSIS **********************

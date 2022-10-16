@@ -25,13 +25,13 @@ void Model::AddNaturalBoundaryCondition(const std::string& boundary_name,
           boundary_elements, boundary_load, radiation));
 }
 
-void Model::AddDirichletBoundaryCondition(
+void Model::AddEssentialBoundaryCondition(
     const std::string& boundary_name, ConditionFunction boundary_function,
     const std::unordered_set<size_t>& directions_to_consider,
     const EnforcementStrategy& enforcement_strategy) {
   const auto& boundary_elements = mesh_.GetElementGroup(boundary_name);
   boundary_conditions_.push_back(
-      std::make_unique<ffea::DirichletBoundaryCondition>(
+      std::make_unique<ffea::EssentialBoundaryCondition>(
           boundary_elements, boundary_function, directions_to_consider,
           enforcement_strategy));
 }
