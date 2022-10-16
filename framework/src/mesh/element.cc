@@ -49,8 +49,8 @@ Eigen::VectorXd Element::GetSolutionFromDofs(size_t component_idx) const {
   return solution;
 }
 
-const std::vector<Node *> &Element::nodes() const {
-  return geometric_entity_.nodes();
+size_t Element::GetNodeId(size_t local_node_idx) const {
+  return geometric_entity_.GetNodeId(local_node_idx);
 }
 
 Eigen::MatrixXd Element::EvaluateJacobian(
@@ -84,10 +84,6 @@ Coordinates Element::MapLocalToGlobal(
   return geometric_entity_.MapLocalToGlobal(shape_functions_at_point);
 }
 
-const IntegrationPointsGroup &Element::integration_points() const {
-  return integration_points_;
-}
-
 void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                                 Integrand integrand, ConditionFunction source,
                                 Eigen::MatrixXd &global_stiffness,
@@ -100,7 +96,7 @@ void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
     system.rhs_vector = Eigen::VectorXd::Zero(number_of_dofs);
   }
 
-  for (const auto &integration_point : integration_points()) {
+  for (const auto &integration_point : integration_points_) {
     const auto &local_coords = integration_point.local_coords();
     const auto &N =
         EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
@@ -137,7 +133,7 @@ void Element::ProcessOverBoundary(ConditionFunction load,
         Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
   }
 
-  for (const auto &integration_point : integration_points()) {
+  for (const auto &integration_point : integration_points_) {
     const auto &local_coords = integration_point.local_coords();
     const auto &N =
         EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);

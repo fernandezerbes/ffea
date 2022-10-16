@@ -35,14 +35,6 @@ class Element {
   size_t GetNumberOfNodes() const;
   size_t GetNumberOfDofsPerNode() const;
   Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
-  Eigen::MatrixXd EvaluateJacobian(
-      const Coordinates &local_coords,
-      const Eigen::MatrixXd &shape_functions_derivatives) const;
-  Eigen::MatrixXd EvaluateShapeFunctions(
-      const Coordinates &local_coords,
-      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
-  // TODO Reuse jacobian where possible in these functions
-  Eigen::VectorXd EvaluateNormalVector(const Coordinates &local_coords) const;
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                          Integrand integrand, ConditionFunction source,
                          Eigen::MatrixXd &global_stiffness,
@@ -50,16 +42,21 @@ class Element {
   void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
                            Eigen::MatrixXd &global_stiffness,
                            Eigen::VectorXd &global_rhs) const;
+  Eigen::VectorXd GetSolutionFromDofs(size_t component_idx) const;
+  size_t GetNodeId(size_t local_node_idx) const;
+
+ private:
+  Eigen::MatrixXd EvaluateShapeFunctions(
+      const Coordinates &local_coords,
+      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
+  Eigen::MatrixXd EvaluateJacobian(
+      const Coordinates &local_coords,
+      const Eigen::MatrixXd &shape_functions_derivatives) const;
+  Eigen::VectorXd EvaluateNormalVector(const Coordinates &local_coords) const;
   double EvaluateDifferential(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
-  void SetSolutionOnDofs(const Eigen::VectorXd &solution);
-  Eigen::VectorXd GetSolutionFromDofs(size_t component_idx) const;
-  const std::vector<Node *> &nodes() const;
-  const IntegrationPointsGroup &integration_points() const;
-
- private:
   void AddLoadContribution(const std::vector<double> &load_vector,
                            const Eigen::MatrixXd &N, double weight,
                            double differential, ElementSystem &system) const;

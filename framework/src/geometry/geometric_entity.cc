@@ -90,6 +90,10 @@ Coordinates GeometricEntity::MapLocalToGlobal(
   return Coordinates(xyz);
 }
 
+size_t GeometricEntity::GetNodeId(size_t local_node_idx) const {
+  return nodes_[local_node_idx]->id();
+}
+
 Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   std::string type_name = typeid(*this).name();
@@ -100,8 +104,6 @@ Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
 Coordinates &GeometricEntity::GetCoordinatesOfNode(size_t node_idx) const {
   return nodes_[node_idx]->coords();
 }
-
-const std::vector<Node *> &GeometricEntity::nodes() const { return nodes_; }
 
 // Line entities
 

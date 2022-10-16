@@ -59,7 +59,7 @@ class GeometricEntity {
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
-  const std::vector<Node *> &nodes() const;
+  size_t GetNodeId(size_t local_node_idx) const;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(

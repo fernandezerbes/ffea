@@ -33,11 +33,10 @@ void OutputWriter::Write(const std::string& filename,
         geometric_entity_to_vtk_cell_map.at(entity_type);
     types.push_back(vtk_cell_type);
 
-    const auto &nodes = element.nodes();
     for (size_t node_idx = 0; node_idx < element.GetNumberOfNodes();
          node_idx++) {
       const auto& vtk_node_idx = MapToVtkIdx(entity_type, node_idx);
-      connectivity.push_back(nodes[vtk_node_idx]->id());
+      connectivity.push_back(element.GetNodeId(vtk_node_idx));
     }
   }
 
