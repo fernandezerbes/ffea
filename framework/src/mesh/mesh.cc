@@ -99,4 +99,15 @@ const std::unordered_set<const DegreeOfFreedom*> Mesh::GetElementGroupDofs(
   return group_dofs;
 }
 
+size_t Mesh::GetElementNumberOfNodes(
+    const std::string& group_name) const {
+  const auto& element_group = GetElementGroup(group_name);
+  std::unordered_set<size_t> group_node_tags;
+  for (const auto& element: element_group) {
+    const auto &element_node_tags = element.GetNodeTags();
+    group_node_tags.insert(element_node_tags.begin(), element_node_tags.end());
+  }
+  return group_node_tags.size();
+}
+
 }  // namespace ffea

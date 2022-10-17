@@ -94,6 +94,15 @@ size_t GeometricEntity::GetNodeId(size_t local_node_idx) const {
   return nodes_[local_node_idx]->id();
 }
 
+std::vector<size_t> GeometricEntity::GetNodeTags() const {
+  std::vector<size_t> node_tags;
+  node_tags.reserve(GetNumberOfNodes());
+  for (const auto& node: nodes_) {
+    node_tags.push_back(node->id());
+  }
+  return node_tags;
+}
+
 Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   std::string type_name = typeid(*this).name();

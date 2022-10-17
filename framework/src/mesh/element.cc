@@ -77,6 +77,10 @@ void Element::AddNodalQuantities(
 
 std::vector<DegreeOfFreedom *> Element::dofs() const { return dofs_; }
 
+std::vector<size_t> Element::GetNodeTags() const {
+  return geometric_entity_.GetNodeTags();
+}
+
 Eigen::MatrixXd Element::EvaluateJacobian(
     const Coordinates &local_coords,
     const Eigen::MatrixXd &shape_functions_derivatives) const {

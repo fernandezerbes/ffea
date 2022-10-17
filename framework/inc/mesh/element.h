@@ -48,6 +48,7 @@ class Element {
       QuantityProcessor quantity_processor,
       std::vector<std::vector<std::vector<double>>> &data) const;
   std::vector<DegreeOfFreedom *> dofs() const;
+  std::vector<size_t> GetNodeTags() const;
 
  private:
   Eigen::MatrixXd EvaluateShapeFunctions(

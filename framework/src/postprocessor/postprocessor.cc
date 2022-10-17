@@ -41,8 +41,7 @@ DerivedVariableProcessor::DerivedVariableProcessor(
 std::vector<double> DerivedVariableProcessor::Process(
     const std::string &group_name) const {
   std::vector<std::vector<std::vector<double>>>
-      nodal_values;  // <node<element<component>>>
-  // Add data.reserve with the number of nodes in the element group
+      nodal_values(mesh_.GetElementNumberOfNodes(group_name));
   const auto &elements = mesh_.GetElementGroup(group_name);
   for (const auto &element : elements) {
     element.AddNodalQuantities(quantity_processor_, nodal_values);

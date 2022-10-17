@@ -61,6 +61,7 @@ class GeometricEntity {
       const Eigen::MatrixXd &shape_functions_at_point) const;
   size_t GetNodeId(size_t local_node_idx) const;
   virtual std::vector<Coordinates> GetNodalParametricCoords() const = 0;
+  std::vector<size_t> GetNodeTags() const;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(

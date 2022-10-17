@@ -101,9 +101,17 @@ int main() {
   const auto& displacement_postprocessor =
       ffea::utilities::MakeDisplacementProcessor3D(mesh);
 
+  const auto& strain_postprocessor =
+      ffea::utilities::MakeElasticStrainProcessor3D(mesh);
+
+  const auto& stress_postprocessor =
+      ffea::utilities::MakeElasticStressProcessor3D(mesh, constitutive_model);
+
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(displacement_postprocessor);
+  writer.RegisterPostProcessor(strain_postprocessor);
+  writer.RegisterPostProcessor(stress_postprocessor);
   writer.Write("ffea_output_tetra_3d_quadratic_vtu11.vtu", body_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();
