@@ -37,7 +37,7 @@ class Mesh {
   size_t dofs_per_node() const;
   const std::unordered_set<const DegreeOfFreedom*> GetElementGroupDofs(
       const std::string& group_name) const;
-  size_t GetElementNumberOfNodes(const std::string& group_name) const;
+  size_t number_of_nodes(const std::string& group_name) const;
 
  private:
   Geometry& geometry_;

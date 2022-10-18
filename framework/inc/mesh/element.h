@@ -44,9 +44,8 @@ class Element {
                            Eigen::VectorXd &global_rhs) const;
   Eigen::VectorXd GetSolution() const;
   size_t GetNodeId(size_t local_node_idx) const;
-  void AddNodalQuantities(
-      QuantityProcessor quantity_processor,
-      std::vector<std::vector<std::vector<double>>> &data) const;
+  void AddNodalValues(ValuesProcessor values_processor,
+                      std::vector<ffea::NodalValuesGroup> &raw_values) const;
   std::vector<DegreeOfFreedom *> dofs() const;
   std::vector<size_t> GetNodeTags() const;
 

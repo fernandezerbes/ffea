@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <functional>
+#include <vector>
 
 #include "../geometry/coordinates.h"
 
@@ -14,8 +15,12 @@ using ConditionFunction =
 using Integrand = std::function<Eigen::MatrixXd(const Eigen::MatrixXd &,
                                                 const Eigen::MatrixXd &)>;
 
-using QuantityProcessor = std::function<Eigen::MatrixXd(
+using ValuesProcessor = std::function<Eigen::MatrixXd(
     const Eigen::VectorXd &, const Coordinates &, const Eigen::MatrixXd &)>;
+
+using NodalValues = std::vector<double>;
+
+using NodalValuesGroup = std::vector<NodalValues>;
 
 }  // namespace ffea
 

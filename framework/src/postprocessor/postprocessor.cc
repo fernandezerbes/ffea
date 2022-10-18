@@ -3,24 +3,19 @@
 #include <numeric>
 namespace ffea {
 
-PostProcessor::PostProcessor(std::string variable_name,
-                             size_t components_per_node, const Mesh &mesh)
+PostProcessor::PostProcessor(std::string variable_name, size_t values_per_node,
+                             const Mesh &mesh)
     : mesh_(mesh),
       variable_name_(variable_name),
-      components_per_node_(components_per_node) {}
+      values_per_node_(values_per_node) {}
 
-std::string PostProcessor::variable_name() const {
-  return variable_name_;
-}
+std::string PostProcessor::variable_name() const { return variable_name_; }
 
-size_t PostProcessor::components_per_node() const {
-  return components_per_node_;
-}
+size_t PostProcessor::values_per_node() const { return values_per_node_; }
 
 PrimaryVariablePostProcessor::PrimaryVariablePostProcessor(
-    std::string variable_name, size_t components_per_node,
-    const Mesh &mesh)
-    : PostProcessor(variable_name, components_per_node, mesh) {}
+    std::string variable_name, size_t values_per_node, const Mesh &mesh)
+    : PostProcessor(variable_name, values_per_node, mesh) {}
 
 std::vector<double> PrimaryVariablePostProcessor::Process(
     const std::string &group_name) const {
@@ -33,40 +28,49 @@ std::vector<double> PrimaryVariablePostProcessor::Process(
 }
 
 DerivedVariableProcessor::DerivedVariableProcessor(
-    std::string variable_name, size_t components_per_node,
-    const Mesh &mesh, QuantityProcessor quantity_processor)
-    : PostProcessor(variable_name, components_per_node, mesh),
-      quantity_processor_(quantity_processor) {}
+    std::string variable_name, size_t values_per_node, const Mesh &mesh,
+    ValuesProcessor quantity_processor)
+    : PostProcessor(variable_name, values_per_node, mesh),
+      values_processor_(quantity_processor) {}
 
 std::vector<double> DerivedVariableProcessor::Process(
     const std::string &group_name) const {
-  std::vector<std::vector<std::vector<double>>>
-      nodal_values(mesh_.GetElementNumberOfNodes(group_name));
-  const auto &elements = mesh_.GetElementGroup(group_name);
-  for (const auto &element : elements) {
-    element.AddNodalQuantities(quantity_processor_, nodal_values);
+  const auto raw_values = GetNodalValuesOfAllContributingElements(group_name);
+  const auto avg_values = AverageNodalValues(raw_values);
+  return avg_values;
+}
+
+std::vector<ffea::NodalValuesGroup>
+DerivedVariableProcessor::GetNodalValuesOfAllContributingElements(
+    const std::string &group_name) const {
+  const auto number_of_nodes = mesh_.number_of_nodes(group_name);
+  std::vector<ffea::NodalValuesGroup> raw_values(number_of_nodes);
+
+  for (const auto &element : mesh_.GetElementGroup(group_name)) {
+    element.AddNodalValues(values_processor_, raw_values);
   }
 
-  size_t number_of_values = components_per_node() * nodal_values.size();
-  std::vector<double> avg_nodal_values(number_of_values, 0.0);
-  avg_nodal_values.reserve(nodal_values.size() * components_per_node());
-  for (size_t node_idx = 0; node_idx < nodal_values.size(); node_idx++) {
-    const auto &nodal_values_all_contributions = nodal_values[node_idx];
-    const auto &number_of_contributing_elements =
-        nodal_values_all_contributions.size();
-    for (const auto &element_contributions : nodal_values_all_contributions) {
-      for (size_t component_idx = 0;
-           component_idx < components_per_node(); component_idx++) {
-        const auto &variable_idx =
-            node_idx * components_per_node() + component_idx;
-        avg_nodal_values[variable_idx] +=
-            element_contributions[component_idx] /
-            static_cast<double>(number_of_contributing_elements);
+  return raw_values;
+}
+
+std::vector<double> DerivedVariableProcessor::AverageNodalValues(
+    const std::vector<ffea::NodalValuesGroup> &raw_values) const {
+  size_t number_of_values = values_per_node() * raw_values.size();
+  std::vector<double> avg_values(number_of_values, 0.0);
+
+  for (size_t node_idx = 0; node_idx < raw_values.size(); node_idx++) {
+    const auto &values_group = raw_values[node_idx];
+    const auto &group_size = values_group.size();
+    for (const auto &values : values_group) {
+      for (size_t value_idx = 0; value_idx < values_per_node(); value_idx++) {
+        const auto &global_value_idx = node_idx * values_per_node() + value_idx;
+        avg_values[global_value_idx] +=
+            values[value_idx] / static_cast<double>(group_size);
       }
     }
   }
 
-  return avg_nodal_values;
+  return avg_values;
 }
 
 namespace utilities {
@@ -84,9 +88,8 @@ PrimaryVariablePostProcessor MakeTemperatureProcessor(const Mesh &mesh) {
 }
 
 DerivedVariableProcessor MakeElasticStrainProcessor(
-    size_t components_per_node, const Mesh &mesh,
-    DifferentialOperator B_operator) {
-  QuantityProcessor strain_processor =
+    size_t values_per_node, const Mesh &mesh, DifferentialOperator B_operator) {
+  ValuesProcessor strain_processor =
       [B_operator](const Eigen::VectorXd &solution,
                    const Coordinates &global_coords,
                    const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
@@ -94,7 +97,7 @@ DerivedVariableProcessor MakeElasticStrainProcessor(
     return B * solution;
   };
 
-  return DerivedVariableProcessor("Strain", components_per_node, mesh,
+  return DerivedVariableProcessor("Strain", values_per_node, mesh,
                                   strain_processor);
 }
 
@@ -107,10 +110,10 @@ DerivedVariableProcessor MakeElasticStrainProcessor3D(const Mesh &mesh) {
 }
 
 DerivedVariableProcessor MakeElasticStressProcessor(
-    size_t components_per_node, const Mesh &mesh,
+    size_t values_per_node, const Mesh &mesh,
     const ConstitutiveModel &constitutive_model,
     DifferentialOperator B_operator) {
-  QuantityProcessor stress_processor =
+  ValuesProcessor stress_processor =
       [&constitutive_model, B_operator](
           const Eigen::VectorXd &solution, const Coordinates &global_coords,
           const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
@@ -119,7 +122,7 @@ DerivedVariableProcessor MakeElasticStressProcessor(
     return C * B * solution;
   };
 
-  return DerivedVariableProcessor("Stress", components_per_node, mesh,
+  return DerivedVariableProcessor("Stress", values_per_node, mesh,
                                   stress_processor);
 }
 

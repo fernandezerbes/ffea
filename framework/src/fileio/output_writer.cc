@@ -52,7 +52,7 @@ void OutputWriter::Write(const std::string& filename,
     data_set_data.push_back(postprocessor->Process(group_name));
     data_set_info.emplace_back(postprocessor->variable_name(),
                                vtu11::DataSetType::PointData,
-                               postprocessor->components_per_node());
+                               postprocessor->values_per_node());
   }
 
   vtu11::writeVtu(filename, vtu_mesh, data_set_info, data_set_data, "Ascii");

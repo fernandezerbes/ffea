@@ -50,14 +50,14 @@ size_t Element::GetNodeId(size_t local_node_idx) const {
   return geometric_entity_.GetNodeId(local_node_idx);
 }
 
-void Element::AddNodalQuantities(
-    QuantityProcessor quantity_processor,
-    std::vector<std::vector<std::vector<double>>> &data) const {
-  const auto &nodal_parametric_coords =
+void Element::AddNodalValues(
+    ValuesProcessor values_processor,
+    std::vector<ffea::NodalValuesGroup> &raw_values) const {
+  const auto &local_coords_all_nodes =
       geometric_entity_.GetNodalParametricCoords();
   const auto &solution = GetSolution();
   for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
-    const auto &local_coords = nodal_parametric_coords[node_idx];
+    const auto &local_coords = local_coords_all_nodes[node_idx];
     const auto &N =
         EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
     const auto &global_coords = MapLocalToGlobal(N);
@@ -65,13 +65,12 @@ void Element::AddNodalQuantities(
         EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kFirst);
     const auto &jacobian = EvaluateJacobian(local_coords, dN_dLocal);
     const auto &dN_dGlobal = jacobian.inverse() * dN_dLocal;
-    const auto &quantity =
-        quantity_processor(solution, global_coords, dN_dGlobal);
-    std::vector<double> quantity_as_vector(quantity.data(),
-                                           quantity.data() + quantity.size());
+    const auto &values = values_processor(solution, global_coords, dN_dGlobal);
+    std::vector<double> values_as_vector(values.data(),
+                                         values.data() + values.size());
     const auto &node_id = geometric_entity_.GetNodeId(node_idx);
-    data[node_id].emplace_back(quantity.data(),
-                               quantity.data() + quantity.size());
+    raw_values[node_id].emplace_back(values.data(),
+                                     values.data() + values.size());
   }
 }
 
