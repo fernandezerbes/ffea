@@ -35,7 +35,7 @@ size_t Mesh::number_of_dofs(const std::string& group_name) const {
   std::unordered_set<size_t> unique_dof_tags;
   const auto& element_group = GetElementGroup(group_name);
   for (const auto& element : element_group) {
-    const auto& dof_tags = element.GetOrderedDofTags();
+    const auto& dof_tags = element.GetDofTags();
     unique_dof_tags.insert(dof_tags.begin(), dof_tags.end());
   }
   return unique_dof_tags.size();

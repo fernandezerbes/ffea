@@ -30,7 +30,7 @@ class Element {
           const IntegrationPointsGroup &integration_points);
 
   GeometricEntityType GetGeometricEntityType() const;
-  std::vector<size_t> GetOrderedDofTags() const;
+  std::vector<size_t> GetDofTags() const;
   size_t GetNumberOfDofs() const;
   size_t number_of_nodes() const;
   size_t GetNumberOfDofsPerNode() const;

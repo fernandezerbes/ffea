@@ -13,7 +13,7 @@ GeometricEntityType Element::GetGeometricEntityType() const {
   return geometric_entity_.type();
 }
 
-std::vector<size_t> Element::GetOrderedDofTags() const {
+std::vector<size_t> Element::GetDofTags() const {
   std::vector<size_t> indices_map;
   indices_map.reserve(GetNumberOfDofs());
   for (const auto &dof : dofs_) {
@@ -206,7 +206,7 @@ void Element::AddRadiationContribution(double radiation,
 void Element::Scatter(const ElementSystem &element_system,
                       Eigen::MatrixXd &global_stiffness,
                       Eigen::VectorXd &global_rhs) const {
-  const auto &dofs_map = GetOrderedDofTags();
+  const auto &dofs_map = GetDofTags();
   for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     size_t local_i_idx = 0;
     for (const auto &global_i_idx : dofs_map) {
