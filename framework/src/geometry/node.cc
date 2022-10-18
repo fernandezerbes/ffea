@@ -2,9 +2,10 @@
 
 namespace ffea {
 
-Node::Node(size_t id, const Coordinates &coords) : id_(id), coords_(coords) {}
+Node::Node(size_t tag, const Coordinates &coords)
+    : tag_(tag), coords_(coords) {}
 
-size_t Node::id() const { return id_; }
+size_t Node::tag() const { return tag_; }
 
 Coordinates &Node::coords() { return coords_; }
 

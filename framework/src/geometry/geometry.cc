@@ -14,17 +14,17 @@ const std::vector<GeometricEntity*>& Geometry::GetGeometricEntityGroup(
 }
 
 void Geometry::AddNode(const std::array<double, 3>& xyz) {
-  size_t id = number_of_nodes();
-  nodes_.emplace_back(id, xyz);
+  size_t tag = number_of_nodes();
+  nodes_.emplace_back(tag, xyz);
 }
 
 void Geometry::AddGeometricEntity(GeometricEntityType type,
-                                  const std::vector<size_t>& node_ids,
+                                  const std::vector<size_t>& node_tags,
                                   const GeometricEntityFactory& factory) {
   std::vector<Node*> nodes;
-  nodes.reserve(node_ids.size());
-  for (size_t id : node_ids) {
-    nodes.push_back(&nodes_[id]);
+  nodes.reserve(node_tags.size());
+  for (size_t tag : node_tags) {
+    nodes.push_back(&nodes_[tag]);
   }
 
   auto geometric_entity = factory.CreateGeometricEntity(type, nodes);
@@ -33,15 +33,15 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
 
 void Geometry::RegisterGeometricEntityGroup(
     const std::string& group_name,
-    const std::vector<size_t>& geometric_entities_ids) {
+    const std::vector<size_t>& geometric_entity_tags) {
   if (geometric_entities_groups_.contains(group_name)) {
     throw std::runtime_error("Entity group already registered");
   };
 
   std::vector<GeometricEntity*> geometric_entities;
-  geometric_entities.reserve(geometric_entities_ids.size());
-  for (auto id : geometric_entities_ids) {
-    geometric_entities.push_back(geometric_entities_[id].get());
+  geometric_entities.reserve(geometric_entity_tags.size());
+  for (auto tag : geometric_entity_tags) {
+    geometric_entities.push_back(geometric_entities_[tag].get());
   }
 
   geometric_entities_groups_.insert({group_name, geometric_entities});

@@ -8,11 +8,10 @@ namespace ffea {
 
 class DegreeOfFreedom {
  public:
-  explicit DegreeOfFreedom(size_t local_id,
-                           size_t number_of_axiliary_values = 0);
+  explicit DegreeOfFreedom(size_t tag, size_t number_of_axiliary_values = 0);
 
-  size_t local_id() const;
-  size_t global_id() const;
+  size_t tag() const;
+  size_t parallel_tag() const;
   double value() const;
   void set_value(double value);
   void set_value(const Eigen::VectorXd &solution);
@@ -22,8 +21,8 @@ class DegreeOfFreedom {
  private:
   double value_;
   std::vector<double> auxiliary_values_;
-  size_t local_id_;
-  size_t global_id_;
+  size_t tag_;
+  size_t parallel_tag_;
 
   void check_auxiliary_value(size_t idx) const;
 };

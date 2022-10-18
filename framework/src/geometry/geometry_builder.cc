@@ -36,7 +36,7 @@ void GeometryFromFileBuilder::AddEntities(Geometry &geometry) {
     // ElementType(element.type
     // - 1)
     geometry.AddGeometricEntity(GeometricEntityType(geometric_entity.type - 1),
-                                geometric_entity.node_ids,
+                                geometric_entity.node_tags,
                                 geometric_entity_factory_);
   }
 }
@@ -46,7 +46,7 @@ void GeometryFromFileBuilder::AddEntitiesGroups(Geometry &geometry) {
        geometry_data_.geometric_entities_groups()) {
     geometry.RegisterGeometricEntityGroup(
         geometric_entities_group.name(),
-        geometric_entities_group.geometric_entities_ids());
+        geometric_entities_group.geometric_entity_tags());
   }
 }
 

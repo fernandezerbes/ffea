@@ -39,7 +39,7 @@ class Mesh {
 
  private:
   void AddDofs();
-  size_t GetDofId(size_t node_id, size_t component_idx) const;
+  size_t GetDofTag(size_t node_tag, size_t component_idx) const;
   const std::vector<DegreeOfFreedom>& dofs() const;
   const std::unordered_set<const DegreeOfFreedom*> GetElementGroupDofs(
       const std::string& group_name) const;

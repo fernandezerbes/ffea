@@ -30,12 +30,12 @@ class Geometry {
   void AddNode(const std::array<double, 3>& xyz);
 
   void AddGeometricEntity(
-      GeometricEntityType type, const std::vector<size_t>& node_ids,
+      GeometricEntityType type, const std::vector<size_t>& node_tags,
       const GeometricEntityFactory& geometric_entity_factory);
 
   void RegisterGeometricEntityGroup(
       const std::string& group_name,
-      const std::vector<size_t>& geometric_entities_ids);
+      const std::vector<size_t>& geometric_entity_tags);
 
   std::vector<GeometricEntity*>& GetGeometricEntityGroup(
       const std::string& group_name);
@@ -44,7 +44,6 @@ class Geometry {
       const std::string& group_name) const;
 
   const std::vector<Node>& nodes() const;
-
 
  private:
   std::vector<Node> nodes_;

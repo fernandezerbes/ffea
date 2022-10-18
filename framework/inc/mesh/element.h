@@ -30,9 +30,9 @@ class Element {
           const IntegrationPointsGroup &integration_points);
 
   GeometricEntityType GetGeometricEntityType() const;
-  std::vector<size_t> GetLocalToGlobalDofIndicesMap() const;
+  std::vector<size_t> GetOrderedDofTags() const;
   size_t GetNumberOfDofs() const;
-  size_t GetNumberOfNodes() const;
+  size_t number_of_nodes() const;
   size_t GetNumberOfDofsPerNode() const;
   Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
@@ -43,7 +43,7 @@ class Element {
                            Eigen::MatrixXd &global_stiffness,
                            Eigen::VectorXd &global_rhs) const;
   Eigen::VectorXd GetSolution() const;
-  size_t GetNodeId(size_t local_node_idx) const;
+  size_t GetNodeTag(size_t local_node_idx) const;
   void AddNodalValues(ValuesProcessor values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
   std::vector<DegreeOfFreedom *> dofs() const;

@@ -20,56 +20,56 @@ void ConvertZeroToOneBased(int &idx);
 }  // namespace utilities
 
 struct NodeData {
-  NodeData(size_t id, const std::array<double, 3> &coords);
-  const size_t id;
+  NodeData(size_t tag, const std::array<double, 3> &coords);
+  const size_t tag;
   const std::array<double, 3> coords;
 };
 
 struct GeometricEntityData {
-  GeometricEntityData(size_t id, size_t geometric_entity_type,
-                      const std::vector<size_t> &node_ids);
-  const size_t id;
+  GeometricEntityData(size_t tag, size_t geometric_entity_type,
+                      const std::vector<size_t> &node_tags);
+  const size_t tag;
   const size_t type;
-  const std::vector<size_t> node_ids;
+  const std::vector<size_t> node_tags;
 };
 
 class GeometricEntityDataGroup {
  public:
-  GeometricEntityDataGroup(size_t id, const std::string &group_name);
-  void RegisterGeometricEntity(size_t geometric_entity_id);
-  size_t id() const;
+  GeometricEntityDataGroup(size_t tag, const std::string &group_name);
+  void RegisterGeometricEntity(size_t geometric_entity_tag);
+  size_t tag() const;
   const std::string &name() const;
-  const std::vector<size_t> &geometric_entities_ids() const;
+  const std::vector<size_t> &geometric_entity_tags() const;
 
  private:
-  const size_t id_;
+  const size_t tag_;
   const std::string name_;
-  std::vector<size_t> geometric_entities_ids_;
+  std::vector<size_t> geometric_entity_tags_;
 };
 
 class GeometryData {
  public:
-  void AddNode(size_t id, const std::array<double, 3> &coords);
-  void AddGeometricEntityDataGroup(size_t id, const std::string &group_name);
-  void AddGeometricEntityData(size_t id, size_t geometric_entity_type,
-                              const std::vector<size_t> &node_ids,
+  void AddNode(size_t tag, const std::array<double, 3> &coords);
+  void AddGeometricEntityDataGroup(size_t tag, const std::string &group_name);
+  void AddGeometricEntityData(size_t tag, size_t geometric_entity_type,
+                              const std::vector<size_t> &node_tags,
                               size_t owner_shape_dimension,
-                              size_t owner_shape_id);
-  void RegisterShapeId(size_t dimensions, size_t shape_id,
-                        size_t entity_group_id);
+                              size_t owner_shape_tag);
+  void RegisterShapeTag(size_t dimensions, size_t shape_tag,
+                        size_t entity_group_tag);
   const std::vector<NodeData> &nodes() const;
   const std::vector<GeometricEntityData> &geometric_entities() const;
   const std::vector<GeometricEntityDataGroup> &geometric_entities_groups()
       const;
 
  private:
-  GeometricEntityDataGroup &GetGeometricEntityDataGroup(size_t group_id);
+  GeometricEntityDataGroup &GetGeometricEntityDataGroup(size_t group_tag);
 
   std::vector<NodeData> nodes_;
   std::vector<GeometricEntityData> geometric_entities_;
   std::vector<GeometricEntityDataGroup> geometric_entities_groups_;
   std::array<std::unordered_map<size_t, std::vector<size_t>>, 4>
-      shape_id_to_entities_group_ids_maps_;
+      shape_tag_to_entities_group_tags_maps_;
 };
 
 class Parser {

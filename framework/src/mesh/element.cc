@@ -13,23 +13,23 @@ GeometricEntityType Element::GetGeometricEntityType() const {
   return geometric_entity_.type();
 }
 
-std::vector<size_t> Element::GetLocalToGlobalDofIndicesMap() const {
+std::vector<size_t> Element::GetOrderedDofTags() const {
   std::vector<size_t> indices_map;
   indices_map.reserve(GetNumberOfDofs());
   for (const auto &dof : dofs_) {
-    indices_map.push_back(dof->local_id());
+    indices_map.push_back(dof->tag());
   }
   return indices_map;
 }
 
 size_t Element::GetNumberOfDofs() const { return dofs_.size(); }
 
-size_t Element::GetNumberOfNodes() const {
-  return geometric_entity_.GetNumberOfNodes();
+size_t Element::number_of_nodes() const {
+  return geometric_entity_.number_of_nodes();
 }
 
 size_t Element::GetNumberOfDofsPerNode() const {
-  return GetNumberOfDofs() / GetNumberOfNodes();
+  return GetNumberOfDofs() / number_of_nodes();
 }
 
 Coordinates &Element::GetCoordinatesOfNode(size_t node_idx) const {
@@ -46,8 +46,8 @@ Eigen::VectorXd Element::GetSolution() const {
   return solution;
 }
 
-size_t Element::GetNodeId(size_t local_node_idx) const {
-  return geometric_entity_.GetNodeId(local_node_idx);
+size_t Element::GetNodeTag(size_t local_node_idx) const {
+  return geometric_entity_.GetNodeTag(local_node_idx);
 }
 
 void Element::AddNodalValues(
@@ -56,7 +56,7 @@ void Element::AddNodalValues(
   const auto &local_coords_all_nodes =
       geometric_entity_.GetNodalParametricCoords();
   const auto &solution = GetSolution();
-  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     const auto &local_coords = local_coords_all_nodes[node_idx];
     const auto &N =
         EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
@@ -68,9 +68,9 @@ void Element::AddNodalValues(
     const auto &values = values_processor(solution, global_coords, dN_dGlobal);
     std::vector<double> values_as_vector(values.data(),
                                          values.data() + values.size());
-    const auto &node_id = geometric_entity_.GetNodeId(node_idx);
-    raw_values[node_id].emplace_back(values.data(),
-                                     values.data() + values.size());
+    const auto &node_tag = geometric_entity_.GetNodeTag(node_idx);
+    raw_values[node_tag].emplace_back(values.data(),
+                                      values.data() + values.size());
   }
 }
 
@@ -185,7 +185,7 @@ void Element::AddLoadContribution(const std::vector<double> &load_vector,
                                   const Eigen::MatrixXd &N, double weight,
                                   double differential,
                                   ElementSystem &system) const {
-  for (auto node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+  for (auto node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     for (auto component_idx = 0; component_idx < GetNumberOfDofsPerNode();
          component_idx++) {
       const auto &dof_idx = node_idx * GetNumberOfDofsPerNode() + component_idx;
@@ -206,8 +206,8 @@ void Element::AddRadiationContribution(double radiation,
 void Element::Scatter(const ElementSystem &element_system,
                       Eigen::MatrixXd &global_stiffness,
                       Eigen::VectorXd &global_rhs) const {
-  const auto &dofs_map = GetLocalToGlobalDofIndicesMap();
-  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+  const auto &dofs_map = GetOrderedDofTags();
+  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     size_t local_i_idx = 0;
     for (const auto &global_i_idx : dofs_map) {
       size_t local_j_idx = 0;

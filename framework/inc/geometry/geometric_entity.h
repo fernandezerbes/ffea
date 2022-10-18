@@ -42,8 +42,8 @@ class GeometricEntity {
 
   GeometricEntityType type() const;
   size_t dimensions() const;
-  size_t GetNumberOfNodes() const;
-  std::vector<size_t> GetNodesIds() const;
+  size_t number_of_nodes() const;
+  std::vector<size_t> GetNodeTags() const;
   Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
   Eigen::MatrixXd EvaluateJacobian(
       const Coordinates &local_coords,
@@ -59,9 +59,8 @@ class GeometricEntity {
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(
       const Eigen::MatrixXd &shape_functions_at_point) const;
-  size_t GetNodeId(size_t local_node_idx) const;
+  size_t GetNodeTag(size_t local_node_idx) const;
   virtual std::vector<Coordinates> GetNodalParametricCoords() const = 0;
-  std::vector<size_t> GetNodeTags() const;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(

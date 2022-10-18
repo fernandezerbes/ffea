@@ -10,14 +10,14 @@ namespace ffea {
 
 class Node {
  public:
-  Node(size_t id, const Coordinates &coords);
+  Node(size_t tag, const Coordinates &coords);
 
-  size_t id() const;
+  size_t tag() const;
   Coordinates &coords();
   const Coordinates &coords() const;
 
  private:
-  size_t id_;
+  size_t tag_;
   Coordinates coords_;
 };
 

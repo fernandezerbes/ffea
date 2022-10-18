@@ -28,7 +28,7 @@ void NaturalBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
 //     const std::unordered_set<size_t> &directions_to_consider) const {
 //   // TODO Take care of the case where more than one bc is applied to the
 //   same boundary for (auto &element : boundary_elements) {
-//     const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
+//     const auto &dofs_map = element.GetOrderedDofTags();
 //     for (size_t local_i_idx = 0; local_i_idx < dofs_map.size();
 //     local_i_idx++) {
 //       size_t dof_direction = local_i_idx %
@@ -56,7 +56,7 @@ void PenaltyEnforcementStrategy::Enforce(
     const std::vector<Element> &boundary_elements,
     const std::unordered_set<size_t> &directions_to_consider) const {
   for (auto &element : boundary_elements) {
-    const auto &dofs_map = element.GetLocalToGlobalDofIndicesMap();
+    const auto &dofs_map = element.GetOrderedDofTags();
     for (size_t local_i_idx = 0; local_i_idx < dofs_map.size(); local_i_idx++) {
       size_t dof_direction = local_i_idx % element.GetNumberOfDofsPerNode();
       if (!directions_to_consider.contains(dof_direction)) {

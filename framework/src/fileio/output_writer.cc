@@ -13,7 +13,8 @@ void OutputWriter::RegisterPostProcessor(const PostProcessor& postprocessor) {
 void OutputWriter::Write(const std::string& filename,
                          const std::string& group_name) const {
   std::vector<double> points;
-  for (const auto& node : mesh_.nodes()) { // TODO This should only work with nodes of the element group
+  for (const auto& node : mesh_.nodes()) {  // TODO This should only work with
+                                            // nodes of the element group
     points.push_back(node.coords().get(0));
     points.push_back(node.coords().get(1));
     points.push_back(node.coords().get(2));
@@ -25,7 +26,7 @@ void OutputWriter::Write(const std::string& filename,
   vtu11::VtkIndexType offset = 0;
   const auto& elements = mesh_.GetElementGroup(group_name);
   for (const auto& element : elements) {
-    offset += element.GetNumberOfNodes();
+    offset += element.number_of_nodes();
     offsets.push_back(offset);
 
     const auto& entity_type = element.GetGeometricEntityType();
@@ -33,10 +34,10 @@ void OutputWriter::Write(const std::string& filename,
         geometric_entity_to_vtk_cell_map.at(entity_type);
     types.push_back(vtk_cell_type);
 
-    for (size_t node_idx = 0; node_idx < element.GetNumberOfNodes();
+    for (size_t node_idx = 0; node_idx < element.number_of_nodes();
          node_idx++) {
       const auto& vtk_node_idx = MapToVtkIdx(entity_type, node_idx);
-      connectivity.push_back(element.GetNodeId(vtk_node_idx));
+      connectivity.push_back(element.GetNodeTag(vtk_node_idx));
     }
   }
 

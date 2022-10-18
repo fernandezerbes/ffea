@@ -13,15 +13,15 @@ GeometricEntityType GeometricEntity::type() const { return type_; }
 
 size_t GeometricEntity::dimensions() const { return dimension_; }
 
-size_t GeometricEntity::GetNumberOfNodes() const { return nodes_.size(); }
+size_t GeometricEntity::number_of_nodes() const { return nodes_.size(); }
 
-std::vector<size_t> GeometricEntity::GetNodesIds() const {
-  std::vector<size_t> nodes_ids;
-  nodes_ids.reserve(GetNumberOfNodes());
+std::vector<size_t> GeometricEntity::GetNodeTags() const {
+  std::vector<size_t> node_tags;
+  node_tags.reserve(number_of_nodes());
   for (const auto &node : nodes_) {
-    nodes_ids.push_back(node->id());
+    node_tags.push_back(node->tag());
   }
-  return nodes_ids;
+  return node_tags;
 }
 
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
@@ -42,8 +42,8 @@ Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
 }
 
 Eigen::MatrixXd GeometricEntity::GetNodesCoordinatesValues() const {
-  Eigen::MatrixXd coords_values(GetNumberOfNodes(), dimension_);
-  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+  Eigen::MatrixXd coords_values(number_of_nodes(), dimension_);
+  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     const auto &node = nodes_[node_idx];
     const auto &coords = node->coords();
     for (size_t dimension_idx = 0; dimension_idx < dimension_;
@@ -78,7 +78,7 @@ Coordinates GeometricEntity::MapLocalToGlobal(
 Coordinates GeometricEntity::MapLocalToGlobal(
     const Eigen::MatrixXd &shape_functions_at_point) const {
   std::array<double, 3> xyz{};
-  for (size_t node_idx = 0; node_idx < GetNumberOfNodes(); node_idx++) {
+  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     const auto &node = nodes_[node_idx];
     const auto &coords = node->coords();
     for (size_t dimension_idx = 0; dimension_idx < dimension_;
@@ -90,17 +90,8 @@ Coordinates GeometricEntity::MapLocalToGlobal(
   return Coordinates(xyz);
 }
 
-size_t GeometricEntity::GetNodeId(size_t local_node_idx) const {
-  return nodes_[local_node_idx]->id();
-}
-
-std::vector<size_t> GeometricEntity::GetNodeTags() const {
-  std::vector<size_t> node_tags;
-  node_tags.reserve(GetNumberOfNodes());
-  for (const auto& node: nodes_) {
-    node_tags.push_back(node->id());
-  }
-  return node_tags;
+size_t GeometricEntity::GetNodeTag(size_t local_node_idx) const {
+  return nodes_[local_node_idx]->tag();
 }
 
 Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
