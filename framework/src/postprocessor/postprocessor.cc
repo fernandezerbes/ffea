@@ -19,12 +19,7 @@ PrimaryVariablePostProcessor::PrimaryVariablePostProcessor(
 
 std::vector<double> PrimaryVariablePostProcessor::Process(
     const std::string &group_name) const {
-  const auto &dofs = mesh_.GetElementGroupDofs(group_name);
-  std::vector<double> values(dofs.size());
-  for (const auto &dof : dofs) {
-    values[dof->local_id()] = dof->value();
-  }
-  return values;
+  return mesh_.GetNodalValues(group_name);
 }
 
 DerivedVariableProcessor::DerivedVariableProcessor(

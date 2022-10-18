@@ -13,7 +13,7 @@ void OutputWriter::RegisterPostProcessor(const PostProcessor& postprocessor) {
 void OutputWriter::Write(const std::string& filename,
                          const std::string& group_name) const {
   std::vector<double> points;
-  for (const auto& node : mesh_.nodes()) {
+  for (const auto& node : mesh_.nodes()) { // TODO This should only work with nodes of the element group
     points.push_back(node.coords().get(0));
     points.push_back(node.coords().get(1));
     points.push_back(node.coords().get(2));

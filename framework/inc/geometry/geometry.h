@@ -45,6 +45,7 @@ class Geometry {
 
   const std::vector<Node>& nodes() const;
 
+
  private:
   std::vector<Node> nodes_;
   std::vector<std::unique_ptr<GeometricEntity>> geometric_entities_;

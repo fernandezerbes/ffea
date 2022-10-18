@@ -30,7 +30,7 @@ const std::vector<Element>& Mesh::GetElementGroup(
   return element_groups_.at(group_name);
 }
 
-size_t Mesh::GetElementGroupNumberOfDofs(const std::string& group_name) const {
+size_t Mesh::number_of_dofs(const std::string& group_name) const {
   std::unordered_set<size_t> unique_dof_ids;
   const auto& element_group = GetElementGroup(group_name);
   for (const auto& element : element_group) {
@@ -84,27 +84,31 @@ const std::vector<DegreeOfFreedom>& Mesh::dofs() const { return dofs_; }
 
 size_t Mesh::dofs_per_node() const { return dofs_per_node_; }
 
-double Mesh::GetSolutionAtDof(size_t dof_id) const {
-  return dofs_[dof_id].value();
-}
-
 const std::unordered_set<const DegreeOfFreedom*> Mesh::GetElementGroupDofs(
     const std::string& group_name) const {
   const auto& element_group = GetElementGroup(group_name);
   std::unordered_set<const DegreeOfFreedom*> group_dofs;
-  for (const auto& element: element_group) {
-    const auto &element_dofs = element.dofs();
+  for (const auto& element : element_group) {
+    const auto& element_dofs = element.dofs();
     group_dofs.insert(element_dofs.begin(), element_dofs.end());
   }
   return group_dofs;
 }
 
-size_t Mesh::number_of_nodes(
-    const std::string& group_name) const {
+std::vector<double> Mesh::GetNodalValues(const std::string& group_name) const {
+  const auto& dofs = GetElementGroupDofs(group_name);
+  std::vector<double> values(dofs.size());
+  for (const auto& dof : dofs) {
+    values[dof->local_id()] = dof->value();
+  }
+  return values;
+}
+
+size_t Mesh::number_of_nodes(const std::string& group_name) const {
   const auto& element_group = GetElementGroup(group_name);
   std::unordered_set<size_t> group_node_tags;
-  for (const auto& element: element_group) {
-    const auto &element_node_tags = element.GetNodeTags();
+  for (const auto& element : element_group) {
+    const auto& element_node_tags = element.GetNodeTags();
     group_node_tags.insert(element_node_tags.begin(), element_node_tags.end());
   }
   return group_node_tags.size();
