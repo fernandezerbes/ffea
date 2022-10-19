@@ -16,7 +16,7 @@ namespace ffea {
 
 class BoundaryCondition {
  public:
-  BoundaryCondition(const std::vector<Element> &boundary_elements);
+  BoundaryCondition(const std::vector<Element> &elements);
   virtual ~BoundaryCondition() = default;
   BoundaryCondition(const BoundaryCondition &) = delete;
   BoundaryCondition &operator=(const BoundaryCondition &) = delete;
@@ -27,39 +27,36 @@ class BoundaryCondition {
                        Eigen::VectorXd &global_rhs) const = 0;
 
  protected:
-  const std::vector<Element> &boundary_elements_;
+  const std::vector<Element> &elements_;
 };
 
 class NaturalBoundaryCondition : public BoundaryCondition {
  public:
-  NaturalBoundaryCondition(const std::vector<Element> &boundary_elements,
-                           ConditionFunction boundary_load,
-                           ConditionFunction radiation);
+  NaturalBoundaryCondition(const std::vector<Element> &elements,
+                           ConditionFunction load, ConditionFunction radiation);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const override;
 
  private:
-  ConditionFunction boundary_load_;
+  ConditionFunction load_;
   ConditionFunction radiation_;
 };
 
 class EnforcementStrategy {
  public:
-  virtual void Enforce(
-      Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
-      ConditionFunction boundary_function,
-      const std::vector<Element> &boundary_elements,
-      const std::unordered_set<size_t> &directions_to_consider) const = 0;
+  virtual void Enforce(Eigen::MatrixXd &global_stiffness,
+                       Eigen::VectorXd &global_rhs, ConditionFunction condition,
+                       const std::vector<Element> &elements,
+                       const std::unordered_set<size_t> &components) const = 0;
 };
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
   virtual void Enforce(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
-      ConditionFunction boundary_function,
-      const std::vector<Element> &boundary_elements,
-      const std::unordered_set<size_t> &directions_to_consider) const override;
+      ConditionFunction condition, const std::vector<Element> &elements,
+      const std::unordered_set<size_t> &components) const override;
 };
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
@@ -67,9 +64,8 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
   PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(
       Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
-      ConditionFunction boundary_function,
-      const std::vector<Element> &boundary_elements,
-      const std::unordered_set<size_t> &directions_to_consider) const override;
+      ConditionFunction condition, const std::vector<Element> &elements,
+      const std::unordered_set<size_t> &components) const override;
 
  private:
   double penalty_;
@@ -77,19 +73,18 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
 
 class EssentialBoundaryCondition : public BoundaryCondition {
  public:
-  EssentialBoundaryCondition(
-      const std::vector<Element> &boundary_elements,
-      ConditionFunction boundary_function,
-      const std::unordered_set<size_t> &directions_to_consider,
-      const EnforcementStrategy &enforcement_strategy);
+  EssentialBoundaryCondition(const std::vector<Element> &elements,
+                             ConditionFunction condition,
+                             const std::unordered_set<size_t> &components,
+                             const EnforcementStrategy &strategy);
 
   virtual void Enforce(Eigen::MatrixXd &global_stiffness,
                        Eigen::VectorXd &global_rhs) const override;
 
  private:
-  ConditionFunction boundary_function_;
+  ConditionFunction condition_;
   const std::unordered_set<size_t> &directions_to_consider_;
-  const EnforcementStrategy &enforcement_strategy_;
+  const EnforcementStrategy &strategy_;
 };
 
 }  // namespace ffea

@@ -29,12 +29,16 @@ class Element {
           const std::vector<DegreeOfFreedom *> &dofs,
           const IntegrationPointsGroup &integration_points);
 
-  GeometricEntityType GetGeometricEntityType() const;
-  std::vector<size_t> GetDofTags() const;
-  size_t GetNumberOfDofs() const;
+  GeometricEntityType geometric_entity_type() const;
   size_t number_of_nodes() const;
-  size_t GetNumberOfDofsPerNode() const;
-  Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
+  size_t number_of_dofs() const;
+  size_t dofs_per_node() const;
+  std::vector<DegreeOfFreedom *> dofs() const;
+  std::vector<size_t> dof_tags() const;
+  Coordinates &node_coords(size_t node_idx) const;
+  std::vector<size_t> node_tags() const;
+  size_t node_tag(size_t local_node_idx) const;
+
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                          Integrand integrand, ConditionFunction source,
                          Eigen::MatrixXd &global_stiffness,
@@ -42,38 +46,32 @@ class Element {
   void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
                            Eigen::MatrixXd &global_stiffness,
                            Eigen::VectorXd &global_rhs) const;
-  Eigen::VectorXd GetSolution() const;
-  size_t GetNodeTag(size_t local_node_idx) const;
+  Eigen::VectorXd ExtractSolution() const;
   void AddNodalValues(ValuesProcessor values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
-  std::vector<DegreeOfFreedom *> dofs() const;
-  std::vector<size_t> GetNodeTags() const;
 
  private:
   Eigen::MatrixXd EvaluateShapeFunctions(
       const Coordinates &local_coords,
-      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
-  Eigen::MatrixXd EvaluateJacobian(
-      const Coordinates &local_coords,
-      const Eigen::MatrixXd &shape_functions_derivatives) const;
+      DerivativeOrder order = DerivativeOrder::kZeroth) const;
+  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coords,
+                                   const Eigen::MatrixXd &dN_local) const;
   Eigen::VectorXd EvaluateNormalVector(const Coordinates &local_coords) const;
   double EvaluateDifferential(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
-  Coordinates MapLocalToGlobal(
-      const Eigen::MatrixXd &shape_functions_at_point) const;
+  Coordinates MapLocalToGlobal(const Eigen::MatrixXd &N_at_point) const;
   void AddLoadContribution(const std::vector<double> &load_vector,
                            const Eigen::MatrixXd &N, double weight,
                            double differential, ElementSystem &system) const;
   void AddRadiationContribution(double radiation, const Eigen::MatrixXd &N,
                                 double weight, double differential,
                                 ElementSystem &system) const;
-  void Scatter(const ElementSystem &element_system,
-               Eigen::MatrixXd &global_stiffness,
+  void Scatter(const ElementSystem &system, Eigen::MatrixXd &global_stiffness,
                Eigen::VectorXd &global_rhs) const;
 
-  GeometricEntity &geometric_entity_;
+  GeometricEntity &entity_;
   std::vector<DegreeOfFreedom *> dofs_;
-  const IntegrationPointsGroup &integration_points_;
+  const IntegrationPointsGroup &ips_;
 };
 
 }  // namespace ffea

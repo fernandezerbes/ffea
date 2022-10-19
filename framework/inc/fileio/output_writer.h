@@ -15,14 +15,17 @@ namespace ffea {
 class OutputWriter {
  public:
   explicit OutputWriter(Mesh& mesh);
+
   void RegisterPostProcessor(const PostProcessor& postprocessor);
-  void Write(const std::string& filename,
-                const std::string& group_name) const;
+  void Write(const std::string& filename, const std::string& group_name) const;
 
  private:
   std::vector<const PostProcessor*> postprocessors_;
   const Mesh& mesh_;
 };
+
+vtu11::VtkIndexType MapToVtkNodeIdx(GeometricEntityType entity_type,
+                                    size_t node_idx);
 
 const std::unordered_map<GeometricEntityType, vtu11::VtkCellType>
     geometric_entity_to_vtk_cell_map = {
@@ -38,9 +41,6 @@ const std::unordered_map<GeometricEntityType, vtu11::VtkCellType>
         {GeometricEntityType::kNineNodeQuad, 23},
         {GeometricEntityType::kTenNodeTetra, 24},
         {GeometricEntityType::kTwentySevenNodeHex, 25}};
-
-vtu11::VtkIndexType MapToVtkIdx(GeometricEntityType entity_type,
-                                size_t node_idx);
 
 }  // namespace ffea
 

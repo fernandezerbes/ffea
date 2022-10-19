@@ -16,9 +16,6 @@ namespace ffea {
 class Geometry {
  public:
   Geometry() = default;
-
-  // We need the move-constructor and move-assignment operator defined to be
-  // able to move the vector of unique_ptr. The rest is just rule of 5.
   ~Geometry() = default;
   Geometry(const Geometry&) = delete;
   Geometry& operator=(const Geometry&) = delete;
@@ -26,33 +23,26 @@ class Geometry {
   Geometry& operator=(Geometry&&) = delete;
 
   size_t number_of_nodes() const;
+  const std::vector<Node>& nodes() const;
+  std::vector<GeometricEntity*>& geometric_entity_group(
+      const std::string& name);
+  const std::vector<GeometricEntity*>& geometric_entity_group(
+      const std::string& name) const;
 
   void AddNode(const std::array<double, 3>& xyz);
-
-  void AddGeometricEntity(
-      GeometricEntityType type, const std::vector<size_t>& node_tags,
-      const GeometricEntityFactory& geometric_entity_factory);
-
-  void RegisterGeometricEntityGroup(
-      const std::string& group_name,
-      const std::vector<size_t>& geometric_entity_tags);
-
-  std::vector<GeometricEntity*>& GetGeometricEntityGroup(
-      const std::string& group_name);
-
-  const std::vector<GeometricEntity*>& GetGeometricEntityGroup(
-      const std::string& group_name) const;
-
-  const std::vector<Node>& nodes() const;
+  void AddGeometricEntity(GeometricEntityType type,
+                          const std::vector<size_t>& node_tags,
+                          const GeometricEntityFactory& factory);
+  void RegisterGeometricEntityGroup(const std::string& name,
+                                    const std::vector<size_t>& entity_tags);
 
  private:
   std::vector<Node> nodes_;
-  std::vector<std::unique_ptr<GeometricEntity>> geometric_entities_;
+  std::vector<std::unique_ptr<GeometricEntity>> entities_;
 
  public:
   // TODO Make private
-  std::unordered_map<std::string, std::vector<GeometricEntity*>>
-      geometric_entities_groups_;
+  std::unordered_map<std::string, std::vector<GeometricEntity*>> entity_groups_;
 };
 
 }  // namespace ffea

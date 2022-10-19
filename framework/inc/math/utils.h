@@ -7,8 +7,8 @@ namespace ffea {
 
 namespace utilities {
 
-double DistanceBetweenPoints(const std::array<double, 3>& first_point,
-                             const std::array<double, 3>& second_point);
+double DistanceBetweenPoints(const std::array<double, 3>& first,
+                             const std::array<double, 3>& second);
 
 }  // namespace utilities
 

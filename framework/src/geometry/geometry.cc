@@ -3,14 +3,14 @@
 #include <stdexcept>
 namespace ffea {
 
-std::vector<GeometricEntity*>& Geometry::GetGeometricEntityGroup(
-    const std::string& group_name) {
-  return geometric_entities_groups_.at(group_name);
+std::vector<GeometricEntity*>& Geometry::geometric_entity_group(
+    const std::string& name) {
+  return entity_groups_.at(name);
 }
 
-const std::vector<GeometricEntity*>& Geometry::GetGeometricEntityGroup(
-    const std::string& group_name) const {
-  return geometric_entities_groups_.at(group_name);
+const std::vector<GeometricEntity*>& Geometry::geometric_entity_group(
+    const std::string& name) const {
+  return entity_groups_.at(name);
 }
 
 void Geometry::AddNode(const std::array<double, 3>& xyz) {
@@ -27,24 +27,23 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
     nodes.push_back(&nodes_[tag]);
   }
 
-  auto geometric_entity = factory.CreateGeometricEntity(type, nodes);
-  geometric_entities_.push_back(std::move(geometric_entity));
+  auto entity = factory.CreateGeometricEntity(type, nodes);
+  entities_.push_back(std::move(entity));
 }
 
 void Geometry::RegisterGeometricEntityGroup(
-    const std::string& group_name,
-    const std::vector<size_t>& geometric_entity_tags) {
-  if (geometric_entities_groups_.contains(group_name)) {
+    const std::string& name, const std::vector<size_t>& entity_tags) {
+  if (entity_groups_.contains(name)) {
     throw std::runtime_error("Entity group already registered");
   };
 
-  std::vector<GeometricEntity*> geometric_entities;
-  geometric_entities.reserve(geometric_entity_tags.size());
-  for (auto tag : geometric_entity_tags) {
-    geometric_entities.push_back(geometric_entities_[tag].get());
+  std::vector<GeometricEntity*> entities;
+  entities.reserve(entity_tags.size());
+  for (auto tag : entity_tags) {
+    entities.push_back(entities_[tag].get());
   }
 
-  geometric_entities_groups_.insert({group_name, geometric_entities});
+  entity_groups_.insert({name, entities});
 }
 
 size_t Geometry::number_of_nodes() const { return nodes_.size(); }

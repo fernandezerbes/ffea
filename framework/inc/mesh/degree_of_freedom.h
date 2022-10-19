@@ -19,12 +19,12 @@ class DegreeOfFreedom {
   void set_auxiliary_value(size_t idx, double value);
 
  private:
+  void CheckAuxiliaryValueInsideRange(size_t idx) const;
+
   double value_;
   std::vector<double> auxiliary_values_;
   size_t tag_;
   size_t parallel_tag_;
-
-  void check_auxiliary_value(size_t idx) const;
 };
 
 }  // namespace ffea

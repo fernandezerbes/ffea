@@ -8,7 +8,7 @@ namespace ffea {
 Analysis::Analysis(Model& model) : model_(model) {}
 
 void Analysis::Solve() {
-  auto number_of_dofs = model_.NumberOfDofs();
+  auto number_of_dofs = model_.number_of_dofs();
   Eigen::MatrixXd global_stiffness =
       Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
   Eigen::VectorXd global_rhs = Eigen::VectorXd::Zero(number_of_dofs);

@@ -29,23 +29,23 @@ class ComputationalDomain {
 };
 
 const Integrand elasticity_integrand_2D =
-    [](const Eigen::MatrixXd &dN_dGlobal,
+    [](const Eigen::MatrixXd &dN_global,
        const Eigen::MatrixXd &C) -> Eigen::MatrixXd {
-  const auto &B = linear_B_operator_2D(dN_dGlobal);
+  const auto &B = linear_B_operator_2D(dN_global);
   return B.transpose() * C * B;
 };
 
 const Integrand elasticity_integrand_3D =
-    [](const Eigen::MatrixXd &dN_dGlobal,
+    [](const Eigen::MatrixXd &dN_global,
        const Eigen::MatrixXd &C) -> Eigen::MatrixXd {
-  const auto &B = linear_B_operator_3D(dN_dGlobal);
+  const auto &B = linear_B_operator_3D(dN_global);
   return B.transpose() * C * B;
 };
 
 const Integrand quasi_harmonic_integrand =
-    [](const Eigen::MatrixXd &dN_dGlobal,
+    [](const Eigen::MatrixXd &dN_global,
        const Eigen::MatrixXd &C) -> Eigen::MatrixXd {
-  const auto &B = gradient_operator(dN_dGlobal);
+  const auto &B = gradient_operator(dN_global);
   return B.transpose() * C * B;
 };
 

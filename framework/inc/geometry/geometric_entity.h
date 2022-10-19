@@ -37,32 +37,33 @@ enum class DerivativeOrder { kZeroth, kFirst, kSecond };
 
 class GeometricEntity {
  public:
-  GeometricEntity(GeometricEntityType type, size_t dimensions,
+  GeometricEntity(GeometricEntityType type, size_t dim,
                   const std::vector<Node *> &nodes);
 
   GeometricEntityType type() const;
-  size_t dimensions() const;
+  size_t dim() const;
   size_t number_of_nodes() const;
-  std::vector<size_t> GetNodeTags() const;
-  Coordinates &GetCoordinatesOfNode(size_t node_idx) const;
+  std::vector<size_t> node_tags() const;
+  size_t node_tag(size_t node_idx) const;
+  Coordinates &node_coords(size_t node_idx) const;
+  virtual std::vector<Coordinates> nodal_local_coords() const = 0;
+
+  Eigen::MatrixXd EvaluateShapeFunctions(
+      const Coordinates &local_coords,
+      DerivativeOrder order = DerivativeOrder::kZeroth) const;
   Eigen::MatrixXd EvaluateJacobian(
       const Coordinates &local_coords,
       const Eigen::MatrixXd &shape_functions_derivatives) const;
   Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coords) const;
-  Eigen::MatrixXd EvaluateShapeFunctions(
-      const Coordinates &local_coords,
-      DerivativeOrder derivative_order = DerivativeOrder::kZeroth) const;
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Coordinates &local_coords) const;
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const = 0;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
-  Coordinates MapLocalToGlobal(
-      const Eigen::MatrixXd &shape_functions_at_point) const;
-  size_t GetNodeTag(size_t local_node_idx) const;
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const = 0;
+  Coordinates MapLocalToGlobal(const Eigen::MatrixXd &N_at_point) const;
 
  private:
+  Eigen::MatrixXd nodal_coords() const;
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const = 0;
   virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
@@ -71,17 +72,15 @@ class GeometricEntity {
       const Coordinates &local_coords) const = 0;
 
   GeometricEntityType type_;
-  size_t dimension_;
+  size_t dim_;
   std::vector<Node *> nodes_;
-  Eigen::MatrixXd GetNodesCoordinatesValues() const;
 };
 
 // Line entities
 
 class Line : public GeometricEntity {
  public:
-  Line(GeometricEntityType type, size_t dimensions,
-       const std::vector<Node *> &nodes);
+  Line(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Coordinates &local_coords) const override;
@@ -91,9 +90,9 @@ class Line : public GeometricEntity {
 
 class TwoNodeLine : public Line {
  public:
-  TwoNodeLine(size_t dimensions, const std::vector<Node *> &nodes);
+  TwoNodeLine(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -108,8 +107,7 @@ class TwoNodeLine : public Line {
 
 class Quad : public GeometricEntity {
  public:
-  Quad(GeometricEntityType type, size_t dimensions,
-       const std::vector<Node *> &nodes);
+  Quad(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Coordinates &local_coords) const override;
@@ -119,9 +117,9 @@ class Quad : public GeometricEntity {
 
 class FourNodeQuad : public Quad {
  public:
-  FourNodeQuad(size_t dimensions, const std::vector<Node *> &nodes);
+  FourNodeQuad(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -136,8 +134,7 @@ class FourNodeQuad : public Quad {
 
 class Hex : public GeometricEntity {
  public:
-  Hex(GeometricEntityType type, size_t dimensions,
-      const std::vector<Node *> &nodes);
+  Hex(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const override;
@@ -147,7 +144,7 @@ class EightNodeHex : public Hex {
  public:
   EightNodeHex(const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -161,8 +158,7 @@ class EightNodeHex : public Hex {
 // Tria entities
 class Tria : public GeometricEntity {
  public:
-  Tria(GeometricEntityType type, size_t dimensions,
-       const std::vector<Node *> &nodes);
+  Tria(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Coordinates &local_coords) const override;
@@ -172,9 +168,9 @@ class Tria : public GeometricEntity {
 
 class ThreeNodeTria : public Tria {
  public:
-  ThreeNodeTria(size_t dimensions, const std::vector<Node *> &nodes);
+  ThreeNodeTria(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -187,9 +183,9 @@ class ThreeNodeTria : public Tria {
 
 class SixNodeTria : public Tria {
  public:
-  SixNodeTria(size_t dimensions, const std::vector<Node *> &nodes);
+  SixNodeTria(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -204,8 +200,7 @@ class SixNodeTria : public Tria {
 
 class Tetra : public GeometricEntity {
  public:
-  Tetra(GeometricEntityType type, size_t dimensions,
-        const std::vector<Node *> &nodes);
+  Tetra(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const override;
@@ -215,7 +210,7 @@ class FourNodeTetra : public Tetra {
  public:
   FourNodeTetra(const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
@@ -230,7 +225,7 @@ class TenNodeTetra : public Tetra {
  public:
   TenNodeTetra(const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> GetNodalParametricCoords() const override;
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
   virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(

@@ -16,24 +16,26 @@ namespace ffea {
 class Model {
  public:
   explicit Model(Mesh &mesh);
+  
+  size_t number_of_dofs() const;
+
   void AddComputationalDomain(const std::string &domain_name,
                               const ConstitutiveModel &constitutive_model,
                               Integrand integrand,
                               ConditionFunction source = nullptr);
   void AddNaturalBoundaryCondition(const std::string &boundary_name,
-                                   ConditionFunction boundary_load,
+                                   ConditionFunction load,
                                    ConditionFunction radiation);
   void AddEssentialBoundaryCondition(
-      const std::string &boundary_name, ConditionFunction boundary_function,
-      const std::unordered_set<size_t> &directions_to_consider,
-      const EnforcementStrategy &enforcement_strategy =
+      const std::string &boundary_name, ConditionFunction condition,
+      const std::unordered_set<size_t> &components_to_consider,
+      const EnforcementStrategy &strategy =
           ffea::PenaltyEnforcementStrategy());
-  void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
-  size_t NumberOfDofs() const;
-  void AddComputationalDomainsContributions(Eigen::MatrixXd &global_stiffness,
-                                            Eigen::VectorXd &global_rhs) const;
   void EnforceBoundaryConditions(Eigen::MatrixXd &global_stiffness,
                                  Eigen::VectorXd &global_rhs) const;
+  void AddComputationalDomainsContributions(Eigen::MatrixXd &global_stiffness,
+                                            Eigen::VectorXd &global_rhs) const;
+  void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
 
  private:
   Mesh &mesh_;

@@ -13,10 +13,11 @@ namespace ffea {
 class GeometryBuilder {
  public:
   explicit GeometryBuilder(const GeometricEntityFactory &factory);
+  
   Geometry Build();
 
  protected:
-  const GeometricEntityFactory &geometric_entity_factory_;
+  const GeometricEntityFactory &factory_;
  
  private:
   virtual void AddNodes(Geometry &geometry) = 0;
@@ -36,27 +37,8 @@ class GeometryFromFileBuilder : public GeometryBuilder {
 
   std::ifstream file_stream_;
   GeometryParser parser_;
-  GeometryData geometry_data_;
+  GeometryData data_;
 };
-
-// class CartesianGeometryBuilder : public GeometryBuilder {
-//  public:
-//   CartesianGeometryBuilder(double x_length, double y_length,
-//                            size_t elements_in_x, size_t elements_in_y);
-//   ~CartesianGeometryBuilder();
-
-//  protected:
-//   virtual void AddNodes(Geometry &geometry) override;
-//   virtual void AddEntities(Geometry &geometry) override;
-
-//  private:
-//   double x_length_;
-//   double y_length_;
-//   size_t elements_in_x_;
-//   size_t elements_in_y_;
-//   size_t nodes_in_x_;
-//   size_t nodes_in_y_;
-// };
 
 }  // namespace ffea
 

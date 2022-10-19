@@ -11,32 +11,32 @@ void Model::AddComputationalDomain(const std::string& domain_name,
                                    const ConstitutiveModel& constitutive_model,
                                    Integrand integrand,
                                    ConditionFunction source) {
-  const auto& domain_elements = mesh_.GetElementGroup(domain_name);
+  const auto& domain_elements = mesh_.element_group(domain_name);
   computational_domains_.emplace_back(domain_elements, constitutive_model,
                                       integrand, source);
 }
 
 void Model::AddNaturalBoundaryCondition(const std::string& boundary_name,
-                                        ConditionFunction boundary_load,
+                                        ConditionFunction load,
                                         ConditionFunction radiation) {
-  const auto& boundary_elements = mesh_.GetElementGroup(boundary_name);
+  const auto& boundary_elements = mesh_.element_group(boundary_name);
   boundary_conditions_.push_back(
-      std::make_unique<ffea::NaturalBoundaryCondition>(
-          boundary_elements, boundary_load, radiation));
+      std::make_unique<ffea::NaturalBoundaryCondition>(boundary_elements, load,
+                                                       radiation));
 }
 
 void Model::AddEssentialBoundaryCondition(
-    const std::string& boundary_name, ConditionFunction boundary_function,
-    const std::unordered_set<size_t>& directions_to_consider,
+    const std::string& boundary_name, ConditionFunction condition,
+    const std::unordered_set<size_t>& components_to_consider,
     const EnforcementStrategy& enforcement_strategy) {
-  const auto& boundary_elements = mesh_.GetElementGroup(boundary_name);
+  const auto& boundary_elements = mesh_.element_group(boundary_name);
   boundary_conditions_.push_back(
       std::make_unique<ffea::EssentialBoundaryCondition>(
-          boundary_elements, boundary_function, directions_to_consider,
+          boundary_elements, condition, components_to_consider,
           enforcement_strategy));
 }
 
-size_t Model::NumberOfDofs() const { return mesh_.number_of_dofs(); }
+size_t Model::number_of_dofs() const { return mesh_.number_of_dofs(); }
 
 void Model::ProjectSolutionOnMesh(const Eigen::VectorXd& solution) {
   std::cout << "Projecting solution on mesh..." << std::endl;

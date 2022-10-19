@@ -13,14 +13,13 @@ namespace ffea {
 
 class ElementFactory {
  public:
-  explicit ElementFactory(
-      const IntegrationPointsProvider &integration_points_provider);
-  
-  Element CreateElement(GeometricEntity &geometric_entity,
+  explicit ElementFactory(const IntegrationPointsProvider &ip_provider);
+
+  Element CreateElement(GeometricEntity &entity,
                         const std::vector<DegreeOfFreedom *> &dofs) const;
 
  private:
-  const IntegrationPointsProvider &integration_points_provider_;
+  const IntegrationPointsProvider &ip_provider_;
 };
 
 }  // namespace ffea

@@ -19,30 +19,31 @@ PrimaryVariablePostProcessor::PrimaryVariablePostProcessor(
 
 std::vector<double> PrimaryVariablePostProcessor::Process(
     const std::string &group_name) const {
-  return mesh_.GetNodalValues(group_name);
+  return mesh_.nodal_values(group_name);
 }
 
-DerivedVariableProcessor::DerivedVariableProcessor(
-    std::string variable_name, size_t values_per_node, const Mesh &mesh,
-    ValuesProcessor quantity_processor)
+DerivedVariableProcessor::DerivedVariableProcessor(std::string variable_name,
+                                                   size_t values_per_node,
+                                                   const Mesh &mesh,
+                                                   ValuesProcessor processor)
     : PostProcessor(variable_name, values_per_node, mesh),
-      values_processor_(quantity_processor) {}
+      processor_(processor) {}
 
 std::vector<double> DerivedVariableProcessor::Process(
     const std::string &group_name) const {
-  const auto raw_values = GetNodalValuesOfAllContributingElements(group_name);
+  const auto raw_values = ExtractValuesOfAllElementsPerNode(group_name);
   const auto avg_values = AverageNodalValues(raw_values);
   return avg_values;
 }
 
 std::vector<ffea::NodalValuesGroup>
-DerivedVariableProcessor::GetNodalValuesOfAllContributingElements(
+DerivedVariableProcessor::ExtractValuesOfAllElementsPerNode(
     const std::string &group_name) const {
   const auto number_of_nodes = mesh_.number_of_nodes(group_name);
   std::vector<ffea::NodalValuesGroup> raw_values(number_of_nodes);
 
-  for (const auto &element : mesh_.GetElementGroup(group_name)) {
-    element.AddNodalValues(values_processor_, raw_values);
+  for (const auto &element : mesh_.element_group(group_name)) {
+    element.AddNodalValues(processor_, raw_values);
   }
 
   return raw_values;
@@ -87,8 +88,8 @@ DerivedVariableProcessor MakeElasticStrainProcessor(
   ValuesProcessor strain_processor =
       [B_operator](const Eigen::VectorXd &solution,
                    const Coordinates &global_coords,
-                   const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
-    const auto &B = B_operator(dN_dGlobal);
+                   const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
+    const auto &B = B_operator(dN_global);
     return B * solution;
   };
 
@@ -111,8 +112,8 @@ DerivedVariableProcessor MakeElasticStressProcessor(
   ValuesProcessor stress_processor =
       [&constitutive_model, B_operator](
           const Eigen::VectorXd &solution, const Coordinates &global_coords,
-          const Eigen::MatrixXd &dN_dGlobal) -> Eigen::MatrixXd {
-    const auto &B = B_operator(dN_dGlobal);
+          const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
+    const auto &B = B_operator(dN_global);
     const auto &C = constitutive_model.Evaluate(global_coords);
     return C * B * solution;
   };

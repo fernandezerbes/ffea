@@ -43,19 +43,18 @@ class PrimaryVariablePostProcessor : public PostProcessor {
 class DerivedVariableProcessor : public PostProcessor {
  public:
   DerivedVariableProcessor(std::string variable_name, size_t values_per_node,
-                           const Mesh &mesh,
-                           ValuesProcessor quantity_processor);
+                           const Mesh &mesh, ValuesProcessor processor);
 
   virtual std::vector<double> Process(
       const std::string &group_name) const override;
 
  private:
-  std::vector<ffea::NodalValuesGroup> GetNodalValuesOfAllContributingElements(
+  std::vector<ffea::NodalValuesGroup> ExtractValuesOfAllElementsPerNode(
       const std::string &group_name) const;
   std::vector<double> AverageNodalValues(
       const std::vector<ffea::NodalValuesGroup> &raw_values) const;
 
-  ValuesProcessor values_processor_;
+  ValuesProcessor processor_;
 };
 
 namespace utilities {

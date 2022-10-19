@@ -24,18 +24,18 @@ void DegreeOfFreedom::set_value(const Eigen::VectorXd &solution) {
 }
 
 double DegreeOfFreedom::auxiliary_value(size_t index) const {
-  check_auxiliary_value(index);
+  CheckAuxiliaryValueInsideRange(index);
 
   return auxiliary_values_[index];
 }
 
 void DegreeOfFreedom::set_auxiliary_value(size_t index, double value) {
-  check_auxiliary_value(index);
+  CheckAuxiliaryValueInsideRange(index);
 
   auxiliary_values_[index] = value;
 }
 
-void DegreeOfFreedom::check_auxiliary_value(size_t index) const {
+void DegreeOfFreedom::CheckAuxiliaryValueInsideRange(size_t index) const {
   if (auxiliary_values_.empty()) {
     throw std::out_of_range("There are no auxiliary values.");
   }

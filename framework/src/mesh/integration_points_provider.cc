@@ -2,15 +2,14 @@
 
 namespace ffea {
 
-const IntegrationPointsGroup &IntegrationPointsProvider::GetIntegrationPoints(
+const IntegrationPointsGroup &IntegrationPointsProvider::integration_points(
     GeometricEntityType type) const {
-  return integration_points_registry_.at(type);
+  return ips_registry_.at(type);
 }
 
 void IntegrationPointsProvider::RegisterIntegrationPoints(
-    GeometricEntityType type,
-    const IntegrationPointsGroup &integration_points) {
-  integration_points_registry_.insert({type, integration_points});
+    GeometricEntityType type, const IntegrationPointsGroup &ips) {
+  ips_registry_.insert({type, ips});
 }
 
 namespace utilities {
