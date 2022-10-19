@@ -53,7 +53,7 @@ class GeometricEntity {
       DerivativeOrder order = DerivativeOrder::kZeroth) const;
   Eigen::MatrixXd EvaluateJacobian(
       const Coordinates &local_coords,
-      const Eigen::MatrixXd &shape_functions_derivatives) const;
+      const Eigen::MatrixXd &dN_local) const;
   Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coords) const;
   virtual Eigen::VectorXd EvaluateNormalVector(
       const Coordinates &local_coords) const;

@@ -97,8 +97,8 @@ Coordinates Element::MapLocalToGlobal(const Coordinates &local_coords) const {
 }
 
 Coordinates Element::MapLocalToGlobal(
-    const Eigen::MatrixXd &shape_functions_at_point) const {
-  return entity_.MapLocalToGlobal(shape_functions_at_point);
+    const Eigen::MatrixXd &N_at_point) const {
+  return entity_.MapLocalToGlobal(N_at_point);
 }
 
 void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
