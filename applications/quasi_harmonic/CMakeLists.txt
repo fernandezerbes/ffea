@@ -1,5 +1,6 @@
 add_library(ffea_quasi_harmonic
             src/constitutive_model.cc
+            src/postprocessor.cc
 )
 
 target_include_directories(ffea_quasi_harmonic INTERFACE

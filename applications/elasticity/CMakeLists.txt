@@ -1,5 +1,6 @@
 add_library(ffea_elasticity
             src/constitutive_model.cc
+            src/postprocessor.cc
 )
 
 target_include_directories(ffea_elasticity INTERFACE

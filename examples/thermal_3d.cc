@@ -9,6 +9,7 @@
 #include <unordered_set>
 
 #include "../applications/quasi_harmonic/inc/constitutive_model.h"
+#include "../applications/quasi_harmonic/inc/postprocessor.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -24,7 +25,6 @@
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/model/operator.h"
-#include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
   // ********************** MESH **********************
