@@ -13,6 +13,9 @@
 
 namespace ffea {
 
+using GeometricEntityGroups =
+    std::unordered_map<std::string, std::vector<GeometricEntity*>>;
+
 class Geometry {
  public:
   Geometry() = default;
@@ -24,9 +27,10 @@ class Geometry {
 
   size_t number_of_nodes() const;
   const std::vector<Node>& nodes() const;
-  std::vector<GeometricEntity*>& geometric_entity_group(
+  GeometricEntityGroups& entity_groups();
+  std::vector<GeometricEntity*>& entity_group(
       const std::string& name);
-  const std::vector<GeometricEntity*>& geometric_entity_group(
+  const std::vector<GeometricEntity*>& entity_group(
       const std::string& name) const;
 
   void AddNode(const std::array<double, 3>& xyz);
@@ -39,10 +43,7 @@ class Geometry {
  private:
   std::vector<Node> nodes_;
   std::vector<std::unique_ptr<GeometricEntity>> entities_;
-
- public:
-  // TODO Make private
-  std::unordered_map<std::string, std::vector<GeometricEntity*>> entity_groups_;
+  GeometricEntityGroups entity_groups_;
 };
 
 }  // namespace ffea

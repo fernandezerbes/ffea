@@ -10,10 +10,10 @@ namespace ffea {
 
 namespace utilities {
 
-void ConvertOneToZeroBased(size_t &index) { index--; }
-void ConvertOneToZeroBased(int &index) { index--; }
-void ConvertZeroToOneBased(size_t &index) { index++; }
-void ConvertZeroToOneBased(int &index) { index++; }
+void ConvertOneToZeroBased(size_t &idx) { idx--; }
+void ConvertOneToZeroBased(int &idx) { idx--; }
+void ConvertZeroToOneBased(size_t &idx) { idx++; }
+void ConvertZeroToOneBased(int &idx) { idx++; }
 
 }  // namespace utilities
 
@@ -28,10 +28,6 @@ GeometricEntityDataGroup::GeometricEntityDataGroup(size_t tag,
                                                    const std::string &name)
     : tag_(tag), name_(name), entity_tags_() {}
 
-void GeometricEntityDataGroup::RegisterGeometricEntity(size_t tag) {
-  entity_tags_.push_back(tag);
-}
-
 size_t GeometricEntityDataGroup::tag() const { return tag_; }
 
 const std::string &GeometricEntityDataGroup::name() const { return name_; }
@@ -40,13 +36,24 @@ const std::vector<size_t> &GeometricEntityDataGroup::entity_tags() const {
   return entity_tags_;
 }
 
-void GeometryData::AddNode(size_t tag, const std::array<double, 3> &coords) {
-  nodes_.emplace_back(tag, coords);
+void GeometricEntityDataGroup::RegisterGeometricEntity(size_t tag) {
+  entity_tags_.push_back(tag);
 }
 
-void GeometryData::AddGeometricEntityDataGroup(size_t tag,
-                                               const std::string &name) {
-  entity_groups_.emplace_back(tag, name);
+const std::vector<NodeData> &GeometryData::nodes() const { return nodes_; }
+
+const std::vector<GeometricEntityData> &GeometryData::geometric_entities()
+    const {
+  return entities_;
+}
+
+const std::vector<GeometricEntityDataGroup>
+    &GeometryData::geometric_entity_groups() const {
+  return entity_groups_;
+}
+
+void GeometryData::AddNode(size_t tag, const std::array<double, 3> &coords) {
+  nodes_.emplace_back(tag, coords);
 }
 
 void GeometryData::AddGeometricEntityData(size_t tag, size_t type,
@@ -62,6 +69,11 @@ void GeometryData::AddGeometricEntityData(size_t tag, size_t type,
   }
 }
 
+void GeometryData::AddGeometricEntityDataGroup(size_t tag,
+                                               const std::string &name) {
+  entity_groups_.emplace_back(tag, name);
+}
+
 void GeometryData::RegisterShapeTag(size_t dim, size_t shape_tag,
                                     size_t entity_group_tag) {
   auto &map = shape_tag_to_entity_group_tags_maps_[dim];
@@ -71,18 +83,6 @@ void GeometryData::RegisterShapeTag(size_t dim, size_t shape_tag,
   } else {
     map.insert({shape_tag, {entity_group_tag}});
   }
-}
-
-const std::vector<NodeData> &GeometryData::nodes() const { return nodes_; }
-
-const std::vector<GeometricEntityData> &GeometryData::geometric_entities()
-    const {
-  return entities_;
-}
-
-const std::vector<GeometricEntityDataGroup>
-    &GeometryData::geometric_entity_groups() const {
-  return entity_groups_;
 }
 
 GeometricEntityDataGroup &GeometryData::GetGeometricEntityDataGroup(

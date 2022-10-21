@@ -9,14 +9,14 @@ Coordinates::Coordinates(const std::array<double, 3> &xyz) : xyz_(xyz) {}
 
 Coordinates::Coordinates(double x, double y, double z) : xyz_({x, y, z}) {}
 
-double Coordinates::get(size_t index) const {
-  if (index > 2) {
-    throw std::runtime_error("Tried to get coordinate at index " +
-                             std::to_string(index) +
-                             ", but maximum possible index is 2.");
+double Coordinates::get(size_t idx) const {
+  if (idx > 2) {
+    throw std::runtime_error("Tried to get coordinate at idx " +
+                             std::to_string(idx) +
+                             ", but maximum possible idx is 2.");
   }
 
-  return xyz_[index];
+  return xyz_[idx];
 }
 
 void Coordinates::set(double x, double y, double z) {
@@ -27,14 +27,14 @@ void Coordinates::set(double x, double y, double z) {
 
 void Coordinates::set(const std::array<double, 3> &xyz) { xyz_ = xyz; }
 
-void Coordinates::set(size_t index, double value) {
-  if (index > 2) {
-    throw std::runtime_error("Tried to set coordinate at index " +
-                             std::to_string(index) +
-                             ", but maximum possible index is 2.");
+void Coordinates::set(size_t idx, double value) {
+  if (idx > 2) {
+    throw std::runtime_error("Tried to set coordinate at idx " +
+                             std::to_string(idx) +
+                             ", but maximum possible idx is 2.");
   }
 
-  xyz_[index] = value;
+  xyz_[idx] = value;
 }
 
 std::ostream &operator<<(std::ostream &os, const Coordinates &xyz) {

@@ -23,26 +23,26 @@ void DegreeOfFreedom::set_value(const Eigen::VectorXd &solution) {
   set_value(solution(tag()));
 }
 
-double DegreeOfFreedom::auxiliary_value(size_t index) const {
-  CheckAuxiliaryValueInsideRange(index);
+double DegreeOfFreedom::auxiliary_value(size_t idx) const {
+  CheckAuxiliaryValueInsideRange(idx);
 
-  return auxiliary_values_[index];
+  return auxiliary_values_[idx];
 }
 
-void DegreeOfFreedom::set_auxiliary_value(size_t index, double value) {
-  CheckAuxiliaryValueInsideRange(index);
+void DegreeOfFreedom::set_auxiliary_value(size_t idx, double value) {
+  CheckAuxiliaryValueInsideRange(idx);
 
-  auxiliary_values_[index] = value;
+  auxiliary_values_[idx] = value;
 }
 
-void DegreeOfFreedom::CheckAuxiliaryValueInsideRange(size_t index) const {
+void DegreeOfFreedom::CheckAuxiliaryValueInsideRange(size_t idx) const {
   if (auxiliary_values_.empty()) {
     throw std::out_of_range("There are no auxiliary values.");
   }
 
-  if (index > (auxiliary_values_.size() - 1)) {
-    throw std::out_of_range("Tried to access auxiliary value at index " +
-                            std::to_string(index) + " but maximum index is " +
+  if (idx > (auxiliary_values_.size() - 1)) {
+    throw std::out_of_range("Tried to access auxiliary value at idx " +
+                            std::to_string(idx) + " but maximum idx is " +
                             std::to_string(auxiliary_values_.size()) + ".");
   }
 }

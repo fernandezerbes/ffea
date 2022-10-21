@@ -11,7 +11,7 @@ MeshBuilder::MeshBuilder(Geometry &geometry)
 Mesh MeshBuilder::Build(size_t number_of_fields) const {
   Mesh mesh(geometry_, number_of_fields);
 
-  for (auto &item : geometry_.entity_groups_) {
+  for (auto &item : geometry_.entity_groups()) {
     const auto &group_name = item.first;
     const auto &element_factory = element_factories_.at(group_name);
     for (auto &geometric_entity : item.second) {

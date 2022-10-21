@@ -10,25 +10,29 @@ Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
   AddDofs();
 }
 
-void Mesh::AddDofs() {
-  dofs_.reserve(geometry_.number_of_nodes() * dofs_per_node_);
-  for (size_t node_idx = 0; node_idx < geometry_.number_of_nodes();
-       node_idx++) {
-    for (size_t component_idx = 0; component_idx < dofs_per_node_;
-         component_idx++) {
-      dofs_.emplace_back(dof_tag(node_idx, component_idx));
-    }
+size_t Mesh::number_of_nodes() const { return geometry_.number_of_nodes(); }
+
+size_t Mesh::number_of_nodes(const std::string& group_name) const {
+  std::unordered_set<size_t> group_node_tags;
+  for (const auto& element : element_group(group_name)) {
+    const auto& element_node_tags = element.node_tags();
+    group_node_tags.insert(element_node_tags.begin(), element_node_tags.end());
   }
+  return group_node_tags.size();
 }
 
-std::vector<Element>& Mesh::element_group(const std::string& group_name) {
-  return element_groups_.at(group_name);
+const std::vector<Node>& Mesh::nodes() const { return geometry_.nodes(); }
+
+std::vector<double> Mesh::nodal_values(const std::string& group_name) const {
+  const auto& dofs = element_group_dofs(group_name);
+  std::vector<double> values(dofs.size());
+  for (const auto& dof : dofs) {
+    values[dof->tag()] = dof->value();
+  }
+  return values;
 }
 
-const std::vector<Element>& Mesh::element_group(
-    const std::string& group_name) const {
-  return element_groups_.at(group_name);
-}
+size_t Mesh::number_of_dofs() const { return dofs_.size(); }
 
 size_t Mesh::number_of_dofs(const std::string& group_name) const {
   std::unordered_set<size_t> unique_dof_tags;
@@ -37,6 +41,12 @@ size_t Mesh::number_of_dofs(const std::string& group_name) const {
     unique_dof_tags.insert(dof_tags.begin(), dof_tags.end());
   }
   return unique_dof_tags.size();
+}
+
+size_t Mesh::dofs_per_node() const { return dofs_per_node_; }
+
+std::vector<Element>& Mesh::element_group(const std::string& group_name) {
+  return element_groups_.at(group_name);
 }
 
 void Mesh::AddElement(const std::string& group_name,
@@ -63,25 +73,20 @@ void Mesh::AddElement(const std::string& group_name,
   }
 }
 
-size_t Mesh::number_of_dofs() const { return dofs_.size(); }
-
-size_t Mesh::number_of_nodes() const { return geometry_.number_of_nodes(); }
-
 void Mesh::SetSolutionOnDofs(const Eigen::VectorXd& solution) {
   for (auto& dof : dofs_) {
     dof.set_value(solution);
   }
 }
 
+const std::vector<Element>& Mesh::element_group(
+    const std::string& group_name) const {
+  return element_groups_.at(group_name);
+}
+
 size_t Mesh::dof_tag(size_t node_idx, size_t component_idx) const {
   return node_idx * dofs_per_node_ + component_idx;
 }
-
-const std::vector<Node>& Mesh::nodes() const { return geometry_.nodes(); }
-
-const std::vector<DegreeOfFreedom>& Mesh::dofs() const { return dofs_; }
-
-size_t Mesh::dofs_per_node() const { return dofs_per_node_; }
 
 const std::unordered_set<const DegreeOfFreedom*> Mesh::element_group_dofs(
     const std::string& group_name) const {
@@ -93,22 +98,15 @@ const std::unordered_set<const DegreeOfFreedom*> Mesh::element_group_dofs(
   return group_dofs;
 }
 
-std::vector<double> Mesh::nodal_values(const std::string& group_name) const {
-  const auto& dofs = element_group_dofs(group_name);
-  std::vector<double> values(dofs.size());
-  for (const auto& dof : dofs) {
-    values[dof->tag()] = dof->value();
+void Mesh::AddDofs() {
+  dofs_.reserve(geometry_.number_of_nodes() * dofs_per_node_);
+  for (size_t node_idx = 0; node_idx < geometry_.number_of_nodes();
+       node_idx++) {
+    for (size_t component_idx = 0; component_idx < dofs_per_node_;
+         component_idx++) {
+      dofs_.emplace_back(dof_tag(node_idx, component_idx));
+    }
   }
-  return values;
-}
-
-size_t Mesh::number_of_nodes(const std::string& group_name) const {
-  std::unordered_set<size_t> group_node_tags;
-  for (const auto& element : element_group(group_name)) {
-    const auto& element_node_tags = element.node_tags();
-    group_node_tags.insert(element_node_tags.begin(), element_node_tags.end());
-  }
-  return group_node_tags.size();
 }
 
 }  // namespace ffea

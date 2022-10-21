@@ -19,9 +19,10 @@ class PostProcessor {
                 const Mesh &mesh);
   virtual ~PostProcessor() = default;
 
-  virtual std::vector<double> Process(const std::string &group_name) const = 0;
   std::string variable_name() const;
   size_t values_per_node() const;
+  
+  virtual std::vector<double> Process(const std::string &group_name) const = 0;
 
  protected:
   const Mesh &mesh_;

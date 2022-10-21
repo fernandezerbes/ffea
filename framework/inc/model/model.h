@@ -31,16 +31,16 @@ class Model {
       const std::unordered_set<size_t> &components_to_consider,
       const EnforcementStrategy &strategy =
           ffea::PenaltyEnforcementStrategy());
-  void EnforceBoundaryConditions(Eigen::MatrixXd &global_stiffness,
-                                 Eigen::VectorXd &global_rhs) const;
   void AddComputationalDomainsContributions(Eigen::MatrixXd &global_stiffness,
                                             Eigen::VectorXd &global_rhs) const;
+  void EnforceBoundaryConditions(Eigen::MatrixXd &global_stiffness,
+                                 Eigen::VectorXd &global_rhs) const;
   void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
 
  private:
   Mesh &mesh_;
-  std::vector<ComputationalDomain> computational_domains_;
-  std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions_;
+  std::vector<ComputationalDomain> domains_;
+  std::vector<std::unique_ptr<BoundaryCondition>> bcs_;
 };
 
 }  // namespace ffea

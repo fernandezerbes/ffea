@@ -31,13 +31,13 @@ class Element {
 
   GeometricEntityType geometric_entity_type() const;
   size_t number_of_nodes() const;
+  Coordinates &node_coords(size_t node_idx) const;
+  std::vector<size_t> node_tags() const;
+  size_t node_tag(size_t local_node_idx) const;
   size_t number_of_dofs() const;
   size_t dofs_per_node() const;
   std::vector<DegreeOfFreedom *> dofs() const;
   std::vector<size_t> dof_tags() const;
-  Coordinates &node_coords(size_t node_idx) const;
-  std::vector<size_t> node_tags() const;
-  size_t node_tag(size_t local_node_idx) const;
 
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                          Integrand integrand, ConditionFunction source,

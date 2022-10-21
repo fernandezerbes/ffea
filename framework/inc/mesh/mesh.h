@@ -23,12 +23,11 @@ class Mesh {
 
   size_t number_of_nodes() const;
   size_t number_of_nodes(const std::string& group_name) const;
+  const std::vector<Node>& nodes() const;
+  std::vector<double> nodal_values(const std::string& group_name) const;
   size_t number_of_dofs() const;
   size_t number_of_dofs(const std::string& group_name) const;
   size_t dofs_per_node() const;
-  const std::vector<Node>& nodes() const;
-  std::vector<Coordinates> nodal_coords(const std::string& group_name) const;
-  std::vector<double> nodal_values(const std::string& group_name) const;
   std::vector<Element>& element_group(const std::string& group_name);
   const std::vector<Element>& element_group(
       const std::string& group_name) const;
@@ -39,7 +38,6 @@ class Mesh {
 
  private:
   size_t dof_tag(size_t node_tag, size_t component_idx) const;
-  const std::vector<DegreeOfFreedom>& dofs() const;
   const std::unordered_set<const DegreeOfFreedom*> element_group_dofs(
       const std::string& group_name) const;
 

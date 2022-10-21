@@ -3,12 +3,17 @@
 #include <stdexcept>
 namespace ffea {
 
-std::vector<GeometricEntity*>& Geometry::geometric_entity_group(
-    const std::string& name) {
+size_t Geometry::number_of_nodes() const { return nodes_.size(); }
+
+const std::vector<Node>& Geometry::nodes() const { return nodes_; }
+
+GeometricEntityGroups& Geometry::entity_groups() { return entity_groups_; }
+
+std::vector<GeometricEntity*>& Geometry::entity_group(const std::string& name) {
   return entity_groups_.at(name);
 }
 
-const std::vector<GeometricEntity*>& Geometry::geometric_entity_group(
+const std::vector<GeometricEntity*>& Geometry::entity_group(
     const std::string& name) const {
   return entity_groups_.at(name);
 }
@@ -45,9 +50,5 @@ void Geometry::RegisterGeometricEntityGroup(
 
   entity_groups_.insert({name, entities});
 }
-
-size_t Geometry::number_of_nodes() const { return nodes_.size(); }
-
-const std::vector<Node>& Geometry::nodes() const { return nodes_; }
 
 }  // namespace ffea

@@ -24,6 +24,22 @@ std::vector<size_t> GeometricEntity::node_tags() const {
   return node_tags;
 }
 
+size_t GeometricEntity::node_tag(size_t node_idx) const {
+  return nodes_[node_idx]->tag();
+}
+
+Eigen::MatrixXd GeometricEntity::nodal_coords() const {
+  Eigen::MatrixXd coords_values(number_of_nodes(), dim_);
+  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
+    const auto &node = nodes_[node_idx];
+    const auto &coords = node->coords();
+    for (size_t dim_idx = 0; dim_idx < dim_; dim_idx++) {
+      coords_values(node_idx, dim_idx) = coords.get(dim_idx);
+    }
+  }
+  return coords_values;
+}
+
 Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
     const Coordinates &local_coords, DerivativeOrder order) const {
   switch (order) {
@@ -41,18 +57,6 @@ Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
   }
 }
 
-Eigen::MatrixXd GeometricEntity::nodal_coords() const {
-  Eigen::MatrixXd coords_values(number_of_nodes(), dim_);
-  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
-    const auto &node = nodes_[node_idx];
-    const auto &coords = node->coords();
-    for (size_t dim_idx = 0; dim_idx < dim_; dim_idx++) {
-      coords_values(node_idx, dim_idx) = coords.get(dim_idx);
-    }
-  }
-  return coords_values;
-}
-
 Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
     const Coordinates &local_coords, const Eigen::MatrixXd &dN_local) const {
   return dN_local * nodal_coords();
@@ -63,6 +67,13 @@ Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
   const auto &dN_local =
       EvaluateShapeFunctions(local_coords, DerivativeOrder::kFirst);
   return EvaluateJacobian(local_coords, dN_local);
+}
+
+Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
+    const Coordinates &local_coords) const {
+  std::string type_name = typeid(*this).name();
+  throw std::logic_error("Normal is undefined for geometric entity of type " +
+                         type_name);
 }
 
 Coordinates GeometricEntity::MapLocalToGlobal(
@@ -83,17 +94,6 @@ Coordinates GeometricEntity::MapLocalToGlobal(
     }
   }
   return Coordinates(xyz);
-}
-
-size_t GeometricEntity::node_tag(size_t node_idx) const {
-  return nodes_[node_idx]->tag();
-}
-
-Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
-    const Coordinates &local_coords) const {
-  std::string type_name = typeid(*this).name();
-  throw std::logic_error("Normal is undefined for geometric entity of type " +
-                         type_name);
 }
 
 Coordinates &GeometricEntity::node_coords(size_t node_idx) const {

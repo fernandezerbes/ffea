@@ -44,15 +44,15 @@ int main() {
 
   */
 
+  // TODO Finish reorganizing classes in cc files
   // TODO Pass Clang analyzer
+  // TODO Add unit-tests
   // TODO Use ONEmkl and PARDISO Solver
-  // TODO Change shape functions classes for functions?
   // TODO Add check for mesh file format version
   // TODO Add sparse matrices
   // TODO Do half of computations when matrices are symmetric. We can overload
   // functions based on symmetric matrices.
   // TODO Check results for axial case
-  // TODO Add source term
   // TODO Reuse all possible values of shape functions, jacobians, etc. during
   // system integration
   // TODO See if protected virtual classes can be made private
@@ -60,9 +60,8 @@ int main() {
   // TODO Remove dependency of Eigen
   // TODO Create analysis builders
   // TODO Review function signatures and check constness, encapsulation, etc
-  // TODO Add unit-tests
-  // TODO Add smoke-tests
   // TODO Add capabilities for geometric non-linearities (non linear analysis,
+  // TODO Add smoke-tests
   // NR Solver, etc)
   // TODO Add multithreading
   // TODO Add MPI
