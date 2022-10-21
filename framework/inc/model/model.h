@@ -9,7 +9,7 @@
 #include "./boundary_condition.h"
 #include "./computational_domain.h"
 #include "./constitutive_model.h"
-#include "./types.h"
+#include "./alias.h"
 
 namespace ffea {
 

@@ -10,7 +10,7 @@
 #include "../geometry/geometric_entity.h"
 #include "../geometry/node.h"
 #include "../model/constitutive_model.h"
-#include "../model/types.h"
+#include "../model/alias.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"
 

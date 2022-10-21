@@ -9,7 +9,7 @@
 #include "../mesh/mesh.h"
 #include "../model/constitutive_model.h"
 #include "../model/operator.h"
-#include "../model/types.h"
+#include "../model/alias.h"
 
 namespace ffea {
 
