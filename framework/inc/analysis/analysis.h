@@ -1,8 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_ANALYSIS_ANALYSIS_H_
 #define FFEA_FRAMEWORK_INC_ANALYSIS_ANALYSIS_H_
 
-#include <eigen3/Eigen/Dense>
-
 #include "../model/model.h"
 
 namespace ffea {
