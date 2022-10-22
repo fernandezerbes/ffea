@@ -5,7 +5,7 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "./alias.h"
+#include "../alias.h"
 #include "./boundary_condition.h"
 #include "./computational_domain.h"
 #include "./constitutive_model.h"

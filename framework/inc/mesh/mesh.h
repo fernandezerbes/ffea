@@ -10,7 +10,7 @@
 #include "../geometry/geometric_entity.h"
 #include "../geometry/geometry.h"
 #include "../geometry/node.h"
-#include "../model/alias.h"
+#include "../alias.h"
 #include "./degree_of_freedom.h"
 #include "./element.h"
 #include "./element_factory.h"

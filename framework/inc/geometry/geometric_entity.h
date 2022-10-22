@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "../model/alias.h"
+#include "../alias.h"
 #include "./coordinates.h"
 #include "./node.h"
 

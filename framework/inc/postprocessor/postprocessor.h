@@ -6,7 +6,7 @@
 
 #include "../geometry/coordinates.h"
 #include "../mesh/mesh.h"
-#include "../model/alias.h"
+#include "../alias.h"
 #include "../model/constitutive_model.h"
 #include "../model/operator.h"
 

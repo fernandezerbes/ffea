@@ -2,7 +2,7 @@
 #define FFEA_FRAMEWORK_INC_MODEL_CONSTITUTIVEMODEL_H_
 
 #include "../geometry/coordinates.h"
-#include "./alias.h"
+#include "../alias.h"
 
 namespace ffea {
 

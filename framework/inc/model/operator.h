@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include "./alias.h"
+#include "../alias.h"
 
 namespace ffea {
 

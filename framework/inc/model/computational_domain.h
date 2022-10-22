@@ -3,7 +3,7 @@
 
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "./alias.h"
+#include "../alias.h"
 #include "./operator.h"
 
 namespace ffea {

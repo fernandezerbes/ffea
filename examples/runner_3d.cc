@@ -16,7 +16,7 @@
 #include "../framework/inc/mesh/integration_points_provider.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
-#include "../framework/inc/model/alias.h"
+#include "../framework/inc/alias.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"

@@ -7,7 +7,7 @@
 #include "../geometry/coordinates.h"
 #include "../geometry/geometric_entity.h"
 #include "../geometry/node.h"
-#include "../model/alias.h"
+#include "../alias.h"
 #include "../model/constitutive_model.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"

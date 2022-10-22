@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-#include "../../inc/model/alias.h"
+#include "../../inc/alias.h"
 
 namespace ffea {
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "../model/alias.h"
+#include "../alias.h"
 
 namespace ffea {
 
