@@ -1,6 +1,7 @@
 #include "../../inc/geometry/geometry.h"
 
 #include <stdexcept>
+
 namespace ffea {
 
 size_t Geometry::number_of_nodes() const { return nodes_.size(); }

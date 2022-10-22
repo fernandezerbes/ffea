@@ -1,9 +1,6 @@
 #ifndef FFEA_FRAMEWORK_MESH_INTEGRATIONPOINT_H_
 #define FFEA_FRAMEWORK_MESH_INTEGRATIONPOINT_H_
 
-#include <array>
-#include <memory>
-
 #include "../geometry/coordinates.h"
 #include "../geometry/geometric_entity.h"
 

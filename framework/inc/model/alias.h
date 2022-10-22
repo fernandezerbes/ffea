@@ -1,7 +1,7 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_TYPES_H_
 #define FFEA_FRAMEWORK_INC_MODEL_TYPES_H_
 
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 #include <functional>
 #include <vector>
 

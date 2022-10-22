@@ -7,9 +7,9 @@
 
 #include "../geometry/coordinates.h"
 #include "../mesh/mesh.h"
+#include "../model/alias.h"
 #include "../model/constitutive_model.h"
 #include "../model/operator.h"
-#include "../model/alias.h"
 
 namespace ffea {
 
@@ -21,7 +21,7 @@ class PostProcessor {
 
   std::string variable_name() const;
   size_t values_per_node() const;
-  
+
   virtual std::vector<double> Process(const std::string &group_name) const = 0;
 
  protected:

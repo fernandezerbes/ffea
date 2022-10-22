@@ -1,9 +1,5 @@
-#include <Eigen/IterativeLinearSolvers>
-#include <Eigen/SparseCholesky>
-#include <array>
 #include <chrono>
 #include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/Sparse>
 #include <iostream>
 #include <memory>
 #include <unordered_set>

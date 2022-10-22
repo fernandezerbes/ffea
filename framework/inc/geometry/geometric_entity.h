@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_
 #define FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_
 
-#include <array>
 #include <eigen3/Eigen/Dense>
 #include <memory>
 #include <vector>

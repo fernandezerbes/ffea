@@ -28,8 +28,7 @@ class Geometry {
   size_t number_of_nodes() const;
   const std::vector<Node>& nodes() const;
   GeometricEntityGroups& entity_groups();
-  std::vector<GeometricEntity*>& entity_group(
-      const std::string& name);
+  std::vector<GeometricEntity*>& entity_group(const std::string& name);
   const std::vector<GeometricEntity*>& entity_group(
       const std::string& name) const;
 

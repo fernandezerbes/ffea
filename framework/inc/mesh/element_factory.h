@@ -1,8 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_ELEMENTFACTORY_H_
 #define FFEA_FRAMEWORK_INC_MESH_ELEMENTFACTORY_H_
 
-#include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "./degree_of_freedom.h"

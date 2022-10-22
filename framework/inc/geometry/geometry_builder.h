@@ -13,12 +13,12 @@ namespace ffea {
 class GeometryBuilder {
  public:
   explicit GeometryBuilder(const GeometricEntityFactory &factory);
-  
+
   Geometry Build();
 
  protected:
   const GeometricEntityFactory &factory_;
- 
+
  private:
   virtual void AddNodes(Geometry &geometry) = 0;
   virtual void AddEntities(Geometry &geometry) = 0;

@@ -1,8 +1,6 @@
 #ifndef FFEA_APPLICATIONS_ELASTICITY_INC_CONSTITUTIVEMODEL_H_
 #define FFEA_APPLICATIONS_ELASTICITY_INC_CONSTITUTIVEMODEL_H_
 
-#include <eigen3/Eigen/Dense>
-
 #include "../../../framework/inc/model/constitutive_model.h"
 
 namespace ffea {

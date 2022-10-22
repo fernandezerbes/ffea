@@ -1,6 +1,5 @@
 #include "../../inc/postprocessor/postprocessor.h"
 
-#include <numeric>
 namespace ffea {
 
 PostProcessor::PostProcessor(std::string variable_name, size_t values_per_node,

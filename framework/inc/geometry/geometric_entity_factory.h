@@ -2,7 +2,6 @@
 #define FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITYFACTORY_H_
 
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 #include "./geometric_entity.h"

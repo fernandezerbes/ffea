@@ -3,7 +3,6 @@
 
 #include <eigen3/Eigen/Dense>
 
-
 #include "../geometry/coordinates.h"
 
 namespace ffea {

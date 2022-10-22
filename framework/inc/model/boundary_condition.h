@@ -2,8 +2,6 @@
 #define FFEA_FRAMEWORK_INC_MODEL_BOUNDARYCONDITION_H_
 
 #include <eigen3/Eigen/Dense>
-#include <functional>
-#include <string>
 #include <unordered_set>
 #include <vector>
 

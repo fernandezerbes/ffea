@@ -1,7 +1,5 @@
 #include "../../inc/mesh/integration_point.h"
 
-#include <memory>
-
 namespace ffea {
 
 IntegrationPoint::IntegrationPoint(double x, double y, double z, double weight)

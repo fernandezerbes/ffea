@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_MESH_H_
 #define FFEA_FRAMEWORK_INC_MESH_MESH_H_
 
-#include <array>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>

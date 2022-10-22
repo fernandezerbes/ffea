@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_FILEIO_WRITER_H_
 #define FFEA_FRAMEWORK_INC_FILEIO_WRITER_H_
 
-#include <array>
 #include <string>
 #include <unordered_map>
 

@@ -2,15 +2,14 @@
 #define FFEA_FRAMEWORK_INC_MESH_ELEMENT_H_
 
 #include <eigen3/Eigen/Dense>
-#include <memory>
 #include <optional>
 #include <vector>
 
 #include "../geometry/coordinates.h"
 #include "../geometry/geometric_entity.h"
 #include "../geometry/node.h"
-#include "../model/constitutive_model.h"
 #include "../model/alias.h"
+#include "../model/constitutive_model.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"
 
