@@ -42,10 +42,9 @@ std::vector<size_t> Element::dof_tags() const {
 
 void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
   const auto &tags = dof_tags();
-  for (const auto &i_dof_tag : tags) {
-    for (const auto &j_dof_tag : tags) {
-      // TODO Modify the loops so that always j>=i
-      nonzero_entries.emplace_back(i_dof_tag, j_dof_tag, 0.0);
+  for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
+    for (size_t j_dof_idx = 0; j_dof_idx < number_of_dofs(); j_dof_idx++) {
+      nonzero_entries.emplace_back(tags[i_dof_idx], tags[j_dof_idx], 0.0);
     }
   }
 }
@@ -204,23 +203,16 @@ void Element::Scatter(const ElementSystem &element_system,
                       CSRMatrix<double> &global_stiffness,
                       Eigen::VectorXd &global_rhs) const {
   const auto &tags = dof_tags();
-  for (size_t node_idx = 0; node_idx < number_of_nodes();
-       node_idx++) {  // TODO This might be unnecessary
-    // TODO Modify the loops so that always j>=i
-    size_t i_dof_idx = 0;
-    for (const auto &i_dof_tag : tags) {
-      size_t j_dof_idx = 0;
-      for (const auto &j_dof_tag : tags) {
-        if (element_system.stiffness_matrix) {
-          global_stiffness.coeffRef(i_dof_tag, j_dof_tag) +=
-              (*element_system.stiffness_matrix)(i_dof_idx, j_dof_idx);
-        }
-        j_dof_idx++;
+  for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
+    for (size_t j_dof_idx = 0; j_dof_idx < number_of_dofs();
+         j_dof_idx++) {
+      if (element_system.stiffness_matrix) {
+        global_stiffness.coeffRef(tags[i_dof_idx], tags[j_dof_idx]) +=
+            (*element_system.stiffness_matrix)(i_dof_idx, j_dof_idx);
       }
-      if (element_system.rhs_vector) {
-        global_rhs(i_dof_tag) += (*element_system.rhs_vector)(i_dof_idx);
-      }
-      i_dof_idx++;
+    }
+    if (element_system.rhs_vector) {
+      global_rhs(tags[i_dof_idx]) += (*element_system.rhs_vector)(i_dof_idx);
     }
   }
 }

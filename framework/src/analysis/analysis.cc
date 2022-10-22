@@ -21,7 +21,7 @@ void Analysis::Solve() {
   // Aparently this should work better with OpenMP enabled, but it does not
   // Eigen::ConjugateGradient<Eigen::MatrixXd, Eigen::Lower | Eigen::Upper>
   //     cg_solver;
-  Eigen::ConjugateGradient<CSRMatrix<double>> cg_solver;
+  Eigen::ConjugateGradient<CSRMatrix<double>, Eigen::Upper> cg_solver;
   cg_solver.setTolerance(1.0e-12);
   cg_solver.compute(global_stiffness);
   Eigen::VectorXd solution;
