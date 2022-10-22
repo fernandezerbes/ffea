@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_POSTPROCESSOR_H_
 #define FFEA_FRAMEWORK_INC_POSTPROCESSOR_H_
 
-#include <eigen3/Eigen/Dense>
 #include <string>
 #include <vector>
 

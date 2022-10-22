@@ -28,8 +28,8 @@ size_t GeometricEntity::node_tag(size_t node_idx) const {
   return nodes_[node_idx]->tag();
 }
 
-Eigen::MatrixXd GeometricEntity::nodal_coords() const {
-  Eigen::MatrixXd coords_values(number_of_nodes(), dim_);
+Matrix<double> GeometricEntity::nodal_coords() const {
+  Matrix<double> coords_values(number_of_nodes(), dim_);
   for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     const auto &node = nodes_[node_idx];
     const auto &coords = node->coords();
@@ -40,7 +40,7 @@ Eigen::MatrixXd GeometricEntity::nodal_coords() const {
   return coords_values;
 }
 
-Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
+Matrix<double> GeometricEntity::EvaluateShapeFunctions(
     const Coordinates &local_coords, DerivativeOrder order) const {
   switch (order) {
     case DerivativeOrder::kZeroth:
@@ -57,19 +57,19 @@ Eigen::MatrixXd GeometricEntity::EvaluateShapeFunctions(
   }
 }
 
-Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
-    const Coordinates &local_coords, const Eigen::MatrixXd &dN_local) const {
+Matrix<double> GeometricEntity::EvaluateJacobian(
+    const Coordinates &local_coords, const Matrix<double> &dN_local) const {
   return dN_local * nodal_coords();
 }
 
-Eigen::MatrixXd GeometricEntity::EvaluateJacobian(
+Matrix<double> GeometricEntity::EvaluateJacobian(
     const Coordinates &local_coords) const {
   const auto &dN_local =
       EvaluateShapeFunctions(local_coords, DerivativeOrder::kFirst);
   return EvaluateJacobian(local_coords, dN_local);
 }
 
-Eigen::VectorXd GeometricEntity::EvaluateNormalVector(
+Vector<double> GeometricEntity::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   std::string type_name = typeid(*this).name();
   throw std::logic_error("Normal is undefined for geometric entity of type " +
@@ -84,7 +84,7 @@ Coordinates GeometricEntity::MapLocalToGlobal(
 }
 
 Coordinates GeometricEntity::MapLocalToGlobal(
-    const Eigen::MatrixXd &N_at_point) const {
+    const Matrix<double> &N_at_point) const {
   std::array<double, 3> xyz{};
   for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     const auto &node = nodes_[node_idx];
@@ -106,7 +106,7 @@ Line::Line(GeometricEntityType type, size_t dim,
            const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
-Eigen::VectorXd Line::EvaluateNormalVector(
+Vector<double> Line::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   if (dim() == 3) {
     throw std::runtime_error("Lines are not supported in 3D");
@@ -114,7 +114,7 @@ Eigen::VectorXd Line::EvaluateNormalVector(
 
   const auto &jacobian = EvaluateJacobian(local_coords);
   // [1x2] * [2x2] = [1x2] = [dx/dxi, dy/dxi]
-  Eigen::VectorXd normal = Eigen::VectorXd::Zero(2);
+  Vector<double> normal = Vector<double>::Zero(2);
   normal(0) = jacobian(0, 1);
   normal(1) = -jacobian(0, 0);
   return normal;
@@ -132,10 +132,10 @@ std::vector<Coordinates> TwoNodeLine::nodal_local_coords() const {
   return {{-1.0, 0.0, 0.0}, {1.0, 0.0, 0.0}};
 }
 
-Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions0thDerivative(
+Matrix<double> TwoNodeLine::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 2);
+  Matrix<double> result = Matrix<double>::Zero(1, 2);
 
   result(0, 0) = 0.5 * (1.0 - r);
   result(0, 1) = 0.5 * (1.0 + r);
@@ -143,9 +143,9 @@ Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions1stDerivative(
+Matrix<double> TwoNodeLine::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 2);
+  Matrix<double> result = Matrix<double>::Zero(1, 2);
 
   result(0, 0) = -0.5;
   result(0, 1) = 0.5;
@@ -153,9 +153,9 @@ Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd TwoNodeLine::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> TwoNodeLine::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  return Eigen::MatrixXd::Zero(1, 2);
+  return Matrix<double>::Zero(1, 2);
 }
 
 // Quad entities
@@ -164,13 +164,13 @@ Quad::Quad(GeometricEntityType type, size_t dim,
            const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
-Eigen::VectorXd Quad::EvaluateNormalVector(
+Vector<double> Quad::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
   // For 2D we don't have dz
   const auto &jacobian = EvaluateJacobian(local_coords);
-  Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
+  Vector<double> normal = Vector<double>::Zero(3);
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
 
@@ -183,7 +183,7 @@ Eigen::VectorXd Quad::EvaluateNormalVector(
 }
 
 double Quad::EvaluateDifferential(const Coordinates &local_coords) const {
-  Eigen::VectorXd normal = EvaluateNormalVector(local_coords);
+  Vector<double> normal = EvaluateNormalVector(local_coords);
   return normal.norm();
 }
 
@@ -195,11 +195,11 @@ std::vector<Coordinates> FourNodeQuad::nodal_local_coords() const {
       {-1.0, -1.0, 0.0}, {1.0, -1.0, 0.0}, {1.0, 1.0, 0.0}, {-1.0, 1.0, 0.0}};
 }
 
-Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions0thDerivative(
+Matrix<double> FourNodeQuad::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 4);
+  Matrix<double> result = Matrix<double>::Zero(1, 4);
 
   result(0, 0) = 0.25 * (1 - r) * (1 - s);
   result(0, 1) = 0.25 * (1 + r) * (1 - s);
@@ -209,11 +209,11 @@ Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions1stDerivative(
+Matrix<double> FourNodeQuad::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 4);
+  Matrix<double> result = Matrix<double>::Zero(2, 4);
 
   result(0, 0) = -0.25 * (1 - s);
   result(0, 1) = 0.25 * (1 - s);
@@ -228,11 +228,11 @@ Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd FourNodeQuad::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> FourNodeQuad::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 4);
+  Matrix<double> result = Matrix<double>::Zero(3, 4);
 
   result(2, 0) = 0.25;
   result(2, 1) = -0.25;
@@ -261,12 +261,12 @@ std::vector<Coordinates> EightNodeHex::nodal_local_coords() const {
           {1.0, 1.0, 1.0},    {-1.0, 1.0, 1.0}};
 }
 
-Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions0thDerivative(
+Matrix<double> EightNodeHex::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 8);
+  Matrix<double> result = Matrix<double>::Zero(1, 8);
 
   result(0, 0) = 0.125 * (1 - r) * (1 - s) * (1 - t);
   result(0, 1) = 0.125 * (1 + r) * (1 - s) * (1 - t);
@@ -280,12 +280,12 @@ Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions1stDerivative(
+Matrix<double> EightNodeHex::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 8);
+  Matrix<double> result = Matrix<double>::Zero(3, 8);
 
   result(0, 0) = -0.125 * (1 - s) * (1 - t);
   result(0, 1) = 0.125 * (1 - s) * (1 - t);
@@ -317,12 +317,12 @@ Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd EightNodeHex::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> EightNodeHex::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 8);
+  Matrix<double> result = Matrix<double>::Zero(6, 8);
 
   result(3, 0) = 0.125 * (1 - t);
   result(3, 1) = -0.125 * (1 - t);
@@ -360,12 +360,12 @@ Tria::Tria(GeometricEntityType type, size_t dim,
            const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
-Eigen::VectorXd Tria::EvaluateNormalVector(
+Vector<double> Tria::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
   const auto &jacobian = EvaluateJacobian(local_coords);
-  Eigen::VectorXd normal = Eigen::VectorXd::Zero(3);
+  Vector<double> normal = Vector<double>::Zero(3);
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
 
@@ -378,7 +378,7 @@ Eigen::VectorXd Tria::EvaluateNormalVector(
 }
 
 double Tria::EvaluateDifferential(const Coordinates &local_coords) const {
-  Eigen::VectorXd normal = EvaluateNormalVector(local_coords);
+  Vector<double> normal = EvaluateNormalVector(local_coords);
   return normal.norm() / 2.0;
 }
 
@@ -389,11 +389,11 @@ std::vector<Coordinates> ThreeNodeTria::nodal_local_coords() const {
   return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}};
 }
 
-Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
+Matrix<double> ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 3);
+  Matrix<double> result = Matrix<double>::Zero(1, 3);
 
   result(0, 0) = 1.0 - r - s;
   result(0, 1) = r;
@@ -402,11 +402,11 @@ Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions1stDerivative(
+Matrix<double> ThreeNodeTria::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 3);
+  Matrix<double> result = Matrix<double>::Zero(2, 3);
 
   result(0, 0) = -1.0;
   result(0, 1) = 1.0;
@@ -417,9 +417,9 @@ Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd ThreeNodeTria::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> ThreeNodeTria::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  return Eigen::MatrixXd::Zero(3, 3);
+  return Matrix<double>::Zero(3, 3);
 }
 
 SixNodeTria::SixNodeTria(size_t dim, const std::vector<Node *> &nodes)
@@ -430,12 +430,12 @@ std::vector<Coordinates> SixNodeTria::nodal_local_coords() const {
           {0.5, 0.0, 0.0}, {0.5, 0.5, 0.0}, {0.0, 0.5, 0.0}};
 }
 
-Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions0thDerivative(
+Matrix<double> SixNodeTria::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = 1 - r - s;
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 6);
+  Matrix<double> result = Matrix<double>::Zero(1, 6);
 
   result(0, 0) = (2.0 * t - 1.0) * t;
   result(0, 1) = (2.0 * r - 1.0) * r;
@@ -447,12 +447,12 @@ Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions1stDerivative(
+Matrix<double> SixNodeTria::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = 1 - r - s;
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(2, 6);
+  Matrix<double> result = Matrix<double>::Zero(2, 6);
 
   result(0, 0) = -3.0 + 4.0 * (r + s);
   result(0, 1) = 4.0 * r - 1.0;
@@ -469,12 +469,12 @@ Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd SixNodeTria::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> SixNodeTria::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = 1 - r - s;
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 6);
+  Matrix<double> result = Matrix<double>::Zero(3, 6);
 
   result(0, 0) = 4.0;
   result(0, 1) = 4.0;
@@ -515,12 +515,12 @@ std::vector<Coordinates> FourNodeTetra::nodal_local_coords() const {
   };
 }
 
-Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions0thDerivative(
+Matrix<double> FourNodeTetra::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 4);
+  Matrix<double> result = Matrix<double>::Zero(1, 4);
 
   result(0, 0) = 1.0 - r - s - t;
   result(0, 1) = r;
@@ -530,12 +530,12 @@ Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions1stDerivative(
+Matrix<double> FourNodeTetra::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 4);
+  Matrix<double> result = Matrix<double>::Zero(3, 4);
 
   result(0, 0) = -1.0;
   result(0, 1) = 1.0;
@@ -549,9 +549,9 @@ Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd FourNodeTetra::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> FourNodeTetra::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  return Eigen::MatrixXd::Zero(6, 4);
+  return Matrix<double>::Zero(6, 4);
 }
 
 TenNodeTetra::TenNodeTetra(const std::vector<Node *> &nodes)
@@ -563,13 +563,13 @@ std::vector<Coordinates> TenNodeTetra::nodal_local_coords() const {
           {0.0, 0.5, 0.5}, {0.5, 0.0, 0.5}};
 }
 
-Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions0thDerivative(
+Matrix<double> TenNodeTetra::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
   double u = 1.0 - r - s - t;
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(1, 10);
+  Matrix<double> result = Matrix<double>::Zero(1, 10);
 
   result(0, 0) = (2.0 * u - 1.0) * u;
   result(0, 1) = (2.0 * r - 1.0) * r;
@@ -585,13 +585,13 @@ Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions0thDerivative(
   return result;
 }
 
-Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions1stDerivative(
+Matrix<double> TenNodeTetra::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
   double u = 1.0 - r - s - t;
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(3, 10);
+  Matrix<double> result = Matrix<double>::Zero(3, 10);
 
   result(0, 0) = 4.0 * (r + s + t) - 3.0;
   result(0, 1) = 4.0 * r - 1.0;
@@ -620,13 +620,13 @@ Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions1stDerivative(
   return result;
 }
 
-Eigen::MatrixXd TenNodeTetra::EvaluateShapeFunctions2ndDerivative(
+Matrix<double> TenNodeTetra::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
   double r = local_coords.get(0);
   double s = local_coords.get(1);
   double t = local_coords.get(2);
   double u = 1.0 - r - s - t;
-  Eigen::MatrixXd result = Eigen::MatrixXd::Zero(6, 10);
+  Matrix<double> result = Matrix<double>::Zero(6, 10);
 
   result(0, 0) = 4.0;
   result(0, 1) = 4.0;

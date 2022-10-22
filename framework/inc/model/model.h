@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_MODEL_H_
 #define FFEA_FRAMEWORK_INC_MODEL_MODEL_H_
 
-#include <eigen3/Eigen/Dense>
 #include <memory>
 
 #include "../mesh/element.h"
@@ -32,10 +31,10 @@ class Model {
       const EnforcementStrategy &strategy = ffea::PenaltyEnforcementStrategy());
   void SetSparsity(CSRMatrix<double> &global_stiffness) const;
   void AddComputationalDomainContributions(CSRMatrix<double> &global_stiffness,
-                                            Eigen::VectorXd &global_rhs) const;
+                                           Vector<double> &global_rhs) const;
   void EnforceBoundaryConditions(CSRMatrix<double> &global_stiffness,
-                                 Eigen::VectorXd &global_rhs) const;
-  void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
+                                 Vector<double> &global_rhs) const;
+  void ProjectSolutionOnMesh(const Vector<double> &solution);
 
  private:
   Mesh &mesh_;

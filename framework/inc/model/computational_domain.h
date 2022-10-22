@@ -1,8 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_COMPUTATIONALDOMAIN_H_
 #define FFEA_FRAMEWORK_INC_MODEL_COMPUTATIONALDOMAIN_H_
 
-#include <eigen3/Eigen/Dense>
-
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
 #include "./alias.h"
@@ -18,7 +16,7 @@ class ComputationalDomain {
 
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
   void AddContribution(CSRMatrix<double> &global_stiffness,
-                       Eigen::VectorXd &global_rhs) const;
+                       Vector<double> &global_rhs) const;
 
  private:
   const std::vector<Element> &elements_;
@@ -28,22 +26,22 @@ class ComputationalDomain {
 };
 
 const Integrand elasticity_integrand_2D =
-    [](const Eigen::MatrixXd &dN_global,
-       const Eigen::MatrixXd &C) -> Eigen::MatrixXd {
+    [](const Matrix<double> &dN_global,
+       const Matrix<double> &C) -> Matrix<double> {
   const auto &B = linear_B_operator_2D(dN_global);
   return B.transpose() * C * B;
 };
 
 const Integrand elasticity_integrand_3D =
-    [](const Eigen::MatrixXd &dN_global,
-       const Eigen::MatrixXd &C) -> Eigen::MatrixXd {
+    [](const Matrix<double> &dN_global,
+       const Matrix<double> &C) -> Matrix<double> {
   const auto &B = linear_B_operator_3D(dN_global);
   return B.transpose() * C * B;
 };
 
 const Integrand quasi_harmonic_integrand =
-    [](const Eigen::MatrixXd &dN_global,
-       const Eigen::MatrixXd &C) -> Eigen::MatrixXd {
+    [](const Matrix<double> &dN_global,
+       const Matrix<double> &C) -> Matrix<double> {
   const auto &B = gradient_operator(dN_global);
   return B.transpose() * C * B;
 };

@@ -13,7 +13,7 @@ LinearElasticConstitutiveModel2D::LinearElasticConstitutiveModel2D(
   constitutive_matrix_(2, 2) = (1.0 - poisson_ratio) * factor;
 }
 
-Eigen::MatrixXd LinearElasticConstitutiveModel2D::Evaluate(
+Matrix<double> LinearElasticConstitutiveModel2D::Evaluate(
     const Coordinates& coords) const {
   return constitutive_matrix_;
 }
@@ -37,7 +37,7 @@ LinearElasticConstitutiveModel3D::LinearElasticConstitutiveModel3D(
   constitutive_matrix_(2, 1) = constitutive_matrix_(1, 2);
 }
 
-Eigen::MatrixXd LinearElasticConstitutiveModel3D::Evaluate(
+Matrix<double> LinearElasticConstitutiveModel3D::Evaluate(
     const Coordinates& coords) const {
   return constitutive_matrix_;
 }

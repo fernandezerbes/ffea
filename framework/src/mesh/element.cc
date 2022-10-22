@@ -61,12 +61,12 @@ void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
 void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                                 Integrand integrand, ConditionFunction source,
                                 CSRMatrix<double> &global_stiffness,
-                                Eigen::VectorXd &global_rhs) const {
+                                Vector<double> &global_rhs) const {
   ElementSystem system{};
   system.stiffness_matrix =
-      Eigen::MatrixXd::Zero(number_of_dofs(), number_of_dofs());
+      Matrix<double>::Zero(number_of_dofs(), number_of_dofs());
   if (source) {
-    system.rhs_vector = Eigen::VectorXd::Zero(number_of_dofs());
+    system.rhs_vector = Vector<double>::Zero(number_of_dofs());
   }
 
   for (const auto &ip : ips_) {
@@ -97,12 +97,12 @@ void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
 void Element::ProcessOverBoundary(ConditionFunction load,
                                   ConditionFunction radiation,
                                   CSRMatrix<double> &global_stiffness,
-                                  Eigen::VectorXd &global_rhs) const {
+                                  Vector<double> &global_rhs) const {
   ElementSystem system{};
-  system.rhs_vector = Eigen::VectorXd::Zero(number_of_dofs());
+  system.rhs_vector = Vector<double>::Zero(number_of_dofs());
   if (radiation) {
     system.stiffness_matrix =
-        Eigen::MatrixXd::Zero(number_of_dofs(), number_of_dofs());
+        Matrix<double>::Zero(number_of_dofs(), number_of_dofs());
   }
 
   for (const auto &ip : ips_) {
@@ -126,8 +126,8 @@ void Element::ProcessOverBoundary(ConditionFunction load,
   Scatter(system, global_stiffness, global_rhs);
 }
 
-Eigen::VectorXd Element::ExtractSolution() const {
-  Eigen::VectorXd solution = Eigen::VectorXd::Zero(number_of_dofs());
+Vector<double> Element::ExtractSolution() const {
+  Vector<double> solution = Vector<double>::Zero(number_of_dofs());
 
   for (size_t dof_idx = 0; dof_idx < number_of_dofs(); dof_idx++) {
     solution(dof_idx) = dofs_[dof_idx]->value();
@@ -159,17 +159,17 @@ void Element::AddNodalValues(
   }
 }
 
-Eigen::MatrixXd Element::EvaluateShapeFunctions(const Coordinates &local_coords,
-                                                DerivativeOrder order) const {
+Matrix<double> Element::EvaluateShapeFunctions(const Coordinates &local_coords,
+                                               DerivativeOrder order) const {
   return entity_.EvaluateShapeFunctions(local_coords, order);
 }
 
-Eigen::MatrixXd Element::EvaluateJacobian(
-    const Coordinates &local_coords, const Eigen::MatrixXd &dN_local) const {
+Matrix<double> Element::EvaluateJacobian(const Coordinates &local_coords,
+                                         const Matrix<double> &dN_local) const {
   return entity_.EvaluateJacobian(local_coords, dN_local);
 }
 
-Eigen::VectorXd Element::EvaluateNormalVector(
+Vector<double> Element::EvaluateNormalVector(
     const Coordinates &local_coords) const {
   return entity_.EvaluateNormalVector(local_coords);
 }
@@ -182,12 +182,12 @@ Coordinates Element::MapLocalToGlobal(const Coordinates &local_coords) const {
   return entity_.MapLocalToGlobal(local_coords);
 }
 
-Coordinates Element::MapLocalToGlobal(const Eigen::MatrixXd &N_at_point) const {
+Coordinates Element::MapLocalToGlobal(const Matrix<double> &N_at_point) const {
   return entity_.MapLocalToGlobal(N_at_point);
 }
 
 void Element::AddLoadContribution(const std::vector<double> &load_vector,
-                                  const Eigen::MatrixXd &N, double weight,
+                                  const Matrix<double> &N, double weight,
                                   double differential,
                                   ElementSystem &system) const {
   for (auto node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
@@ -201,7 +201,7 @@ void Element::AddLoadContribution(const std::vector<double> &load_vector,
 }
 
 void Element::AddRadiationContribution(double radiation,
-                                       const Eigen::MatrixXd &N, double weight,
+                                       const Matrix<double> &N, double weight,
                                        double differential,
                                        ElementSystem &system) const {
   (*system.stiffness_matrix) +=
@@ -210,7 +210,7 @@ void Element::AddRadiationContribution(double radiation,
 
 void Element::Scatter(const ElementSystem &element_system,
                       CSRMatrix<double> &global_stiffness,
-                      Eigen::VectorXd &global_rhs) const {
+                      Vector<double> &global_rhs) const {
   const auto &tags = dof_tags();
 
   for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {

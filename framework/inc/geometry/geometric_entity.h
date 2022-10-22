@@ -1,10 +1,10 @@
 #ifndef FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_
 #define FFEA_FRAMEWORK_INC_GEOMETRY_GEOMETRICENTITY_H_
 
-#include <eigen3/Eigen/Dense>
 #include <memory>
 #include <vector>
 
+#include "../model/alias.h"
 #include "./coordinates.h"
 #include "./node.h"
 
@@ -48,27 +48,26 @@ class GeometricEntity {
   Coordinates &node_coords(size_t node_idx) const;
   virtual std::vector<Coordinates> nodal_local_coords() const = 0;
 
-  Eigen::MatrixXd EvaluateShapeFunctions(
+  Matrix<double> EvaluateShapeFunctions(
       const Coordinates &local_coords,
       DerivativeOrder order = DerivativeOrder::kZeroth) const;
-  Eigen::MatrixXd EvaluateJacobian(
-      const Coordinates &local_coords,
-      const Eigen::MatrixXd &dN_local) const;
-  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coords) const;
-  virtual Eigen::VectorXd EvaluateNormalVector(
+  Matrix<double> EvaluateJacobian(const Coordinates &local_coords,
+                                  const Matrix<double> &dN_local) const;
+  Matrix<double> EvaluateJacobian(const Coordinates &local_coords) const;
+  virtual Vector<double> EvaluateNormalVector(
       const Coordinates &local_coords) const;
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const = 0;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
-  Coordinates MapLocalToGlobal(const Eigen::MatrixXd &N_at_point) const;
+  Coordinates MapLocalToGlobal(const Matrix<double> &N_at_point) const;
 
  private:
-  Eigen::MatrixXd nodal_coords() const;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  Matrix<double> nodal_coords() const;
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const = 0;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const = 0;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const = 0;
 
   GeometricEntityType type_;
@@ -82,7 +81,7 @@ class Line : public GeometricEntity {
  public:
   Line(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Eigen::VectorXd EvaluateNormalVector(
+  virtual Vector<double> EvaluateNormalVector(
       const Coordinates &local_coords) const override;
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const override;
@@ -95,11 +94,11 @@ class TwoNodeLine : public Line {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -109,7 +108,7 @@ class Quad : public GeometricEntity {
  public:
   Quad(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Eigen::VectorXd EvaluateNormalVector(
+  virtual Vector<double> EvaluateNormalVector(
       const Coordinates &local_coords) const override;
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const override;
@@ -122,11 +121,11 @@ class FourNodeQuad : public Quad {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -147,11 +146,11 @@ class EightNodeHex : public Hex {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -160,7 +159,7 @@ class Tria : public GeometricEntity {
  public:
   Tria(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Eigen::VectorXd EvaluateNormalVector(
+  virtual Vector<double> EvaluateNormalVector(
       const Coordinates &local_coords) const override;
   virtual double EvaluateDifferential(
       const Coordinates &local_coords) const override;
@@ -173,11 +172,11 @@ class ThreeNodeTria : public Tria {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -188,11 +187,11 @@ class SixNodeTria : public Tria {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -213,11 +212,11 @@ class FourNodeTetra : public Tetra {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -228,11 +227,11 @@ class TenNodeTetra : public Tetra {
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Eigen::MatrixXd EvaluateShapeFunctions0thDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions1stDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Eigen::MatrixXd EvaluateShapeFunctions2ndDerivative(
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 

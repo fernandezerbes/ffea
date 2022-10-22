@@ -38,7 +38,6 @@ using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
 template<typename ScalarType>
 using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
 
-
 }  // namespace ffea
 
 #endif  // FFEA_FRAMEWORK_INC_MODEL_TYPES_H_

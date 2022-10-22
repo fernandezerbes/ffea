@@ -44,7 +44,7 @@ void Model::SetSparsity(CSRMatrix<double>& global_stiffness) const {
 }
 
 void Model::AddComputationalDomainContributions(
-    CSRMatrix<double>& global_stiffness, Eigen::VectorXd& global_rhs) const {
+    CSRMatrix<double>& global_stiffness, Vector<double>& global_rhs) const {
   std::cout << "Processing linear system..." << std::endl;
   for (const auto& domain : domains_) {
     domain.AddContribution(global_stiffness, global_rhs);
@@ -52,14 +52,14 @@ void Model::AddComputationalDomainContributions(
 }
 
 void Model::EnforceBoundaryConditions(CSRMatrix<double>& global_stiffness,
-                                      Eigen::VectorXd& global_rhs) const {
+                                      Vector<double>& global_rhs) const {
   std::cout << "Enforcing boundary conditions..." << std::endl;
   for (auto& bc : bcs_) {
     bc->Enforce(global_stiffness, global_rhs);
   }
 }
 
-void Model::ProjectSolutionOnMesh(const Eigen::VectorXd& solution) {
+void Model::ProjectSolutionOnMesh(const Vector<double>& solution) {
   std::cout << "Projecting solution on mesh..." << std::endl;
   mesh_.SetSolutionOnDofs(solution);
 }

@@ -73,7 +73,7 @@ void Mesh::AddElement(const std::string& group_name,
   }
 }
 
-void Mesh::SetSolutionOnDofs(const Eigen::VectorXd& solution) {
+void Mesh::SetSolutionOnDofs(const Vector<double>& solution) {
   for (auto& dof : dofs_) {
     dof.set_value(solution);
   }

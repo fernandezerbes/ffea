@@ -1,9 +1,8 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_CONSTITUTIVEMODEL_H_
 #define FFEA_FRAMEWORK_INC_MODEL_CONSTITUTIVEMODEL_H_
 
-#include <eigen3/Eigen/Dense>
-
 #include "../geometry/coordinates.h"
+#include "./alias.h"
 
 namespace ffea {
 
@@ -11,10 +10,10 @@ class ConstitutiveModel {
  public:
   ConstitutiveModel(size_t n_cols, size_t n_rows);
 
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const = 0;
+  virtual Matrix<double> Evaluate(const Coordinates& coords) const = 0;
 
  protected:
-  Eigen::MatrixXd constitutive_matrix_;
+  Matrix<double> constitutive_matrix_;
 };
 
 }  // namespace ffea

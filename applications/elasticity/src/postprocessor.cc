@@ -15,9 +15,9 @@ PrimaryVariablePostProcessor MakeDisplacementProcessor3D(const Mesh &mesh) {
 DerivedVariableProcessor MakeElasticStrainProcessor(
     size_t values_per_node, const Mesh &mesh, DifferentialOperator B_operator) {
   ValuesProcessor strain_processor =
-      [B_operator](const Eigen::VectorXd &solution,
+      [B_operator](const Vector<double> &solution,
                    const Coordinates &global_coords,
-                   const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
+                   const Matrix<double> &dN_global) -> Matrix<double> {
     const auto &B = B_operator(dN_global);
     return B * solution;
   };
@@ -40,8 +40,8 @@ DerivedVariableProcessor MakeElasticStressProcessor(
     DifferentialOperator B_operator) {
   ValuesProcessor stress_processor =
       [&constitutive_model, B_operator](
-          const Eigen::VectorXd &solution, const Coordinates &global_coords,
-          const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
+          const Vector<double> &solution, const Coordinates &global_coords,
+          const Matrix<double> &dN_global) -> Matrix<double> {
     const auto &B = B_operator(dN_global);
     const auto &C = constitutive_model.Evaluate(global_coords);
     return C * B * solution;

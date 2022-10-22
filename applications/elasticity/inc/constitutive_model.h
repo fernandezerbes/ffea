@@ -9,14 +9,14 @@ class LinearElasticConstitutiveModel2D : public ConstitutiveModel {
  public:
   LinearElasticConstitutiveModel2D(double youngs_modulus, double poisson_ratio);
 
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const override;
+  virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
 class LinearElasticConstitutiveModel3D : public ConstitutiveModel {
  public:
   LinearElasticConstitutiveModel3D(double youngs_modulus, double poisson_ratio);
 
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const override;
+  virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
 }  // namespace ffea

@@ -19,7 +19,7 @@ double DegreeOfFreedom::value() const { return value_; }
 
 void DegreeOfFreedom::set_value(double value) { value_ = value; }
 
-void DegreeOfFreedom::set_value(const Eigen::VectorXd &solution) {
+void DegreeOfFreedom::set_value(const Vector<double> &solution) {
   set_value(solution(tag()));
 }
 

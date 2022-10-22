@@ -1,21 +1,22 @@
 #ifndef FFEA_FRAMEWORK_MODEL_OPERATOR_H_
 #define FFEA_FRAMEWORK_MODEL_OPERATOR_H_
 
-#include <eigen3/Eigen/Dense>
 #include <functional>
+
+#include "./alias.h"
 
 namespace ffea {
 
 using DifferentialOperator =
-    std::function<Eigen::MatrixXd(const Eigen::MatrixXd &)>;
+    std::function<Matrix<double>(const Matrix<double> &)>;
 
 const DifferentialOperator linear_B_operator_2D =
-    [](const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
+    [](const Matrix<double> &dN_global) -> Matrix<double> {
   auto dim = 2;
   auto number_of_shape_functions = dN_global.cols();
   auto columns = number_of_shape_functions * dim;
   auto rows = 3;
-  Eigen::MatrixXd B = Eigen::MatrixXd::Zero(rows, columns);
+  Matrix<double> B = Matrix<double>::Zero(rows, columns);
 
   for (auto N_idx = 0; N_idx < number_of_shape_functions; N_idx++) {
     auto first_dof_idx = dim * N_idx;
@@ -30,12 +31,12 @@ const DifferentialOperator linear_B_operator_2D =
 };
 
 const DifferentialOperator linear_B_operator_3D =
-    [](const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
+    [](const Matrix<double> &dN_global) -> Matrix<double> {
   auto dim = 3;
   auto number_of_shape_functions = dN_global.cols();
   auto columns = number_of_shape_functions * dim;
   auto rows = 6;
-  Eigen::MatrixXd B = Eigen::MatrixXd::Zero(rows, columns);
+  Matrix<double> B = Matrix<double>::Zero(rows, columns);
 
   for (auto N_idx = 0; N_idx < number_of_shape_functions; N_idx++) {
     auto first_dof_idx = dim * N_idx;
@@ -56,9 +57,7 @@ const DifferentialOperator linear_B_operator_3D =
 };
 
 const DifferentialOperator gradient_operator =
-    [](const Eigen::MatrixXd &dN_global) -> Eigen::MatrixXd {
-  return dN_global;
-};
+    [](const Matrix<double> &dN_global) -> Matrix<double> { return dN_global; };
 
 }  // namespace ffea
 

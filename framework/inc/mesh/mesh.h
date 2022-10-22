@@ -10,6 +10,7 @@
 #include "../geometry/geometric_entity.h"
 #include "../geometry/geometry.h"
 #include "../geometry/node.h"
+#include "../model/alias.h"
 #include "./degree_of_freedom.h"
 #include "./element.h"
 #include "./element_factory.h"
@@ -33,7 +34,7 @@ class Mesh {
 
   void AddElement(const std::string& group_name, GeometricEntity& entity,
                   const ElementFactory& factory);
-  void SetSolutionOnDofs(const Eigen::VectorXd& solution);
+  void SetSolutionOnDofs(const Vector<double>& solution);
 
  private:
   size_t dof_tag(size_t node_tag, size_t component_idx) const;

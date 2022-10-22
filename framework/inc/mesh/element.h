@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_ELEMENT_H_
 #define FFEA_FRAMEWORK_INC_MESH_ELEMENT_H_
 
-#include <eigen3/Eigen/Dense>
 #include <optional>
 #include <vector>
 
@@ -16,10 +15,10 @@
 namespace ffea {
 
 struct ElementSystem {
-  std::optional<Eigen::MatrixXd> mass_matrix;
-  std::optional<Eigen::MatrixXd> damping_matrix;
-  std::optional<Eigen::MatrixXd> stiffness_matrix;
-  std::optional<Eigen::VectorXd> rhs_vector;
+  std::optional<Matrix<double>> mass_matrix;
+  std::optional<Matrix<double>> damping_matrix;
+  std::optional<Matrix<double>> stiffness_matrix;
+  std::optional<Vector<double>> rhs_vector;
 };
 
 class Element {
@@ -42,32 +41,32 @@ class Element {
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                          Integrand integrand, ConditionFunction source,
                          CSRMatrix<double> &global_stiffness,
-                         Eigen::VectorXd &global_rhs) const;
+                         Vector<double> &global_rhs) const;
   void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
                            CSRMatrix<double> &global_stiffness,
-                           Eigen::VectorXd &global_rhs) const;
-  Eigen::VectorXd ExtractSolution() const;
+                           Vector<double> &global_rhs) const;
+  Vector<double> ExtractSolution() const;
   void AddNodalValues(ValuesProcessor values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
 
  private:
-  Eigen::MatrixXd EvaluateShapeFunctions(
+  Matrix<double> EvaluateShapeFunctions(
       const Coordinates &local_coords,
       DerivativeOrder order = DerivativeOrder::kZeroth) const;
-  Eigen::MatrixXd EvaluateJacobian(const Coordinates &local_coords,
-                                   const Eigen::MatrixXd &dN_local) const;
-  Eigen::VectorXd EvaluateNormalVector(const Coordinates &local_coords) const;
+  Matrix<double> EvaluateJacobian(const Coordinates &local_coords,
+                                  const Matrix<double> &dN_local) const;
+  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const;
   double EvaluateDifferential(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
-  Coordinates MapLocalToGlobal(const Eigen::MatrixXd &N_at_point) const;
+  Coordinates MapLocalToGlobal(const Matrix<double> &N_at_point) const;
   void AddLoadContribution(const std::vector<double> &load_vector,
-                           const Eigen::MatrixXd &N, double weight,
+                           const Matrix<double> &N, double weight,
                            double differential, ElementSystem &system) const;
-  void AddRadiationContribution(double radiation, const Eigen::MatrixXd &N,
+  void AddRadiationContribution(double radiation, const Matrix<double> &N,
                                 double weight, double differential,
                                 ElementSystem &system) const;
   void Scatter(const ElementSystem &system, CSRMatrix<double> &global_stiffness,
-               Eigen::VectorXd &global_rhs) const;
+               Vector<double> &global_rhs) const;
 
   GeometricEntity &entity_;
   std::vector<DegreeOfFreedom *> dofs_;

@@ -19,7 +19,7 @@ void ComputationalDomain::SetSparsity(
 }
 
 void ComputationalDomain::AddContribution(CSRMatrix<double>& global_stiffness,
-                                          Eigen::VectorXd& global_rhs) const {
+                                          Vector<double>& global_rhs) const {
   for (auto& element : elements_) {
     element.ProcessOverDomain(constitutive_model_, integrand_, source_,
                               global_stiffness, global_rhs);

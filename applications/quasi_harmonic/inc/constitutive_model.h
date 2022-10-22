@@ -9,14 +9,14 @@ class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
  public:
   IsotropicConductivityConstitutiveModel2D(double k);
 
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const override;
+  virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
 class IsotropicConductivityConstitutiveModel3D : public ConstitutiveModel {
  public:
   IsotropicConductivityConstitutiveModel3D(double k);
 
-  virtual Eigen::MatrixXd Evaluate(const Coordinates& coords) const override;
+  virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
 }  // namespace ffea

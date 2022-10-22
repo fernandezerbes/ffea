@@ -1,8 +1,9 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_DEGREEOFFREEDOM_H
 #define FFEA_FRAMEWORK_INC_MESH_DEGREEOFFREEDOM_H
 
-#include <eigen3/Eigen/Dense>
 #include <vector>
+
+#include "../model/alias.h"
 
 namespace ffea {
 
@@ -14,7 +15,7 @@ class DegreeOfFreedom {
   size_t parallel_tag() const;
   double value() const;
   void set_value(double value);
-  void set_value(const Eigen::VectorXd &solution);
+  void set_value(const Vector<double> &solution);
   double auxiliary_value(size_t idx) const;
   void set_auxiliary_value(size_t idx, double value);
 

@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_BOUNDARYCONDITION_H_
 #define FFEA_FRAMEWORK_INC_MODEL_BOUNDARYCONDITION_H_
 
-#include <eigen3/Eigen/Dense>
 #include <unordered_set>
 #include <vector>
 
@@ -22,7 +21,7 @@ class BoundaryCondition {
   BoundaryCondition &operator=(BoundaryCondition &&) = delete;
 
   virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Eigen::VectorXd &global_rhs) const = 0;
+                       Vector<double> &global_rhs) const = 0;
 
  protected:
   const std::vector<Element> &elements_;
@@ -34,7 +33,7 @@ class NaturalBoundaryCondition : public BoundaryCondition {
                            ConditionFunction load, ConditionFunction radiation);
 
   virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Eigen::VectorXd &global_rhs) const override;
+                       Vector<double> &global_rhs) const override;
 
  private:
   ConditionFunction load_;
@@ -44,7 +43,7 @@ class NaturalBoundaryCondition : public BoundaryCondition {
 class EnforcementStrategy {
  public:
   virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Eigen::VectorXd &global_rhs, ConditionFunction condition,
+                       Vector<double> &global_rhs, ConditionFunction condition,
                        const std::vector<Element> &elements,
                        const std::unordered_set<size_t> &components) const = 0;
 };
@@ -52,7 +51,7 @@ class EnforcementStrategy {
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
   virtual void Enforce(
-      CSRMatrix<double> &global_stiffness, Eigen::VectorXd &global_rhs,
+      CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
       ConditionFunction condition, const std::vector<Element> &elements,
       const std::unordered_set<size_t> &components) const override;
 };
@@ -61,7 +60,7 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
   PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(
-      CSRMatrix<double> &global_stiffness, Eigen::VectorXd &global_rhs,
+      CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
       ConditionFunction condition, const std::vector<Element> &elements,
       const std::unordered_set<size_t> &components) const override;
 
@@ -77,7 +76,7 @@ class EssentialBoundaryCondition : public BoundaryCondition {
                              const EnforcementStrategy &strategy);
 
   virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Eigen::VectorXd &global_rhs) const override;
+                       Vector<double> &global_rhs) const override;
 
  private:
   ConditionFunction condition_;
