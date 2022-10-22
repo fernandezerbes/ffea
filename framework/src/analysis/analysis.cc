@@ -14,7 +14,7 @@ void Analysis::Solve() {
   Eigen::VectorXd global_rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
   model_.SetSparsity(global_stiffness);
-  model_.AddComputationalDomainsContributions(global_stiffness, global_rhs);
+  model_.AddComputationalDomainContributions(global_stiffness, global_rhs);
   model_.EnforceBoundaryConditions(global_stiffness, global_rhs);
 
   std::cout << "Solving..." << std::endl;

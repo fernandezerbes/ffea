@@ -31,7 +31,7 @@ class Model {
       const std::unordered_set<size_t> &components_to_consider,
       const EnforcementStrategy &strategy = ffea::PenaltyEnforcementStrategy());
   void SetSparsity(CSRMatrix<double> &global_stiffness) const;
-  void AddComputationalDomainsContributions(CSRMatrix<double> &global_stiffness,
+  void AddComputationalDomainContributions(CSRMatrix<double> &global_stiffness,
                                             Eigen::VectorXd &global_rhs) const;
   void EnforceBoundaryConditions(CSRMatrix<double> &global_stiffness,
                                  Eigen::VectorXd &global_rhs) const;

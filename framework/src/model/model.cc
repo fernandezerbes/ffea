@@ -43,7 +43,7 @@ void Model::SetSparsity(CSRMatrix<double>& global_stiffness) const {
                                    nonzero_entries.end());
 }
 
-void Model::AddComputationalDomainsContributions(
+void Model::AddComputationalDomainContributions(
     CSRMatrix<double>& global_stiffness, Eigen::VectorXd& global_rhs) const {
   std::cout << "Processing linear system..." << std::endl;
   for (const auto& domain : domains_) {
