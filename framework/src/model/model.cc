@@ -33,15 +33,25 @@ void Model::AddEssentialBoundaryCondition(
       elements, condition, components_to_consider, strategy));
 }
 
+void Model::SetSparsity(CSRMatrix<double>& global_stiffness) const {
+  std::cout << "Setting sparsity..." << std::endl;
+  MatrixEntries<double> nonzero_entries;
+  for (const auto& domain : domains_) {
+    domain.SetSparsity(nonzero_entries);
+  }
+  global_stiffness.setFromTriplets(nonzero_entries.begin(),
+                                   nonzero_entries.end());
+}
+
 void Model::AddComputationalDomainsContributions(
-    Eigen::MatrixXd& global_stiffness, Eigen::VectorXd& global_rhs) const {
+    CSRMatrix<double>& global_stiffness, Eigen::VectorXd& global_rhs) const {
   std::cout << "Processing linear system..." << std::endl;
   for (const auto& domain : domains_) {
     domain.AddContribution(global_stiffness, global_rhs);
   }
 }
 
-void Model::EnforceBoundaryConditions(Eigen::MatrixXd& global_stiffness,
+void Model::EnforceBoundaryConditions(CSRMatrix<double>& global_stiffness,
                                       Eigen::VectorXd& global_rhs) const {
   std::cout << "Enforcing boundary conditions..." << std::endl;
   for (auto& bc : bcs_) {

@@ -10,7 +10,7 @@ NaturalBoundaryCondition::NaturalBoundaryCondition(
     ConditionFunction radiation)
     : BoundaryCondition(elements), load_(load), radiation_(radiation) {}
 
-void NaturalBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
+void NaturalBoundaryCondition::Enforce(CSRMatrix<double> &global_stiffness,
                                        Eigen::VectorXd &global_rhs) const {
   for (auto &element : elements_) {
     element.ProcessOverBoundary(load_, radiation_, global_stiffness,
@@ -48,7 +48,7 @@ PenaltyEnforcementStrategy::PenaltyEnforcementStrategy(double penalty)
     : penalty_(penalty) {}
 
 void PenaltyEnforcementStrategy::Enforce(
-    Eigen::MatrixXd &global_stiffness, Eigen::VectorXd &global_rhs,
+    CSRMatrix<double> &global_stiffness, Eigen::VectorXd &global_rhs,
     ConditionFunction condition, const std::vector<Element> &elements,
     const std::unordered_set<size_t> &components_to_consider) const {
   for (auto &element : elements) {
@@ -77,7 +77,7 @@ EssentialBoundaryCondition::EssentialBoundaryCondition(
       directions_to_consider_(components_to_consider),
       strategy_(strategy) {}
 
-void EssentialBoundaryCondition::Enforce(Eigen::MatrixXd &global_stiffness,
+void EssentialBoundaryCondition::Enforce(CSRMatrix<double> &global_stiffness,
                                          Eigen::VectorXd &global_rhs) const {
   strategy_.Enforce(global_stiffness, global_rhs, condition_, elements_,
                     directions_to_consider_);

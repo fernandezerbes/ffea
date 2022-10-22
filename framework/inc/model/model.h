@@ -30,9 +30,10 @@ class Model {
       const std::string &boundary_name, ConditionFunction condition,
       const std::unordered_set<size_t> &components_to_consider,
       const EnforcementStrategy &strategy = ffea::PenaltyEnforcementStrategy());
-  void AddComputationalDomainsContributions(Eigen::MatrixXd &global_stiffness,
+  void SetSparsity(CSRMatrix<double> &global_stiffness) const;
+  void AddComputationalDomainsContributions(CSRMatrix<double> &global_stiffness,
                                             Eigen::VectorXd &global_rhs) const;
-  void EnforceBoundaryConditions(Eigen::MatrixXd &global_stiffness,
+  void EnforceBoundaryConditions(CSRMatrix<double> &global_stiffness,
                                  Eigen::VectorXd &global_rhs) const;
   void ProjectSolutionOnMesh(const Eigen::VectorXd &solution);
 

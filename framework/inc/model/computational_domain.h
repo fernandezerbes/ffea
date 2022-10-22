@@ -16,7 +16,8 @@ class ComputationalDomain {
                       const ConstitutiveModel &constitutive_model,
                       Integrand integrand, ConditionFunction source);
 
-  void AddContribution(Eigen::MatrixXd &global_stiffness,
+  void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
+  void AddContribution(CSRMatrix<double> &global_stiffness,
                        Eigen::VectorXd &global_rhs) const;
 
  private:

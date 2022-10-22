@@ -11,7 +11,14 @@ ComputationalDomain::ComputationalDomain(
       source_(source),
       integrand_(integrand) {}
 
-void ComputationalDomain::AddContribution(Eigen::MatrixXd& global_stiffness,
+void ComputationalDomain::SetSparsity(
+    MatrixEntries<double>& nonzero_entries) const {
+  for (auto& element : elements_) {
+    element.SetSparsity(nonzero_entries);
+  }
+}
+
+void ComputationalDomain::AddContribution(CSRMatrix<double>& global_stiffness,
                                           Eigen::VectorXd& global_rhs) const {
   for (auto& element : elements_) {
     element.ProcessOverDomain(constitutive_model_, integrand_, source_,

@@ -40,9 +40,19 @@ std::vector<size_t> Element::dof_tags() const {
   return dof_tags;
 }
 
+void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
+  const auto &tags = dof_tags();
+  for (const auto &i_dof_tag : tags) {
+    for (const auto &j_dof_tag : tags) {
+      // TODO Modify the loops so that always j>=i
+      nonzero_entries.emplace_back(i_dof_tag, j_dof_tag, 0.0);
+    }
+  }
+}
+
 void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                                 Integrand integrand, ConditionFunction source,
-                                Eigen::MatrixXd &global_stiffness,
+                                CSRMatrix<double> &global_stiffness,
                                 Eigen::VectorXd &global_rhs) const {
   ElementSystem system{};
   system.stiffness_matrix =
@@ -78,7 +88,7 @@ void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
 
 void Element::ProcessOverBoundary(ConditionFunction load,
                                   ConditionFunction radiation,
-                                  Eigen::MatrixXd &global_stiffness,
+                                  CSRMatrix<double> &global_stiffness,
                                   Eigen::VectorXd &global_rhs) const {
   ElementSystem system{};
   system.rhs_vector = Eigen::VectorXd::Zero(number_of_dofs());
@@ -164,8 +174,7 @@ Coordinates Element::MapLocalToGlobal(const Coordinates &local_coords) const {
   return entity_.MapLocalToGlobal(local_coords);
 }
 
-Coordinates Element::MapLocalToGlobal(
-    const Eigen::MatrixXd &N_at_point) const {
+Coordinates Element::MapLocalToGlobal(const Eigen::MatrixXd &N_at_point) const {
   return entity_.MapLocalToGlobal(N_at_point);
 }
 
@@ -192,16 +201,18 @@ void Element::AddRadiationContribution(double radiation,
 }
 
 void Element::Scatter(const ElementSystem &element_system,
-                      Eigen::MatrixXd &global_stiffness,
+                      CSRMatrix<double> &global_stiffness,
                       Eigen::VectorXd &global_rhs) const {
   const auto &tags = dof_tags();
-  for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
+  for (size_t node_idx = 0; node_idx < number_of_nodes();
+       node_idx++) {  // TODO This might be unnecessary
+    // TODO Modify the loops so that always j>=i
     size_t i_dof_idx = 0;
     for (const auto &i_dof_tag : tags) {
       size_t j_dof_idx = 0;
       for (const auto &j_dof_tag : tags) {
         if (element_system.stiffness_matrix) {
-          global_stiffness(i_dof_tag, j_dof_tag) +=
+          global_stiffness.coeffRef(i_dof_tag, j_dof_tag) +=
               (*element_system.stiffness_matrix)(i_dof_idx, j_dof_idx);
         }
         j_dof_idx++;

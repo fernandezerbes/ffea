@@ -2,6 +2,7 @@
 #define FFEA_FRAMEWORK_INC_MODEL_TYPES_H_
 
 #include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Sparse>
 #include <functional>
 #include <vector>
 
@@ -21,6 +22,22 @@ using ValuesProcessor = std::function<Eigen::MatrixXd(
 using NodalValues = std::vector<double>;
 
 using NodalValuesGroup = std::vector<NodalValues>;
+
+template<typename ScalarType>
+using CSRMatrix = Eigen::SparseMatrix<ScalarType, Eigen::RowMajor>;
+
+template<typename ScalarType>
+using MatrixEntry = Eigen::Triplet<ScalarType>;
+
+template<typename ScalarType>
+using MatrixEntries = std::vector<MatrixEntry<ScalarType>>;
+
+template<typename ScalarType>
+using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
+
+template<typename ScalarType>
+using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
+
 
 }  // namespace ffea
 

@@ -38,12 +38,13 @@ class Element {
   std::vector<DegreeOfFreedom *> dofs() const;
   std::vector<size_t> dof_tags() const;
 
+  void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
                          Integrand integrand, ConditionFunction source,
-                         Eigen::MatrixXd &global_stiffness,
+                         CSRMatrix<double> &global_stiffness,
                          Eigen::VectorXd &global_rhs) const;
   void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
-                           Eigen::MatrixXd &global_stiffness,
+                           CSRMatrix<double> &global_stiffness,
                            Eigen::VectorXd &global_rhs) const;
   Eigen::VectorXd ExtractSolution() const;
   void AddNodalValues(ValuesProcessor values_processor,
@@ -65,7 +66,7 @@ class Element {
   void AddRadiationContribution(double radiation, const Eigen::MatrixXd &N,
                                 double weight, double differential,
                                 ElementSystem &system) const;
-  void Scatter(const ElementSystem &system, Eigen::MatrixXd &global_stiffness,
+  void Scatter(const ElementSystem &system, CSRMatrix<double> &global_stiffness,
                Eigen::VectorXd &global_rhs) const;
 
   GeometricEntity &entity_;

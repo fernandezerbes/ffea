@@ -1,4 +1,5 @@
 #include "../../inc/analysis/analysis.h"
+#include "../../inc/model/alias.h"
 
 #include <Eigen/IterativeLinearSolvers>
 #include <iostream>
@@ -9,10 +10,10 @@ Analysis::Analysis(Model& model) : model_(model) {}
 
 void Analysis::Solve() {
   auto number_of_dofs = model_.number_of_dofs();
-  Eigen::MatrixXd global_stiffness =
-      Eigen::MatrixXd::Zero(number_of_dofs, number_of_dofs);
+  CSRMatrix<double> global_stiffness(number_of_dofs, number_of_dofs);
   Eigen::VectorXd global_rhs = Eigen::VectorXd::Zero(number_of_dofs);
 
+  model_.SetSparsity(global_stiffness);
   model_.AddComputationalDomainsContributions(global_stiffness, global_rhs);
   model_.EnforceBoundaryConditions(global_stiffness, global_rhs);
 
@@ -20,7 +21,7 @@ void Analysis::Solve() {
   // Aparently this should work better with OpenMP enabled, but it does not
   // Eigen::ConjugateGradient<Eigen::MatrixXd, Eigen::Lower | Eigen::Upper>
   //     cg_solver;
-  Eigen::ConjugateGradient<Eigen::MatrixXd> cg_solver;
+  Eigen::ConjugateGradient<CSRMatrix<double>> cg_solver;
   cg_solver.setTolerance(1.0e-12);
   cg_solver.compute(global_stiffness);
   Eigen::VectorXd solution;
