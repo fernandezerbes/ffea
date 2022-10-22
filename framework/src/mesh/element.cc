@@ -48,7 +48,6 @@ void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
     for (size_t j_dof_idx = i_dof_idx; j_dof_idx < number_of_dofs();
          j_dof_idx++) {
       const auto &j_dof_tag = tags[j_dof_idx];
-
       if (i_dof_tag <= j_dof_tag) {
         nonzero_entries.emplace_back(i_dof_tag, j_dof_tag, 0.0);
       } else {
@@ -82,7 +81,7 @@ void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
     const auto &weight = ip.weight();
     const auto &differential = EvaluateDifferential(local_coords);
 
-    *(system.stiffness_matrix) +=
+    (*system.stiffness_matrix).triangularView<Eigen::Upper>() +=
         integrand(dN_global, C) * weight * differential;
 
     if (source) {
@@ -204,7 +203,7 @@ void Element::AddRadiationContribution(double radiation,
                                        const Matrix<double> &N, double weight,
                                        double differential,
                                        ElementSystem &system) const {
-  (*system.stiffness_matrix) +=
+  (*system.stiffness_matrix).triangularView<Eigen::Upper>() +=
       N.transpose() * radiation * N * weight * differential;
 }
 
@@ -222,10 +221,9 @@ void Element::Scatter(const ElementSystem &element_system,
       }
 
       const auto &value =
-          (*element_system.stiffness_matrix)(i_dof_idx, j_dof_idx);
-
+          (*element_system.stiffness_matrix)
+              .selfadjointView<Eigen::Upper>()(i_dof_idx, j_dof_idx);
       const auto &j_dof_tag = tags[j_dof_idx];
-
       if (i_dof_tag <= j_dof_tag) {
         global_stiffness.coeffRef(i_dof_tag, j_dof_tag) += value;
       } else {
