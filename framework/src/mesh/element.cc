@@ -42,9 +42,18 @@ std::vector<size_t> Element::dof_tags() const {
 
 void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
   const auto &tags = dof_tags();
+
   for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
-    for (size_t j_dof_idx = 0; j_dof_idx < number_of_dofs(); j_dof_idx++) {
-      nonzero_entries.emplace_back(tags[i_dof_idx], tags[j_dof_idx], 0.0);
+    const auto &i_dof_tag = tags[i_dof_idx];
+    for (size_t j_dof_idx = i_dof_idx; j_dof_idx < number_of_dofs();
+         j_dof_idx++) {
+      const auto &j_dof_tag = tags[j_dof_idx];
+
+      if (i_dof_tag <= j_dof_tag) {
+        nonzero_entries.emplace_back(i_dof_tag, j_dof_tag, 0.0);
+      } else {
+        nonzero_entries.emplace_back(j_dof_tag, i_dof_tag, 0.0);
+      }
     }
   }
 }
@@ -203,16 +212,29 @@ void Element::Scatter(const ElementSystem &element_system,
                       CSRMatrix<double> &global_stiffness,
                       Eigen::VectorXd &global_rhs) const {
   const auto &tags = dof_tags();
+
   for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
-    for (size_t j_dof_idx = 0; j_dof_idx < number_of_dofs();
+    const auto &i_dof_tag = tags[i_dof_idx];
+    for (size_t j_dof_idx = i_dof_idx; j_dof_idx < number_of_dofs();
          j_dof_idx++) {
-      if (element_system.stiffness_matrix) {
-        global_stiffness.coeffRef(tags[i_dof_idx], tags[j_dof_idx]) +=
-            (*element_system.stiffness_matrix)(i_dof_idx, j_dof_idx);
+      if (!element_system.stiffness_matrix) {
+        continue;
+      }
+
+      const auto &value =
+          (*element_system.stiffness_matrix)(i_dof_idx, j_dof_idx);
+
+      const auto &j_dof_tag = tags[j_dof_idx];
+
+      if (i_dof_tag <= j_dof_tag) {
+        global_stiffness.coeffRef(i_dof_tag, j_dof_tag) += value;
+      } else {
+        global_stiffness.coeffRef(j_dof_tag, i_dof_tag) += value;
       }
     }
+
     if (element_system.rhs_vector) {
-      global_rhs(tags[i_dof_idx]) += (*element_system.rhs_vector)(i_dof_idx);
+      global_rhs(i_dof_tag) += (*element_system.rhs_vector)(i_dof_idx);
     }
   }
 }
