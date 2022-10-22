@@ -44,8 +44,6 @@ int main() {
 
   */
 
-  // TODO Finish reorganizing classes in cc files
-  // TODO Pass Clang analyzer
   // TODO Add unit-tests
   // TODO Use ONEmkl and PARDISO Solver
   // TODO Add check for mesh file format version

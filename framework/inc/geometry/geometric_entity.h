@@ -39,6 +39,7 @@ class GeometricEntity {
  public:
   GeometricEntity(GeometricEntityType type, size_t dim,
                   const std::vector<Node *> &nodes);
+  virtual ~GeometricEntity() = default;
 
   GeometricEntityType type() const;
   size_t dim() const;

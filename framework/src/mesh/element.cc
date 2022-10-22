@@ -99,7 +99,7 @@ void Element::ProcessOverBoundary(ConditionFunction load,
     AddLoadContribution(load_vector, N, weight, differential, system);
 
     if (radiation) {
-      const auto &radiation_value = radiation(global_coords)[0];
+      const auto radiation_value = radiation(global_coords)[0];
       AddRadiationContribution(radiation_value, N, weight, differential,
                                system);
     }

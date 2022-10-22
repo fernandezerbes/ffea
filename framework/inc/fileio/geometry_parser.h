@@ -76,6 +76,7 @@ class GeometryData {
 
 class Parser {
  public:
+  virtual ~Parser() = default;
   virtual void Parse(std::ifstream &file, GeometryData &data) const = 0;
 };
 
