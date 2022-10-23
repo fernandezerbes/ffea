@@ -4,7 +4,7 @@
 
 namespace ffea {
 
-#pragma omp declare reduction (merge: MatrixEntries<double> : omp_out.insert(omp_out.end(), omp_in.begin(), omp_out.end()))
+#pragma omp declare reduction (merge: MatrixEntries<double> : omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
 
 Element::Element(GeometricEntity &entity,
                  const std::vector<DegreeOfFreedom *> &dofs,
