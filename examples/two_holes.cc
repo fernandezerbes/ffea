@@ -4,6 +4,7 @@
 #include <unordered_set>
 
 #include "../applications/elasticity/inc/constitutive_model.h"
+#include "../applications/elasticity/inc/postprocessor.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -20,43 +21,8 @@
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
 #include "../framework/inc/model/operator.h"
-#include "../framework/inc/postprocessor/postprocessor.h"
 
 int main() {
-  /*     0         1         2
-    12--------13--------14--------15
-    |         |         |         |
-    |    6    |    7    |    8    |
-    |         |         |         |
-    8---------9---------10--------11
-    |         |         |         |
-    |    3    |    4    |    5    |
-    |         |         |         |
-    4---------5---------6---------7
-    |         |         |         |
-    |    0    |    1    |    2    |
-    |         |         |         |
-    0---------1---------2---------3
-
-  */
-
-  // TODO Add unit-tests
-  // TODO Use ONEmkl and PARDISO Solver
-  // TODO Add check for mesh file format version
-  // TODO Check results for axial case
-  // TODO Reuse all possible values of shape functions, jacobians, etc. during
-  // system integration
-  // TODO See if protected virtual classes can be made private
-  // TODO Add mass matrix contribution
-  // TODO Remove dependency of Eigen
-  // TODO Create analysis builders
-  // TODO Review function signatures and check constness, encapsulation, etc
-  // TODO Add capabilities for geometric non-linearities (non linear analysis,
-  // TODO Add smoke-tests
-  // NR Solver, etc)
-  // TODO Add multithreading
-  // TODO Add MPI
-
   // ********************** MESH **********************
   auto start = std::chrono::high_resolution_clock::now();
   size_t number_of_cores = 4;
@@ -64,15 +30,17 @@ int main() {
   std::cout << "Running with " << Eigen::nbThreads() << " threads..."
             << std::endl;
 
-  const size_t number_of_fields = 2;
-  const std::string dirichlet_group_name = "dirichlet";
-  const std::string neumann_group_name = "neumann";
-  const std::string surface_group_name = "surface";
+  const std::string dirichlet_group_name = "holes";
+  const std::string neumann_group_name = "force";
+  const std::string body_group_name = "body";
+  const size_t number_of_fields = 3;
 
-  ffea::GeometricEntityFactory2D geometric_entity_factory;
-  // ffea::GeometryFromFileBuilder geometry_builder("LShapedStructure.msh",
-  //                                                geometric_entity_factory);
-  ffea::GeometryFromFileBuilder geometry_builder("LShapedStructureTria.msh",
+  ffea::GeometricEntityFactory3D geometric_entity_factory;
+
+  // std::string filename = "cube.msh";
+  // std::string filename = "cylinder.msh";
+  std::string filename = "two_holes.msh";
+  ffea::GeometryFromFileBuilder geometry_builder(filename,
                                                  geometric_entity_factory);
 
   auto geometry = geometry_builder.Build();
@@ -82,7 +50,7 @@ int main() {
   ffea::ElementFactory element_factory(integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(surface_group_name, element_factory);
+  mesh_builder.RegisterElementFactory(body_group_name, element_factory);
   mesh_builder.RegisterElementFactory(neumann_group_name, element_factory);
   mesh_builder.RegisterElementFactory(dirichlet_group_name, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
@@ -90,22 +58,23 @@ int main() {
   // ********************** CONSTITUTIVE MODEL **********************
   double poisson_ratio = 0.3;
   double youngs_modulus = 1;
-  ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus,
+  ffea::LinearElasticConstitutiveModel3D constitutive_model(youngs_modulus,
                                                             poisson_ratio);
+
   // ********************** MODEL **********************
   auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
-    std::vector<double> load{0.0, 0.0};
+    std::vector<double> load{0.0, 0.0, 0.0};
     return load;
   };
 
   ffea::Model model(mesh);
-  model.AddComputationalDomain(surface_group_name, constitutive_model,
-                               ffea::elasticity_integrand_2D, body_load);
+  model.AddComputationalDomain(body_group_name, constitutive_model,
+                               ffea::elasticity_integrand_3D, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function =
       [](const ffea::Coordinates& coords) -> std::vector<double> {
-    std::vector<double> load{1.0, 0.0};
+    std::vector<double> load{0.0, 0.0, 1.0};
     return load;
   };
 
@@ -113,10 +82,10 @@ int main() {
 
   auto boundary_function =
       [](const ffea::Coordinates& coords) -> std::vector<double> {
-    std::vector<double> load{0.0, 0.0};
+    std::vector<double> load{0.0, 0.0, 0.0};
     return load;
   };
-  std::unordered_set<size_t> directions_to_consider = {0, 1};
+  std::unordered_set<size_t> directions_to_consider = {0, 1, 2};
   model.AddEssentialBoundaryCondition(dirichlet_group_name, boundary_function,
                                       directions_to_consider);
 
@@ -125,18 +94,27 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  // std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
-  //     std::make_shared<ffea::PrimaryVariablePostProcessor>(mesh);
+  const auto& displacement_postprocessor =
+      ffea::utilities::MakeDisplacementProcessor3D(mesh);
+
+  const auto& strain_postprocessor =
+      ffea::utilities::MakeElasticStrainProcessor3D(mesh);
+
+  const auto& stress_postprocessor =
+      ffea::utilities::MakeElasticStressProcessor3D(mesh, constitutive_model);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
-  // writer.RegisterPostProcessor(*displacement_postprocessor);
-  writer.Write("ffea_output_tria_vtu11.vtu", surface_group_name);
+  writer.RegisterPostProcessor(displacement_postprocessor);
+  writer.RegisterPostProcessor(strain_postprocessor);
+  writer.RegisterPostProcessor(stress_postprocessor);
+  writer.Write("two_holes.vtu", body_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();
-  auto duration = stop - start;
+  auto duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
-  std::cout << "Ran in " << duration.count() << " ns" << std::endl;
+  std::cout << "Ran in " << duration.count() << " ms" << std::endl;
 
   return 0;
 }
