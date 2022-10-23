@@ -1,6 +1,10 @@
 #include "../../inc/mesh/element.h"
 
+#include "omp.h"
+
 namespace ffea {
+
+#pragma omp declare reduction (merge: MatrixEntries<double> : omp_out.insert(omp_out.end(), omp_in.begin(), omp_out.end()))
 
 Element::Element(GeometricEntity &entity,
                  const std::vector<DegreeOfFreedom *> &dofs,
@@ -41,20 +45,26 @@ std::vector<size_t> Element::dof_tags() const {
 }
 
 void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
+  MatrixEntries<double> entries;
+  // Number of entries of an upper-triangular element matrix
+  const auto &number_of_entries = number_of_dofs() * (number_of_dofs() + 1) / 2;
+  entries.reserve(number_of_entries);
   const auto &tags = dof_tags();
 
+#pragma opm parallel for schedule(dynamic) reduction(merge : entries)
   for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
     const auto &i_dof_tag = tags[i_dof_idx];
     for (size_t j_dof_idx = i_dof_idx; j_dof_idx < number_of_dofs();
          j_dof_idx++) {
       const auto &j_dof_tag = tags[j_dof_idx];
       if (i_dof_tag <= j_dof_tag) {
-        nonzero_entries.emplace_back(i_dof_tag, j_dof_tag, 0.0);
+        entries.emplace_back(i_dof_tag, j_dof_tag);
       } else {
-        nonzero_entries.emplace_back(j_dof_tag, i_dof_tag, 0.0);
+        entries.emplace_back(j_dof_tag, i_dof_tag);
       }
     }
   }
+  nonzero_entries.insert(nonzero_entries.end(), entries.begin(), entries.end());
 }
 
 void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
