@@ -1,3 +1,6 @@
 [submodule "external/vtu11"]
 	path = external/vtu11
 	url = https://github.com/phmkopp/vtu11.git
+[submodule "external/googletest"]
+	path = external/googletest
+	url = https://github.com/google/googletest.git
