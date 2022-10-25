@@ -39,10 +39,10 @@ class Element {
 
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
   void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
-                         Integrand integrand, ConditionFunction source,
+                         Integrand integrand, VectorialFunction source,
                          CSRMatrix<double> &global_stiffness,
                          Vector<double> &global_rhs) const;
-  void ProcessOverBoundary(ConditionFunction load, ConditionFunction radiation,
+  void ProcessOverBoundary(VectorialFunction load, VectorialFunction radiation,
                            CSRMatrix<double> &global_stiffness,
                            Vector<double> &global_rhs) const;
   Vector<double> ExtractSolution() const;

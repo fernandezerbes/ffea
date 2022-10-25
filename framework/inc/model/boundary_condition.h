@@ -30,20 +30,20 @@ class BoundaryCondition {
 class NaturalBoundaryCondition : public BoundaryCondition {
  public:
   NaturalBoundaryCondition(const std::vector<Element> &elements,
-                           ConditionFunction load, ConditionFunction radiation);
+                           VectorialFunction load, VectorialFunction radiation);
 
   virtual void Enforce(CSRMatrix<double> &global_stiffness,
                        Vector<double> &global_rhs) const override;
 
  private:
-  ConditionFunction load_;
-  ConditionFunction radiation_;
+  VectorialFunction load_;
+  VectorialFunction radiation_;
 };
 
 class EnforcementStrategy {
  public:
   virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Vector<double> &global_rhs, ConditionFunction condition,
+                       Vector<double> &global_rhs, VectorialFunction condition,
                        const std::vector<Element> &elements,
                        const std::unordered_set<size_t> &components) const = 0;
 };
@@ -52,7 +52,7 @@ class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
   virtual void Enforce(
       CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
-      ConditionFunction condition, const std::vector<Element> &elements,
+      VectorialFunction condition, const std::vector<Element> &elements,
       const std::unordered_set<size_t> &components) const override;
 };
 
@@ -61,7 +61,7 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
   PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(
       CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
-      ConditionFunction condition, const std::vector<Element> &elements,
+      VectorialFunction condition, const std::vector<Element> &elements,
       const std::unordered_set<size_t> &components) const override;
 
  private:
@@ -71,7 +71,7 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
 class EssentialBoundaryCondition : public BoundaryCondition {
  public:
   EssentialBoundaryCondition(const std::vector<Element> &elements,
-                             ConditionFunction condition,
+                             VectorialFunction condition,
                              const std::unordered_set<size_t> &components,
                              const EnforcementStrategy &strategy);
 
@@ -79,7 +79,7 @@ class EssentialBoundaryCondition : public BoundaryCondition {
                        Vector<double> &global_rhs) const override;
 
  private:
-  ConditionFunction condition_;
+  VectorialFunction condition_;
   const std::unordered_set<size_t> &directions_to_consider_;
   const EnforcementStrategy &strategy_;
 };

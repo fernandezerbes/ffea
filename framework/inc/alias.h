@@ -25,7 +25,7 @@ using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
 template <typename ScalarType>
 using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
 
-using ConditionFunction =
+using VectorialFunction =
     std::function<std::vector<double>(const Coordinates &)>;
 
 using Integrand = std::function<Matrix<double>(const Matrix<double> &,

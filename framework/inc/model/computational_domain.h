@@ -12,7 +12,7 @@ class ComputationalDomain {
  public:
   ComputationalDomain(const std::vector<Element> &elements,
                       const ConstitutiveModel &constitutive_model,
-                      Integrand integrand, ConditionFunction source);
+                      Integrand integrand, VectorialFunction source);
 
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
   void AddContribution(CSRMatrix<double> &global_stiffness,
@@ -22,7 +22,7 @@ class ComputationalDomain {
   const std::vector<Element> &elements_;
   const ConstitutiveModel &constitutive_model_;
   Integrand integrand_;
-  ConditionFunction source_;
+  VectorialFunction source_;
 };
 
 const Integrand elasticity_integrand_2D =

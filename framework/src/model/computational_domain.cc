@@ -5,7 +5,7 @@ namespace ffea {
 ComputationalDomain::ComputationalDomain(
     const std::vector<Element>& elements,
     const ConstitutiveModel& constitutive_model, Integrand integrand,
-    ConditionFunction source)
+    VectorialFunction source)
     : elements_(elements),
       constitutive_model_(constitutive_model),
       source_(source),

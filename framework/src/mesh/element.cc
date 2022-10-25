@@ -68,7 +68,7 @@ void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
 }
 
 void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
-                                Integrand integrand, ConditionFunction source,
+                                Integrand integrand, VectorialFunction source,
                                 CSRMatrix<double> &global_stiffness,
                                 Vector<double> &global_rhs) const {
   ElementSystem system{};
@@ -103,8 +103,8 @@ void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
   Scatter(system, global_stiffness, global_rhs);
 }
 
-void Element::ProcessOverBoundary(ConditionFunction load,
-                                  ConditionFunction radiation,
+void Element::ProcessOverBoundary(VectorialFunction load,
+                                  VectorialFunction radiation,
                                   CSRMatrix<double> &global_stiffness,
                                   Vector<double> &global_rhs) const {
   ElementSystem system{};

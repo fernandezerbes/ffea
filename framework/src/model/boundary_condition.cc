@@ -6,8 +6,8 @@ BoundaryCondition::BoundaryCondition(const std::vector<Element> &elements)
     : elements_(elements) {}
 
 NaturalBoundaryCondition::NaturalBoundaryCondition(
-    const std::vector<Element> &elements, ConditionFunction load,
-    ConditionFunction radiation)
+    const std::vector<Element> &elements, VectorialFunction load,
+    VectorialFunction radiation)
     : BoundaryCondition(elements), load_(load), radiation_(radiation) {}
 
 void NaturalBoundaryCondition::Enforce(CSRMatrix<double> &global_stiffness,
@@ -20,7 +20,7 @@ void NaturalBoundaryCondition::Enforce(CSRMatrix<double> &global_stiffness,
 
 // void DirectEnforcementStrategy::Enforce(
 //     Matrix<double> &global_stiffness, Vector<double> &global_rhs,
-//     ConditionFunction condition,
+//     VectorialFunction condition,
 //     const std::vector<Element> &elements,
 //     const std::unordered_set<size_t> &components_to_consider) const {
 //   // TODO Take care of the case where more than one bc is applied to the
@@ -49,7 +49,7 @@ PenaltyEnforcementStrategy::PenaltyEnforcementStrategy(double penalty)
 
 void PenaltyEnforcementStrategy::Enforce(
     CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
-    ConditionFunction condition, const std::vector<Element> &elements,
+    VectorialFunction condition, const std::vector<Element> &elements,
     const std::unordered_set<size_t> &components_to_consider) const {
   for (auto &element : elements) {
     const auto &dof_tags = element.dof_tags();
@@ -69,7 +69,7 @@ void PenaltyEnforcementStrategy::Enforce(
 }
 
 EssentialBoundaryCondition::EssentialBoundaryCondition(
-    const std::vector<Element> &elements, ConditionFunction condition,
+    const std::vector<Element> &elements, VectorialFunction condition,
     const std::unordered_set<size_t> &components_to_consider,
     const EnforcementStrategy &strategy)
     : BoundaryCondition(elements),

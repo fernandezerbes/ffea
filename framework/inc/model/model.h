@@ -21,12 +21,12 @@ class Model {
   void AddComputationalDomain(const std::string &domain_name,
                               const ConstitutiveModel &constitutive_model,
                               Integrand integrand,
-                              ConditionFunction source = nullptr);
+                              VectorialFunction source = nullptr);
   void AddNaturalBoundaryCondition(const std::string &boundary_name,
-                                   ConditionFunction load,
-                                   ConditionFunction radiation);
+                                   VectorialFunction load,
+                                   VectorialFunction radiation);
   void AddEssentialBoundaryCondition(
-      const std::string &boundary_name, ConditionFunction condition,
+      const std::string &boundary_name, VectorialFunction condition,
       const std::unordered_set<size_t> &components_to_consider,
       const EnforcementStrategy &strategy = ffea::PenaltyEnforcementStrategy());
   void SetSparsity(CSRMatrix<double> &global_stiffness) const;
