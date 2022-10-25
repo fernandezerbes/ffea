@@ -25,6 +25,8 @@ using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
 template <typename ScalarType>
 using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
 
+using ScalarFunction = std::function<double(const Coordinates &)>;
+
 using VectorialFunction =
     std::function<std::vector<double>(const Coordinates &)>;
 
