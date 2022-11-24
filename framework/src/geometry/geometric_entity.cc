@@ -368,20 +368,22 @@ Vector<double> Tria::EvaluateNormalVector(
   //                          dx/deta, dy/deta, dz/deta]
   const auto &jacobian = EvaluateJacobian(local_coords);
   Vector<double> normal = Vector<double>::Zero(3);
+
+  if (dim() == 2) {
+    normal(2) = jacobian.determinant();
+    return normal;
+  }
+
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
-
-  if (dim() == 3) {
-    normal(2) =
-        jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
-  }
+  normal(2) = jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
 
   return normal;
 }
 
 double Tria::EvaluateDifferential(const Coordinates &local_coords) const {
   Vector<double> normal = EvaluateNormalVector(local_coords);
-  return normal.norm() / 2.0;
+  return normal.norm();
 }
 
 ThreeNodeTria::ThreeNodeTria(size_t dim, const std::vector<Node *> &nodes)
