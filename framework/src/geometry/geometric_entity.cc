@@ -171,13 +171,15 @@ Vector<double> Quad::EvaluateNormalVector(
   // For 2D we don't have dz
   const auto &jacobian = EvaluateJacobian(local_coords);
   Vector<double> normal = Vector<double>::Zero(3);
+
+  if (dim() == 2) {
+    normal(2) = jacobian.determinant();
+    return normal;
+  }
+
   normal(0) = jacobian(0, 1) * jacobian(1, 2) - jacobian(0, 2) * jacobian(1, 1);
   normal(1) = jacobian(0, 2) * jacobian(1, 0) - jacobian(0, 0) * jacobian(1, 2);
-
-  if (dim() == 3) {
-    normal(2) =
-        jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
-  }
+  normal(2) = jacobian(0, 0) * jacobian(1, 1) - jacobian(0, 1) * jacobian(1, 0);
 
   return normal;
 }
