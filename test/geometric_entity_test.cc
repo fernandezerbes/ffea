@@ -1009,3 +1009,158 @@ TEST_F(ThreeNodeTria2DTest, MapLocalToGlobalCoordinates) {
   EXPECT_NEAR(actual_coords.get(0), expected_coords.get(0), 1.e-6);
   EXPECT_NEAR(actual_coords.get(1), expected_coords.get(1), 1.e-6);
 }
+
+class ThreeNodeTria3DTest : public ::testing::Test {
+ protected:
+  ThreeNodeTria3DTest()
+      : dim(3),
+        node0(24, {1.0, 1.0, 1.0}),
+        node1(78, {-1.0, 0.0, 0.0}),
+        node2(94, {1.0, 0.0, 0.0}),
+        tria(dim, {&node0, &node1, &node2}) {}
+
+  size_t dim;
+  ffea::Node node0;
+  ffea::Node node1;
+  ffea::Node node2;
+  ffea::ThreeNodeTria tria;
+};
+
+TEST_F(ThreeNodeTria3DTest, BasicExpectations) {
+  ASSERT_EQ(tria.type(), ffea::GeometricEntityType::kThreeNodeTria);
+  ASSERT_EQ(tria.dim(), dim);
+  ASSERT_EQ(tria.number_of_nodes(), 3);
+  ASSERT_EQ(tria.node_tag(0), 24);
+  ASSERT_EQ(tria.node_tag(1), 78);
+  ASSERT_EQ(tria.node_tag(2), 94);
+}
+
+TEST_F(ThreeNodeTria3DTest, GlobalCoordinates) {
+  EXPECT_NEAR(tria.node_coords(0).get(0), 1.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(0).get(1), 1.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(0).get(2), 1.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(1).get(0), -1.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(1).get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(1).get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(2).get(0), 1.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(2).get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(tria.node_coords(2).get(2), 0.0, 1.e-6);
+}
+
+TEST_F(ThreeNodeTria3DTest, NodalLocalCoordinates) {
+  const auto nodal_local_coords = tria.nodal_local_coords();
+  EXPECT_NEAR(nodal_local_coords[0].get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[0].get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[0].get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[1].get(0), 1.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[1].get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[1].get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[2].get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[2].get(1), 1.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[2].get(2), 0.0, 1.e-6);
+}
+
+TEST_F(ThreeNodeTria3DTest, ShapeFunctions) {
+  // At node 0
+  ffea::Matrix<double> expected_N(1, 3);
+  expected_N(0, 0) = 1.0;
+  expected_N(0, 1) = 0.0;
+  expected_N(0, 2) = 0.0;
+
+  auto actual_N = tria.EvaluateShapeFunctions({0.0, 0.0, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At node 1
+  expected_N(0, 0) = 0.0;
+  expected_N(0, 1) = 1.0;
+
+  actual_N = tria.EvaluateShapeFunctions({1.0, 0.0, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At node 2
+  expected_N(0, 1) = 0.0;
+  expected_N(0, 2) = 1.0;
+
+  actual_N = tria.EvaluateShapeFunctions({0.0, 1.0, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At an interior point r = 0.25, s = 0.25
+  expected_N(0, 0) = 0.5;
+  expected_N(0, 1) = 0.25;
+  expected_N(0, 2) = 0.25;
+
+  actual_N = tria.EvaluateShapeFunctions({0.25, 0.25, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+}
+
+TEST_F(ThreeNodeTria3DTest, ShapeFunctionFirstDerivatives) {
+  // At an interior point r = 0.25, s = 0.25
+  ffea::Matrix<double> expected_dN_local(2, 3);
+  expected_dN_local(0, 0) = -1.0;
+  expected_dN_local(0, 1) = 1.0;
+  expected_dN_local(0, 2) = 0.0;
+  expected_dN_local(1, 0) = -1.0;
+  expected_dN_local(1, 1) = -0.0;
+  expected_dN_local(1, 2) = 1.0;
+
+  const auto actual_dN_local = tria.EvaluateShapeFunctions(
+      {0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
+
+  EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
+}
+
+TEST_F(ThreeNodeTria3DTest, NormalVector) {
+  ffea::Vector<double> expected_normal(3);
+  expected_normal(0) = 0.0;
+  expected_normal(1) = -2.0;
+  expected_normal(2) = 2.0;
+
+  const auto actual_normal = tria.EvaluateNormalVector({0.0, 0.0, 0.0});
+
+  EXPECT_TRUE(actual_normal.isApprox(expected_normal)) << actual_normal;
+}
+
+TEST_F(ThreeNodeTria3DTest, Differential) {
+  const auto expected_differential = 2.0 * std::sqrt(2);
+
+  const auto actual_differential = tria.EvaluateDifferential({0.0, 0.0, 0.0});
+
+  EXPECT_NEAR(actual_differential, expected_differential, 1.e-6);
+}
+
+TEST_F(ThreeNodeTria3DTest, MapLocalToGlobalCoordinates) {
+  // At node 0
+  auto actual_coords =
+      tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node0.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node0.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node0.coords().get(2), 1.e-6);
+  
+  // At node 1
+  actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(1.0, 0.0, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node1.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node1.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node1.coords().get(2), 1.e-6);
+
+  // At node 2
+  actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.0, 1.0, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node2.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node2.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node2.coords().get(2), 1.e-6);
+
+  // At an interior point r = 0.25, s = 0.25
+  auto expected_coords = ffea::Coordinates(0.5, 0.5, 0.5);
+
+  actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.25, 0.25, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), expected_coords.get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), expected_coords.get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), expected_coords.get(2), 1.e-6);
+}
