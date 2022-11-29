@@ -970,7 +970,7 @@ TEST_F(ThreeNodeTria2DTest, NormalVector) {
 
   const auto actual_normal = tria.EvaluateNormalVector({0.0, 0.0, 0.0});
 
-  EXPECT_TRUE(actual_normal.isApprox(expected_normal)) << actual_normal;
+  EXPECT_TRUE(actual_normal.isApprox(expected_normal));
 }
 
 TEST_F(ThreeNodeTria2DTest, Differential) {
@@ -983,8 +983,7 @@ TEST_F(ThreeNodeTria2DTest, Differential) {
 
 TEST_F(ThreeNodeTria2DTest, MapLocalToGlobalCoordinates) {
   // At node 0
-  auto actual_coords =
-      tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
+  auto actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
 
   EXPECT_NEAR(actual_coords.get(0), node0.coords().get(0), 1.e-6);
   EXPECT_NEAR(actual_coords.get(1), node0.coords().get(1), 1.e-6);
@@ -1121,7 +1120,7 @@ TEST_F(ThreeNodeTria3DTest, NormalVector) {
 
   const auto actual_normal = tria.EvaluateNormalVector({0.0, 0.0, 0.0});
 
-  EXPECT_TRUE(actual_normal.isApprox(expected_normal)) << actual_normal;
+  EXPECT_TRUE(actual_normal.isApprox(expected_normal));
 }
 
 TEST_F(ThreeNodeTria3DTest, Differential) {
@@ -1134,13 +1133,12 @@ TEST_F(ThreeNodeTria3DTest, Differential) {
 
 TEST_F(ThreeNodeTria3DTest, MapLocalToGlobalCoordinates) {
   // At node 0
-  auto actual_coords =
-      tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
+  auto actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
 
   EXPECT_NEAR(actual_coords.get(0), node0.coords().get(0), 1.e-6);
   EXPECT_NEAR(actual_coords.get(1), node0.coords().get(1), 1.e-6);
   EXPECT_NEAR(actual_coords.get(2), node0.coords().get(2), 1.e-6);
-  
+
   // At node 1
   actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(1.0, 0.0, 0.0));
 
@@ -1340,7 +1338,7 @@ TEST_F(SixNodeTria2DTest, NormalVector) {
 
   const auto actual_normal = tria.EvaluateNormalVector({0.0, 0.0, 0.0});
 
-  EXPECT_TRUE(actual_normal.isApprox(expected_normal)) << actual_normal;
+  EXPECT_TRUE(actual_normal.isApprox(expected_normal));
 }
 
 TEST_F(SixNodeTria2DTest, Differential) {
@@ -1353,8 +1351,7 @@ TEST_F(SixNodeTria2DTest, Differential) {
 
 TEST_F(SixNodeTria2DTest, MapLocalToGlobalCoordinates) {
   // At node 0
-  auto actual_coords =
-      tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
+  auto actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
 
   EXPECT_NEAR(actual_coords.get(0), node0.coords().get(0), 1.e-6);
   EXPECT_NEAR(actual_coords.get(1), node0.coords().get(1), 1.e-6);
@@ -1573,7 +1570,7 @@ TEST_F(SixNodeTria3DTest, NormalVector) {
 
   const auto actual_normal = tria.EvaluateNormalVector({0.0, 0.0, 0.0});
 
-  EXPECT_TRUE(actual_normal.isApprox(expected_normal)) << actual_normal;
+  EXPECT_TRUE(actual_normal.isApprox(expected_normal));
 }
 
 TEST_F(SixNodeTria3DTest, Differential) {
@@ -1586,8 +1583,7 @@ TEST_F(SixNodeTria3DTest, Differential) {
 
 TEST_F(SixNodeTria3DTest, MapLocalToGlobalCoordinates) {
   // At node 0
-  auto actual_coords =
-      tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
+  auto actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
 
   EXPECT_NEAR(actual_coords.get(0), node0.coords().get(0), 1.e-6);
   EXPECT_NEAR(actual_coords.get(1), node0.coords().get(1), 1.e-6);
@@ -1632,6 +1628,187 @@ TEST_F(SixNodeTria3DTest, MapLocalToGlobalCoordinates) {
   auto expected_coords = ffea::Coordinates(0.5, 0.5, 0.5);
 
   actual_coords = tria.MapLocalToGlobal(ffea::Coordinates(0.25, 0.25, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), expected_coords.get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), expected_coords.get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), expected_coords.get(2), 1.e-6);
+}
+
+class FourNodeTetraTest : public ::testing::Test {
+ protected:
+  FourNodeTetraTest()
+      : dim(3),
+        node0(24, {0.0, 0.0, 1.0}),
+        node1(94, {1.0, 0.0, 1.0}),
+        node2(1, {0.0, 0.0, 0.0}),
+        node3(78, {0.0, 1.0, 1.0}),
+        tetra({&node0, &node1, &node2, &node3}) {}
+
+  size_t dim;
+  ffea::Node node0;
+  ffea::Node node1;
+  ffea::Node node2;
+  ffea::Node node3;
+  ffea::FourNodeTetra tetra;
+};
+
+TEST_F(FourNodeTetraTest, BasicExpectations) {
+  ASSERT_EQ(tetra.type(), ffea::GeometricEntityType::kFourNodeTetra);
+  ASSERT_EQ(tetra.dim(), dim);
+  ASSERT_EQ(tetra.number_of_nodes(), 4);
+  ASSERT_EQ(tetra.node_tag(0), 24);
+  ASSERT_EQ(tetra.node_tag(1), 94);
+  ASSERT_EQ(tetra.node_tag(2), 1);
+  ASSERT_EQ(tetra.node_tag(3), 78);
+}
+
+TEST_F(FourNodeTetraTest, GlobalCoordinates) {
+  EXPECT_NEAR(tetra.node_coords(0).get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(0).get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(0).get(2), 1.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(1).get(0), 1.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(1).get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(1).get(2), 1.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(2).get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(2).get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(2).get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(3).get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(3).get(1), 1.0, 1.e-6);
+  EXPECT_NEAR(tetra.node_coords(3).get(2), 1.0, 1.e-6);
+}
+
+TEST_F(FourNodeTetraTest, NodalLocalCoordinates) {
+  const auto nodal_local_coords = tetra.nodal_local_coords();
+  EXPECT_NEAR(nodal_local_coords[0].get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[0].get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[0].get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[1].get(0), 1.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[1].get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[1].get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[2].get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[2].get(1), 1.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[2].get(2), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[3].get(0), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[3].get(1), 0.0, 1.e-6);
+  EXPECT_NEAR(nodal_local_coords[3].get(2), 1.0, 1.e-6);
+}
+
+TEST_F(FourNodeTetraTest, ShapeFunctions) {
+  // At node 0
+  ffea::Matrix<double> expected_N(1, 4);
+  expected_N(0, 0) = 1.0;
+  expected_N(0, 1) = 0.0;
+  expected_N(0, 2) = 0.0;
+  expected_N(0, 3) = 0.0;
+
+  auto actual_N = tetra.EvaluateShapeFunctions({0.0, 0.0, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At node 1
+  expected_N(0, 0) = 0.0;
+  expected_N(0, 1) = 1.0;
+
+  actual_N = tetra.EvaluateShapeFunctions({1.0, 0.0, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At node 2
+  expected_N(0, 1) = 0.0;
+  expected_N(0, 2) = 1.0;
+
+  actual_N = tetra.EvaluateShapeFunctions({0.0, 1.0, 0.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At node 3
+  expected_N(0, 2) = 0.0;
+  expected_N(0, 3) = 1.0;
+
+  actual_N = tetra.EvaluateShapeFunctions({0.0, 0.0, 1.0});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+
+  // At an interior point r = 0.25, s = 0.25, t = 0.25
+  expected_N(0, 0) = 0.25;
+  expected_N(0, 1) = 0.25;
+  expected_N(0, 2) = 0.25;
+  expected_N(0, 3) = 0.25;
+
+  actual_N = tetra.EvaluateShapeFunctions({0.25, 0.25, 0.25});
+
+  EXPECT_TRUE(actual_N.isApprox(expected_N));
+}
+
+TEST_F(FourNodeTetraTest, ShapeFunctionFirstDerivatives) {
+  // At an interior point r = 0.25, s = 0.25, t = 0.25
+  ffea::Matrix<double> expected_dN_local(3, 4);
+  expected_dN_local(0, 0) = -1.0;
+  expected_dN_local(0, 1) = 1.0;
+  expected_dN_local(0, 2) = 0.0;
+  expected_dN_local(0, 3) = 0.0;
+
+  expected_dN_local(1, 0) = -1.0;
+  expected_dN_local(1, 1) = 0.0;
+  expected_dN_local(1, 2) = 1.0;
+  expected_dN_local(1, 3) = 0.0;
+
+  expected_dN_local(2, 0) = -1.0;
+  expected_dN_local(2, 1) = 0.0;
+  expected_dN_local(2, 2) = 0.0;
+  expected_dN_local(2, 3) = 1.0;
+
+  const auto actual_dN_local = tetra.EvaluateShapeFunctions(
+      {0.25, 0.25, 0.25}, ffea::DerivativeOrder::kFirst);
+
+  EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
+}
+
+TEST_F(FourNodeTetraTest, NormalVector) {
+  ASSERT_THROW(tetra.EvaluateNormalVector({0.0, 0.0, 0.0}), std::logic_error);
+}
+
+TEST_F(FourNodeTetraTest, Differential) {
+  const auto expected_differential = 1.0 / 6.0;
+
+  const auto actual_differential = tetra.EvaluateDifferential({0.0, 0.0, 0.0});
+
+  EXPECT_NEAR(actual_differential, expected_differential, 1.e-6);
+}
+
+TEST_F(FourNodeTetraTest, MapLocalToGlobalCoordinates) {
+  // At node 0
+  auto actual_coords = tetra.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node0.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node0.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node0.coords().get(2), 1.e-6);
+
+  // At node 1
+  actual_coords = tetra.MapLocalToGlobal(ffea::Coordinates(1.0, 0.0, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node1.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node1.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node1.coords().get(2), 1.e-6);
+
+  // At node 2
+  actual_coords = tetra.MapLocalToGlobal(ffea::Coordinates(0.0, 1.0, 0.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node2.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node2.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node2.coords().get(2), 1.e-6);
+
+  // At node 3
+  actual_coords = tetra.MapLocalToGlobal(ffea::Coordinates(0.0, 0.0, 1.0));
+
+  EXPECT_NEAR(actual_coords.get(0), node3.coords().get(0), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(1), node3.coords().get(1), 1.e-6);
+  EXPECT_NEAR(actual_coords.get(2), node3.coords().get(2), 1.e-6);
+
+  // At an interior point r = 0.25, s = 0.25, t = 0.25
+  auto expected_coords = ffea::Coordinates(0.25, 0.25, 0.75);
+
+  actual_coords = tetra.MapLocalToGlobal(ffea::Coordinates(0.25, 0.25, 0.25));
 
   EXPECT_NEAR(actual_coords.get(0), expected_coords.get(0), 1.e-6);
   EXPECT_NEAR(actual_coords.get(1), expected_coords.get(1), 1.e-6);
