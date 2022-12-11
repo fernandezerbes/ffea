@@ -2,12 +2,15 @@ enable_testing()
 
 add_executable(geometric_entity_test geometric_entity_test.cc)
 add_executable(geometric_entity_factory_test geometric_entity_factory_test.cc)
+add_executable(geometry_test geometry_test.cc)
 
 target_link_libraries(geometric_entity_test PRIVATE ffea GTest::gtest_main)
 target_link_libraries(geometric_entity_factory_test PRIVATE ffea GTest::gtest_main)
+target_link_libraries(geometry_test PRIVATE ffea GTest::gtest_main)
 
 target_link_libraries(geometric_entity_test PRIVATE ffea gmock)
 target_link_libraries(geometric_entity_factory_test PRIVATE ffea gmock)
+target_link_libraries(geometry_test PRIVATE ffea gmock)
 
 include(GoogleTest)
 
@@ -15,3 +18,4 @@ set(BUILD_GMOCK ON)
 
 add_test(geometric_entity_gtest geometric_entity_test)
 add_test(geometric_entity_factory_gtest geometric_entity_factory_test)
+add_test(geometry_gtest geometry_test)
