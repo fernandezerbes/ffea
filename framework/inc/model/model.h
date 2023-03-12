@@ -21,15 +21,12 @@ class Model {
   size_t number_of_dofs() const;
 
   void AddComputationalDomain(const std::string &domain_name,
-                              const ConstitutiveModel &constitutive_model,
-                              Integrand integrand);
+                              const ConstitutiveModel &constitutive_model, Integrand integrand);
   void AddComputationalDomain(const std::string &domain_name,
-                              const ConstitutiveModel &constitutive_model,
-                              Integrand integrand, VectorialFunction source);
-  void AddNaturalBoundaryCondition(const std::string &boundary_name,
-                                   VectorialFunction load);
-  void AddNaturalBoundaryCondition(const std::string &boundary_name,
-                                   VectorialFunction load,
+                              const ConstitutiveModel &constitutive_model, Integrand integrand,
+                              VectorialFunction source);
+  void AddNaturalBoundaryCondition(const std::string &boundary_name, VectorialFunction load);
+  void AddNaturalBoundaryCondition(const std::string &boundary_name, VectorialFunction load,
                                    VectorialFunction radiation);
   void AddEssentialBoundaryCondition(
       const std::string &boundary_name, VectorialFunction condition,

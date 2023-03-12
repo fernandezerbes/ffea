@@ -3,10 +3,7 @@
 namespace ffea {
 
 Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
-    : geometry_(geometry),
-      dofs_per_node_(dofs_per_node),
-      dofs_(),
-      element_groups_() {
+    : geometry_(geometry), dofs_per_node_(dofs_per_node), dofs_(), element_groups_() {
   AddDofs();
 }
 
@@ -49,15 +46,13 @@ std::vector<Element>& Mesh::element_group(const std::string& group_name) {
   return element_groups_.at(group_name);
 }
 
-void Mesh::AddElement(const std::string& group_name,
-                      GeometricEntity& geometric_entity,
+void Mesh::AddElement(const std::string& group_name, GeometricEntity& geometric_entity,
                       const ElementFactory& factory) {
   std::vector<DegreeOfFreedom*> element_dofs;
   element_dofs.reserve(geometric_entity.number_of_nodes() * dofs_per_node_);
 
   for (size_t node_idx : geometric_entity.node_tags()) {
-    for (size_t component_idx = 0; component_idx < dofs_per_node_;
-         component_idx++) {
+    for (size_t component_idx = 0; component_idx < dofs_per_node_; component_idx++) {
       auto& dof = dofs_[dof_tag(node_idx, component_idx)];
       element_dofs.push_back(&dof);
     }
@@ -79,8 +74,7 @@ void Mesh::SetSolutionOnDofs(const Vector<double>& solution) {
   }
 }
 
-const std::vector<Element>& Mesh::element_group(
-    const std::string& group_name) const {
+const std::vector<Element>& Mesh::element_group(const std::string& group_name) const {
   return element_groups_.at(group_name);
 }
 
@@ -100,10 +94,8 @@ const std::unordered_set<const DegreeOfFreedom*> Mesh::element_group_dofs(
 
 void Mesh::AddDofs() {
   dofs_.reserve(geometry_.number_of_nodes() * dofs_per_node_);
-  for (size_t node_idx = 0; node_idx < geometry_.number_of_nodes();
-       node_idx++) {
-    for (size_t component_idx = 0; component_idx < dofs_per_node_;
-         component_idx++) {
+  for (size_t node_idx = 0; node_idx < geometry_.number_of_nodes(); node_idx++) {
+    for (size_t component_idx = 0; component_idx < dofs_per_node_; component_idx++) {
       dofs_.emplace_back(dof_tag(node_idx, component_idx));
     }
   }

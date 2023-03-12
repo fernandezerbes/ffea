@@ -14,8 +14,7 @@ namespace ffea {
 
 class PostProcessor {
  public:
-  PostProcessor(std::string variable_name, size_t values_per_node,
-                const Mesh &mesh);
+  PostProcessor(std::string variable_name, size_t values_per_node, const Mesh &mesh);
   virtual ~PostProcessor() = default;
 
   std::string variable_name() const;
@@ -33,20 +32,17 @@ class PostProcessor {
 
 class PrimaryVariablePostProcessor : public PostProcessor {
  public:
-  PrimaryVariablePostProcessor(std::string variable_name,
-                               size_t values_per_node, const Mesh &mesh);
+  PrimaryVariablePostProcessor(std::string variable_name, size_t values_per_node, const Mesh &mesh);
 
-  virtual std::vector<double> Process(
-      const std::string &group_name) const override;
+  virtual std::vector<double> Process(const std::string &group_name) const override;
 };
 
 class DerivedVariableProcessor : public PostProcessor {
  public:
-  DerivedVariableProcessor(std::string variable_name, size_t values_per_node,
-                           const Mesh &mesh, ValuesProcessor processor);
+  DerivedVariableProcessor(std::string variable_name, size_t values_per_node, const Mesh &mesh,
+                           ValuesProcessor processor);
 
-  virtual std::vector<double> Process(
-      const std::string &group_name) const override;
+  virtual std::vector<double> Process(const std::string &group_name) const override;
 
  private:
   std::vector<ffea::NodalValuesGroup> ExtractValuesOfAllElementsPerNode(

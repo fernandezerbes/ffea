@@ -5,6 +5,7 @@
 
 #include "../applications/quasi_harmonic/inc/constitutive_model.h"
 #include "../applications/quasi_harmonic/inc/postprocessor.h"
+#include "../framework/inc/alias.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -16,7 +17,6 @@
 #include "../framework/inc/mesh/integration_points_provider.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
-#include "../framework/inc/alias.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
@@ -27,8 +27,7 @@ int main() {
   auto start = std::chrono::high_resolution_clock::now();
   size_t number_of_cores = 4;
   Eigen::setNbThreads(number_of_cores);
-  std::cout << "Running with " << Eigen::nbThreads() << " threads..."
-            << std::endl;
+  std::cout << "Running with " << Eigen::nbThreads() << " threads..." << std::endl;
 
   const std::string dirichlet_group_name = "dirichlet";
   const std::string neumann_group_name = "neumann";
@@ -40,13 +39,11 @@ int main() {
   // std::string filename = "cube.msh";
   // std::string filename = "cylinder.msh";
   std::string filename = "cylinder_quadratic.msh";
-  ffea::GeometryFromFileBuilder geometry_builder(filename,
-                                                 geometric_entity_factory);
+  ffea::GeometryFromFileBuilder geometry_builder(filename, geometric_entity_factory);
 
   auto geometry = geometry_builder.Build();
 
-  auto integration_points_provider =
-      ffea::utilities::MakeFullIntegrationPointsProvider();
+  auto integration_points_provider = ffea::utilities::MakeFullIntegrationPointsProvider();
   ffea::ElementFactory element_factory(integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
@@ -70,8 +67,8 @@ int main() {
   };
 
   ffea::Model model(mesh);
-  model.AddComputationalDomain(body_group_name, constitutive_model,
-                               ffea::quasi_harmonic_integrand, body_load);
+  model.AddComputationalDomain(body_group_name, constitutive_model, ffea::quasi_harmonic_integrand,
+                               body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto radiation = [](const ffea::Coordinates& coords) -> std::vector<double> {
@@ -79,19 +76,16 @@ int main() {
     return load;
   };
 
-  auto load_function =
-      [radiation](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto load_function = [radiation](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.5};
     const auto phi0 = 20;
     load[0] -= radiation(coords)[0] * phi0;
     return load;
   };
 
-  model.AddNaturalBoundaryCondition(neumann_group_name, load_function,
-                                    radiation);
+  model.AddNaturalBoundaryCondition(neumann_group_name, load_function, radiation);
 
-  auto boundary_function =
-      [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto boundary_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0};
     return load;
   };
@@ -104,18 +98,15 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  const auto temperature_processor =
-      ffea::utilities::MakeTemperatureProcessor(mesh);
+  const auto temperature_processor = ffea::utilities::MakeTemperatureProcessor(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(temperature_processor);
-  writer.Write("ffea_output_tetra_3d_quadratic_thermal_vtu11.vtu",
-               body_group_name);
+  writer.Write("ffea_output_tetra_3d_quadratic_thermal_vtu11.vtu", body_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();
-  auto duration =
-      std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
 
   std::cout << "Ran in " << duration.count() << " ms" << std::endl;
 

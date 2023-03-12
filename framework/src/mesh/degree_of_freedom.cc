@@ -19,9 +19,7 @@ double DegreeOfFreedom::value() const { return value_; }
 
 void DegreeOfFreedom::set_value(double value) { value_ = value; }
 
-void DegreeOfFreedom::set_value(const Vector<double> &solution) {
-  set_value(solution(tag()));
-}
+void DegreeOfFreedom::set_value(const Vector<double> &solution) { set_value(solution(tag())); }
 
 double DegreeOfFreedom::auxiliary_value(size_t idx) const {
   CheckAuxiliaryValueInsideRange(idx);
@@ -41,9 +39,9 @@ void DegreeOfFreedom::CheckAuxiliaryValueInsideRange(size_t idx) const {
   }
 
   if (idx > (auxiliary_values_.size() - 1)) {
-    throw std::out_of_range("Tried to access auxiliary value at idx " +
-                            std::to_string(idx) + " but maximum idx is " +
-                            std::to_string(auxiliary_values_.size()) + ".");
+    throw std::out_of_range("Tried to access auxiliary value at idx " + std::to_string(idx) +
+                            " but maximum idx is " + std::to_string(auxiliary_values_.size()) +
+                            ".");
   }
 }
 

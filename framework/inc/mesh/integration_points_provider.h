@@ -10,15 +10,12 @@ namespace ffea {
 
 class IntegrationPointsProvider {
  public:
-  const IntegrationPointsGroup &integration_points(
-      GeometricEntityType type) const;
+  const IntegrationPointsGroup &integration_points(GeometricEntityType type) const;
 
-  void RegisterIntegrationPoints(GeometricEntityType type,
-                                 const IntegrationPointsGroup &ips);
+  void RegisterIntegrationPoints(GeometricEntityType type, const IntegrationPointsGroup &ips);
 
  private:
-  std::unordered_map<GeometricEntityType, const IntegrationPointsGroup &>
-      ips_registry_;
+  std::unordered_map<GeometricEntityType, const IntegrationPointsGroup &> ips_registry_;
 };
 
 namespace utilities {

@@ -36,8 +36,7 @@ enum class DerivativeOrder { kZeroth, kFirst, kSecond };
 
 class GeometricEntity {
  public:
-  GeometricEntity(GeometricEntityType type, size_t dim,
-                  const std::vector<Node *> &nodes);
+  GeometricEntity(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
   virtual ~GeometricEntity() = default;
 
   GeometricEntityType type() const;
@@ -48,16 +47,13 @@ class GeometricEntity {
   Coordinates &node_coords(size_t node_idx) const;
   virtual std::vector<Coordinates> nodal_local_coords() const = 0;
 
-  Matrix<double> EvaluateShapeFunctions(
-      const Coordinates &local_coords,
-      DerivativeOrder order = DerivativeOrder::kZeroth) const;
+  Matrix<double> EvaluateShapeFunctions(const Coordinates &local_coords,
+                                        DerivativeOrder order = DerivativeOrder::kZeroth) const;
   Matrix<double> EvaluateJacobian(const Coordinates &local_coords,
                                   const Matrix<double> &dN_local) const;
   Matrix<double> EvaluateJacobian(const Coordinates &local_coords) const;
-  virtual Vector<double> EvaluateNormalVector(
-      const Coordinates &local_coords) const;
-  virtual double EvaluateDifferential(
-      const Coordinates &local_coords) const = 0;
+  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const = 0;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Matrix<double> &N_at_point) const;
 
@@ -81,10 +77,8 @@ class Line : public GeometricEntity {
  public:
   Line(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Vector<double> EvaluateNormalVector(
-      const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(
-      const Coordinates &local_coords) const override;
+  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class TwoNodeLine : public Line {
@@ -108,10 +102,8 @@ class Quad : public GeometricEntity {
  public:
   Quad(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Vector<double> EvaluateNormalVector(
-      const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(
-      const Coordinates &local_coords) const override;
+  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class FourNodeQuad : public Quad {
@@ -135,8 +127,7 @@ class Hex : public GeometricEntity {
  public:
   Hex(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual double EvaluateDifferential(
-      const Coordinates &local_coords) const override;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class EightNodeHex : public Hex {
@@ -159,10 +150,8 @@ class Tria : public GeometricEntity {
  public:
   Tria(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Vector<double> EvaluateNormalVector(
-      const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(
-      const Coordinates &local_coords) const override;
+  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class ThreeNodeTria : public Tria {
@@ -201,8 +190,7 @@ class Tetra : public GeometricEntity {
  public:
   Tetra(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual double EvaluateDifferential(
-      const Coordinates &local_coords) const override;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class FourNodeTetra : public Tetra {

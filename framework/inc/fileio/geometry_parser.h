@@ -27,8 +27,7 @@ struct NodeData {
 };
 
 struct GeometricEntityData {
-  GeometricEntityData(size_t tag, size_t type,
-                      const std::vector<size_t> &node_tags);
+  GeometricEntityData(size_t tag, size_t type, const std::vector<size_t> &node_tags);
 
   const size_t tag;
   const size_t type;
@@ -58,8 +57,7 @@ class GeometryData {
   const std::vector<GeometricEntityDataGroup> &geometric_entity_groups() const;
 
   void AddNode(size_t tag, const std::array<double, 3> &coords);
-  void AddGeometricEntityData(size_t tag, size_t type,
-                              const std::vector<size_t> &node_tags,
+  void AddGeometricEntityData(size_t tag, size_t type, const std::vector<size_t> &node_tags,
                               size_t owner_shape_dim, size_t owner_shape_tag);
   void AddGeometricEntityDataGroup(size_t tag, const std::string &name);
   void RegisterShapeTag(size_t dim, size_t shape_tag, size_t entity_group_tag);
@@ -107,8 +105,7 @@ class GeometricEntitiesParser : public Parser {
 
 class SectionParserFactory {
  public:
-  static std::unique_ptr<Parser> CreateSectionParser(
-      const std::string &section_name);
+  static std::unique_ptr<Parser> CreateSectionParser(const std::string &section_name);
 };
 
 }  // namespace ffea

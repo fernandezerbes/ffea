@@ -23,8 +23,7 @@ struct ElementSystem {
 
 class Element {
  public:
-  Element(GeometricEntity &geometric_entity,
-          const std::vector<DegreeOfFreedom *> &dofs,
+  Element(GeometricEntity &geometric_entity, const std::vector<DegreeOfFreedom *> &dofs,
           const IntegrationPointsGroup &integration_points);
 
   GeometricEntityType geometric_entity_type() const;
@@ -42,9 +41,8 @@ class Element {
   Vector<double> ExtractSolution() const;
   void AddNodalValues(ValuesProcessor values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
-  Matrix<double> EvaluateShapeFunctions(
-      const Coordinates &local_coords,
-      DerivativeOrder order = DerivativeOrder::kZeroth) const;
+  Matrix<double> EvaluateShapeFunctions(const Coordinates &local_coords,
+                                        DerivativeOrder order = DerivativeOrder::kZeroth) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Matrix<double> &N_at_point) const;
   double EvaluateDifferential(const Coordinates &local_coords) const;

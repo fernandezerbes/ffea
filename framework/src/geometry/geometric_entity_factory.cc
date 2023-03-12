@@ -4,8 +4,7 @@
 
 namespace ffea {
 
-std::unique_ptr<GeometricEntity>
-GeometricEntityFactory2D::CreateGeometricEntity(
+std::unique_ptr<GeometricEntity> GeometricEntityFactory2D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
   switch (type) {
     case GeometricEntityType::kTwoNodeLine:
@@ -21,8 +20,7 @@ GeometricEntityFactory2D::CreateGeometricEntity(
   }
 }
 
-std::unique_ptr<GeometricEntity>
-GeometricEntityFactory3D::CreateGeometricEntity(
+std::unique_ptr<GeometricEntity> GeometricEntityFactory3D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
   switch (type) {
     case GeometricEntityType::kTwoNodeLine:

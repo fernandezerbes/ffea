@@ -13,8 +13,7 @@ class ElementFactory {
  public:
   explicit ElementFactory(const IntegrationPointsProvider &ip_provider);
 
-  Element CreateElement(GeometricEntity &entity,
-                        const std::vector<DegreeOfFreedom *> &dofs) const;
+  Element CreateElement(GeometricEntity &entity, const std::vector<DegreeOfFreedom *> &dofs) const;
 
  private:
   const IntegrationPointsProvider &ip_provider_;

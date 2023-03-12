@@ -29,8 +29,7 @@ void Analysis::Solve() {
   solution = cg_solver.solve(system_rhs);
 
   std::cout << "Finished solution in " << cg_solver.iterations()
-            << " iterations with an estimated error of " << cg_solver.error()
-            << "." << std::endl;
+            << " iterations with an estimated error of " << cg_solver.error() << "." << std::endl;
 
   model_.ProjectSolutionOnMesh(solution);
 }

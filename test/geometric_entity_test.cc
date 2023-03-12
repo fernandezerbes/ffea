@@ -89,8 +89,8 @@ TEST_F(TwoNodeLineTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(0, 0) = -0.5;
   expected_dN_local(0, 1) = 0.5;
 
-  const auto actual_dN_local = line.EvaluateShapeFunctions(
-      {0.0, 0.0, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      line.EvaluateShapeFunctions({0.0, 0.0, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -271,8 +271,8 @@ TEST_F(FourNodeQuad2DTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(1, 2) = 0.375;
   expected_dN_local(1, 3) = 0.125;
 
-  const auto actual_dN_local = quad.EvaluateShapeFunctions(
-      {0.5, 0.5, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      quad.EvaluateShapeFunctions({0.5, 0.5, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -466,8 +466,8 @@ TEST_F(FourNodeQuad3DTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(1, 2) = 0.375;
   expected_dN_local(1, 3) = 0.125;
 
-  const auto actual_dN_local = quad.EvaluateShapeFunctions(
-      {0.5, 0.5, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      quad.EvaluateShapeFunctions({0.5, 0.5, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -765,8 +765,8 @@ TEST_F(EightNodeHexTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(2, 6) = 0.28125;
   expected_dN_local(2, 7) = 0.09375;
 
-  const auto actual_dN_local = hex.EvaluateShapeFunctions(
-      {0.5, 0.5, 0.5}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      hex.EvaluateShapeFunctions({0.5, 0.5, 0.5}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -956,8 +956,8 @@ TEST_F(ThreeNodeTria2DTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(1, 1) = -0.0;
   expected_dN_local(1, 2) = 1.0;
 
-  const auto actual_dN_local = tria.EvaluateShapeFunctions(
-      {0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      tria.EvaluateShapeFunctions({0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -1106,8 +1106,8 @@ TEST_F(ThreeNodeTria3DTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(1, 1) = -0.0;
   expected_dN_local(1, 2) = 1.0;
 
-  const auto actual_dN_local = tria.EvaluateShapeFunctions(
-      {0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      tria.EvaluateShapeFunctions({0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -1324,8 +1324,8 @@ TEST_F(SixNodeTria2DTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(1, 4) = 1.0;
   expected_dN_local(1, 5) = 1.0;
 
-  const auto actual_dN_local = tria.EvaluateShapeFunctions(
-      {0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      tria.EvaluateShapeFunctions({0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -1556,8 +1556,8 @@ TEST_F(SixNodeTria3DTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(1, 4) = 1.0;
   expected_dN_local(1, 5) = 1.0;
 
-  const auto actual_dN_local = tria.EvaluateShapeFunctions(
-      {0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      tria.EvaluateShapeFunctions({0.25, 0.25, 0.0}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -1758,8 +1758,8 @@ TEST_F(FourNodeTetraTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(2, 2) = 0.0;
   expected_dN_local(2, 3) = 1.0;
 
-  const auto actual_dN_local = tetra.EvaluateShapeFunctions(
-      {0.25, 0.25, 0.25}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      tetra.EvaluateShapeFunctions({0.25, 0.25, 0.25}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local));
 }
@@ -1829,8 +1829,7 @@ class TenNodeTetraTest : public ::testing::Test {
         node7(8, {0.0, 0.5, 1.0}),
         node8(23, {0.0, 0.5, 0.5}),
         node9(29, {0.5, 0.5, 1.0}),
-        tetra({&node0, &node1, &node2, &node3, &node4, &node5, &node6, &node7,
-               &node8, &node9}) {}
+        tetra({&node0, &node1, &node2, &node3, &node4, &node5, &node6, &node7, &node8, &node9}) {}
 
   size_t dim;
   ffea::Node node0;
@@ -2072,8 +2071,8 @@ TEST_F(TenNodeTetraTest, ShapeFunctionFirstDerivatives) {
   expected_dN_local(2, 8) = 1.0;
   expected_dN_local(2, 9) = 1.0;
 
-  const auto actual_dN_local = tetra.EvaluateShapeFunctions(
-      {0.25, 0.25, 0.25}, ffea::DerivativeOrder::kFirst);
+  const auto actual_dN_local =
+      tetra.EvaluateShapeFunctions({0.25, 0.25, 0.25}, ffea::DerivativeOrder::kFirst);
 
   EXPECT_TRUE(actual_dN_local.isApprox(expected_dN_local)) << actual_dN_local;
 }

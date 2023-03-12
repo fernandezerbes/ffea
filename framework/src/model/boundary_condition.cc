@@ -4,9 +4,9 @@
 
 namespace ffea {
 
-NaturalBoundaryCondition::NaturalBoundaryCondition(
-    const std::vector<Element> &elements, VectorialFunction load,
-    VectorialFunction radiation)
+NaturalBoundaryCondition::NaturalBoundaryCondition(const std::vector<Element> &elements,
+                                                   VectorialFunction load,
+                                                   VectorialFunction radiation)
     : PhysicsProcessor(elements), load_(load), radiation_(radiation) {}
 
 void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
@@ -21,8 +21,7 @@ void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
 
     for (const auto &ip : element.integration_points()) {
       const auto &local_coords = ip.local_coords();
-      const auto &N = element.EvaluateShapeFunctions(
-          local_coords, ffea::DerivativeOrder::kZeroth);
+      const auto &N = element.EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
       const auto &global_coords = element.MapLocalToGlobal(N);
       const auto &load_vector = load_(global_coords);
       const auto &weight = ip.weight();
@@ -39,8 +38,7 @@ void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
 
     const auto &dof_tags = element.dof_tags();
     if (radiation_) {
-      Scatter(dof_tags, element_stiffness, element_rhs, system_stiffness,
-              system_rhs);
+      Scatter(dof_tags, element_stiffness, element_rhs, system_stiffness, system_rhs);
     } else {
       Scatter(dof_tags, element_rhs, system_rhs);
     }
@@ -51,8 +49,7 @@ void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
                                        CSRMatrix<double> &system_mass,
                                        Vector<double> &system_rhs) const {
   throw std::runtime_error(
-      "NaturalBoundaryCondition::Process not implemented for transient "
-      "problems");
+      "NaturalBoundaryCondition::Process not implemented for transient problems");
 }
 
 void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
@@ -60,16 +57,14 @@ void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
                                        CSRMatrix<double> &system_damping,
                                        Vector<double> &system_rhs) const {
   throw std::runtime_error(
-      "NaturalBoundaryCondition::Process not implemented for damped transient "
-      "problems");
+      "NaturalBoundaryCondition::Process not implemented for damped transient problems");
 }
 
-PenaltyEnforcementStrategy::PenaltyEnforcementStrategy(double penalty)
-    : penalty_(penalty) {}
+PenaltyEnforcementStrategy::PenaltyEnforcementStrategy(double penalty) : penalty_(penalty) {}
 
 void PenaltyEnforcementStrategy::Enforce(
-    CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-    VectorialFunction condition, const std::vector<Element> &elements,
+    CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs, VectorialFunction condition,
+    const std::vector<Element> &elements,
     const std::unordered_set<size_t> &components_to_consider) const {
   for (auto &element : elements) {
     const auto &dof_tags = element.dof_tags();
@@ -90,8 +85,7 @@ void PenaltyEnforcementStrategy::Enforce(
 
 EssentialBoundaryCondition::EssentialBoundaryCondition(
     const std::vector<Element> &elements, VectorialFunction condition,
-    const std::unordered_set<size_t> &components_to_consider,
-    const EnforcementStrategy &strategy)
+    const std::unordered_set<size_t> &components_to_consider, const EnforcementStrategy &strategy)
     : PhysicsProcessor(elements),
       condition_(condition),
       directions_to_consider_(components_to_consider),
@@ -99,16 +93,14 @@ EssentialBoundaryCondition::EssentialBoundaryCondition(
 
 void EssentialBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
                                          Vector<double> &system_rhs) const {
-  strategy_.Enforce(system_stiffness, system_rhs, condition_, elements_,
-                    directions_to_consider_);
+  strategy_.Enforce(system_stiffness, system_rhs, condition_, elements_, directions_to_consider_);
 }
 
 void EssentialBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
                                          CSRMatrix<double> &system_mass,
                                          Vector<double> &system_rhs) const {
   throw std::runtime_error(
-      "EssentialBoundaryCondition::Process not implemented for transient "
-      "problems");
+      "EssentialBoundaryCondition::Process not implemented for transient problems");
 }
 
 void EssentialBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
@@ -116,8 +108,7 @@ void EssentialBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
                                          CSRMatrix<double> &system_damping,
                                          Vector<double> &system_rhs) const {
   throw std::runtime_error(
-      "EssentialBoundaryCondition::Process not implemented for damped "
-      "transient problems");
+      "EssentialBoundaryCondition::Process not implemented for damped transient problems");
 }
 
 }  // namespace ffea

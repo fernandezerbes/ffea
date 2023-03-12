@@ -5,6 +5,7 @@
 
 #include "../applications/elasticity/inc/constitutive_model.h"
 #include "../applications/elasticity/inc/postprocessor.h"
+#include "../framework/inc/alias.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -16,7 +17,6 @@
 #include "../framework/inc/mesh/integration_points_provider.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
-#include "../framework/inc/alias.h"
 #include "../framework/inc/model/boundary_condition.h"
 #include "../framework/inc/model/constitutive_model.h"
 #include "../framework/inc/model/model.h"
@@ -62,8 +62,7 @@ int main() {
   auto start = std::chrono::high_resolution_clock::now();
   size_t number_of_cores = 4;
   Eigen::setNbThreads(number_of_cores);
-  std::cout << "Running with " << Eigen::nbThreads() << " threads..."
-            << std::endl;
+  std::cout << "Running with " << Eigen::nbThreads() << " threads..." << std::endl;
 
   const size_t number_of_fields = 2;
   const std::string dirichlet_group_name = "dirichlet";
@@ -78,8 +77,7 @@ int main() {
 
   auto geometry = geometry_builder.Build();
 
-  auto integration_points_provider =
-      ffea::utilities::MakeFullIntegrationPointsProvider();
+  auto integration_points_provider = ffea::utilities::MakeFullIntegrationPointsProvider();
   ffea::ElementFactory element_factory(integration_points_provider);
 
   ffea::MeshBuilder mesh_builder(geometry);
@@ -91,8 +89,7 @@ int main() {
   // ********************** CONSTITUTIVE MODEL **********************
   double poisson_ratio = 0.3;
   double youngs_modulus = 1;
-  ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus,
-                                                            poisson_ratio);
+  ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus, poisson_ratio);
   // ********************** MODEL **********************
   auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
@@ -104,16 +101,14 @@ int main() {
                                ffea::elasticity_integrand_2D, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
-  auto load_function =
-      [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto load_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{1.0, 0.0};
     return load;
   };
 
   model.AddNaturalBoundaryCondition(neumann_group_name, load_function, nullptr);
 
-  auto boundary_function =
-      [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto boundary_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };
@@ -126,8 +121,7 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  const auto& displacement_postprocessor =
-      ffea::utilities::MakeDisplacementProcessor2D(mesh);
+  const auto& displacement_postprocessor = ffea::utilities::MakeDisplacementProcessor2D(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);

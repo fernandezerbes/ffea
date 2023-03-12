@@ -17,38 +17,30 @@ void ConvertZeroToOneBased(int &idx) { idx++; }
 
 }  // namespace utilities
 
-NodeData::NodeData(size_t tag, const std::array<double, 3> &coords)
-    : tag(tag), coords(coords) {}
+NodeData::NodeData(size_t tag, const std::array<double, 3> &coords) : tag(tag), coords(coords) {}
 
 GeometricEntityData::GeometricEntityData(size_t tag, size_t type,
                                          const std::vector<size_t> &node_tags)
     : tag(tag), type(type), node_tags(node_tags) {}
 
-GeometricEntityDataGroup::GeometricEntityDataGroup(size_t tag,
-                                                   const std::string &name)
+GeometricEntityDataGroup::GeometricEntityDataGroup(size_t tag, const std::string &name)
     : tag_(tag), name_(name), entity_tags_() {}
 
 size_t GeometricEntityDataGroup::tag() const { return tag_; }
 
 const std::string &GeometricEntityDataGroup::name() const { return name_; }
 
-const std::vector<size_t> &GeometricEntityDataGroup::entity_tags() const {
-  return entity_tags_;
-}
+const std::vector<size_t> &GeometricEntityDataGroup::entity_tags() const { return entity_tags_; }
 
-void GeometricEntityDataGroup::RegisterGeometricEntity(size_t tag) {
-  entity_tags_.push_back(tag);
-}
+void GeometricEntityDataGroup::RegisterGeometricEntity(size_t tag) { entity_tags_.push_back(tag); }
 
 const std::vector<NodeData> &GeometryData::nodes() const { return nodes_; }
 
-const std::vector<GeometricEntityData> &GeometryData::geometric_entities()
-    const {
+const std::vector<GeometricEntityData> &GeometryData::geometric_entities() const {
   return entities_;
 }
 
-const std::vector<GeometricEntityDataGroup>
-    &GeometryData::geometric_entity_groups() const {
+const std::vector<GeometricEntityDataGroup> &GeometryData::geometric_entity_groups() const {
   return entity_groups_;
 }
 
@@ -58,8 +50,7 @@ void GeometryData::AddNode(size_t tag, const std::array<double, 3> &coords) {
 
 void GeometryData::AddGeometricEntityData(size_t tag, size_t type,
                                           const std::vector<size_t> &node_tags,
-                                          size_t owner_shape_dim,
-                                          size_t owner_shape_tag) {
+                                          size_t owner_shape_dim, size_t owner_shape_tag) {
   entities_.emplace_back(tag, type, node_tags);
   auto &map = shape_tag_to_entity_group_tags_maps_[owner_shape_dim];
   auto &entity_group_tags = map.at(owner_shape_tag);
@@ -69,13 +60,11 @@ void GeometryData::AddGeometricEntityData(size_t tag, size_t type,
   }
 }
 
-void GeometryData::AddGeometricEntityDataGroup(size_t tag,
-                                               const std::string &name) {
+void GeometryData::AddGeometricEntityDataGroup(size_t tag, const std::string &name) {
   entity_groups_.emplace_back(tag, name);
 }
 
-void GeometryData::RegisterShapeTag(size_t dim, size_t shape_tag,
-                                    size_t entity_group_tag) {
+void GeometryData::RegisterShapeTag(size_t dim, size_t shape_tag, size_t entity_group_tag) {
   auto &map = shape_tag_to_entity_group_tags_maps_[dim];
   if (map.contains(shape_tag)) {
     auto &entity_group_tags = map.at(shape_tag);
@@ -85,16 +74,15 @@ void GeometryData::RegisterShapeTag(size_t dim, size_t shape_tag,
   }
 }
 
-GeometricEntityDataGroup &GeometryData::GetGeometricEntityDataGroup(
-    size_t group_tag) {
+GeometricEntityDataGroup &GeometryData::GetGeometricEntityDataGroup(size_t group_tag) {
   for (auto &group : entity_groups_) {
     if (group.tag() == group_tag) {
       return group;
     }
   }
 
-  throw std::runtime_error("GeometricEntityDataGroup with tag = " +
-                           std::to_string(group_tag) + " not found");
+  throw std::runtime_error("GeometricEntityDataGroup with tag = " + std::to_string(group_tag) +
+                           " not found");
 }
 
 void GeometryParser::Parse(std::ifstream &file, GeometryData &data) const {
@@ -142,8 +130,8 @@ void ShapesParser::Parse(std::ifstream &file, GeometryData &data) const {
 
       size_t number_of_entity_groups;
       file >> number_of_entity_groups;
-      for (size_t column = end_coords_column;
-           column < end_coords_column + number_of_entity_groups; column++) {
+      for (size_t column = end_coords_column; column < end_coords_column + number_of_entity_groups;
+           column++) {
         int entity_group_tag;
         file >> entity_group_tag;
         utilities::ConvertOneToZeroBased(entity_group_tag);
@@ -154,8 +142,7 @@ void ShapesParser::Parse(std::ifstream &file, GeometryData &data) const {
         size_t number_of_bounding_shapes;
         file >> number_of_bounding_shapes;
         int bounding_shape_tag;
-        for (size_t bounding_shape_idx = 0;
-             bounding_shape_idx < number_of_bounding_shapes;
+        for (size_t bounding_shape_idx = 0; bounding_shape_idx < number_of_bounding_shapes;
              bounding_shape_idx++) {
           file >> bounding_shape_tag;
         }
@@ -169,16 +156,14 @@ void NodesParser::Parse(std::ifstream &file, GeometryData &data) const {
   size_t number_of_nodes;
   size_t min_node_tag;
   size_t max_node_tag;
-  file >> number_of_entity_blocks >> number_of_nodes >> min_node_tag >>
-      max_node_tag;
+  file >> number_of_entity_blocks >> number_of_nodes >> min_node_tag >> max_node_tag;
 
   size_t owner_shape_dim;
   int owner_shape_tag;
   size_t parametric;
   size_t number_of_nodes_in_block;
   for (size_t block_idx = 0; block_idx < number_of_entity_blocks; block_idx++) {
-    file >> owner_shape_dim >> owner_shape_tag >> parametric >>
-        number_of_nodes_in_block;
+    file >> owner_shape_dim >> owner_shape_tag >> parametric >> number_of_nodes_in_block;
 
     size_t node_tag;
     std::vector<size_t> node_tags;
@@ -199,14 +184,12 @@ void NodesParser::Parse(std::ifstream &file, GeometryData &data) const {
   }
 }
 
-void GeometricEntitiesParser::Parse(std::ifstream &file,
-                                    GeometryData &data) const {
+void GeometricEntitiesParser::Parse(std::ifstream &file, GeometryData &data) const {
   size_t number_of_entity_blocks;
   size_t number_of_entities;
   size_t min_entity_tag;
   size_t max_entity_tag;
-  file >> number_of_entity_blocks >> number_of_entities >> min_entity_tag >>
-      max_entity_tag;
+  file >> number_of_entity_blocks >> number_of_entities >> min_entity_tag >> max_entity_tag;
 
   size_t total_number_of_entities = max_entity_tag - min_entity_tag + 1;
   if (number_of_entities != total_number_of_entities) {
@@ -218,16 +201,14 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
   size_t entity_type;
   size_t number_of_entities_in_block;
   for (size_t block_idx = 0; block_idx < number_of_entity_blocks; block_idx++) {
-    file >> owner_shape_dim >> owner_shape_tag >> entity_type >>
-        number_of_entities_in_block;
+    file >> owner_shape_dim >> owner_shape_tag >> entity_type >> number_of_entities_in_block;
     utilities::ConvertOneToZeroBased(owner_shape_tag);
 
     size_t node_tag;
     size_t entity_tag;
     std::vector<size_t> node_tags;
     std::string line;
-    for (size_t entity_idx = 0; entity_idx < number_of_entities_in_block;
-         entity_idx++) {
+    for (size_t entity_idx = 0; entity_idx < number_of_entities_in_block; entity_idx++) {
       node_tags.clear();
       std::getline(file, line);
       // TODO Make this better, don't know why getline is returning an empty
@@ -242,14 +223,13 @@ void GeometricEntitiesParser::Parse(std::ifstream &file,
         utilities::ConvertOneToZeroBased(node_tag);
         node_tags.push_back(node_tag);
       }
-      data.AddGeometricEntityData(entity_tag, entity_type, node_tags,
-                                  owner_shape_dim, owner_shape_tag);
+      data.AddGeometricEntityData(entity_tag, entity_type, node_tags, owner_shape_dim,
+                                  owner_shape_tag);
     }
   }
 }
 
-std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(
-    const std::string &section_name) {
+std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(const std::string &section_name) {
   if (section_name == "$PhysicalNames") {
     return std::make_unique<GroupNamesParser>();
   } else if (section_name == "$Entities") {

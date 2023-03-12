@@ -29,8 +29,7 @@ class Mesh {
   size_t number_of_dofs(const std::string &group_name) const;
   size_t dofs_per_node() const;
   std::vector<Element> &element_group(const std::string &group_name);
-  const std::vector<Element> &element_group(
-      const std::string &group_name) const;
+  const std::vector<Element> &element_group(const std::string &group_name) const;
 
   void AddElement(const std::string &group_name, GeometricEntity &entity,
                   const ElementFactory &factory);

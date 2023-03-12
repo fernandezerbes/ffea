@@ -22,20 +22,13 @@ class GeometryTest : public ::testing::Test {
     geometry.AddNode({1.0, 2.0, 0.0});  // Node 7
     geometry.AddNode({2.0, 2.0, 0.0});  // Node 8
 
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
-                                {0, 1, 4, 3}, factory);
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
-                                {1, 2, 5, 4}, factory);
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
-                                {3, 4, 7, 6}, factory);
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria,
-                                {4, 5, 7}, factory);
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria,
-                                {5, 8, 7}, factory);
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kTwoNodeLine, {6, 7},
-                                factory);
-    geometry.AddGeometricEntity(ffea::GeometricEntityType::kTwoNodeLine, {7, 8},
-                                factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad, {0, 1, 4, 3}, factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad, {1, 2, 5, 4}, factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad, {3, 4, 7, 6}, factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria, {4, 5, 7}, factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria, {5, 8, 7}, factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kTwoNodeLine, {6, 7}, factory);
+    geometry.AddGeometricEntity(ffea::GeometricEntityType::kTwoNodeLine, {7, 8}, factory);
 
     geometry.RegisterGeometricEntityGroup("body", {0, 1, 2, 3, 4});
     geometry.RegisterGeometricEntityGroup("top", {5, 6});
@@ -90,8 +83,7 @@ TEST_F(GeometryTest, NodeAddition) {
 }
 
 TEST_F(GeometryTest, GeometricEntityAddition) {
-  geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria,
-                              {0, 4, 3}, factory);
+  geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria, {0, 4, 3}, factory);
   geometry.RegisterGeometricEntityGroup("triangle", {7});
   auto triangle = geometry.entity_group("triangle")[0];
 

@@ -24,9 +24,7 @@ std::vector<size_t> GeometricEntity::node_tags() const {
   return node_tags;
 }
 
-size_t GeometricEntity::node_tag(size_t node_idx) const {
-  return nodes_[node_idx]->tag();
-}
+size_t GeometricEntity::node_tag(size_t node_idx) const { return nodes_[node_idx]->tag(); }
 
 Matrix<double> GeometricEntity::nodal_coords() const {
   Matrix<double> coords_values(number_of_nodes(), dim_);
@@ -40,8 +38,8 @@ Matrix<double> GeometricEntity::nodal_coords() const {
   return coords_values;
 }
 
-Matrix<double> GeometricEntity::EvaluateShapeFunctions(
-    const Coordinates &local_coords, DerivativeOrder order) const {
+Matrix<double> GeometricEntity::EvaluateShapeFunctions(const Coordinates &local_coords,
+                                                       DerivativeOrder order) const {
   switch (order) {
     case DerivativeOrder::kZeroth:
       return EvaluateShapeFunctions0thDerivative(local_coords);
@@ -57,34 +55,27 @@ Matrix<double> GeometricEntity::EvaluateShapeFunctions(
   }
 }
 
-Matrix<double> GeometricEntity::EvaluateJacobian(
-    const Coordinates &local_coords, const Matrix<double> &dN_local) const {
+Matrix<double> GeometricEntity::EvaluateJacobian(const Coordinates &local_coords,
+                                                 const Matrix<double> &dN_local) const {
   return dN_local * nodal_coords();
 }
 
-Matrix<double> GeometricEntity::EvaluateJacobian(
-    const Coordinates &local_coords) const {
-  const auto &dN_local =
-      EvaluateShapeFunctions(local_coords, DerivativeOrder::kFirst);
+Matrix<double> GeometricEntity::EvaluateJacobian(const Coordinates &local_coords) const {
+  const auto &dN_local = EvaluateShapeFunctions(local_coords, DerivativeOrder::kFirst);
   return EvaluateJacobian(local_coords, dN_local);
 }
 
-Vector<double> GeometricEntity::EvaluateNormalVector(
-    const Coordinates &local_coords) const {
+Vector<double> GeometricEntity::EvaluateNormalVector(const Coordinates &local_coords) const {
   std::string type_name = typeid(*this).name();
-  throw std::logic_error("Normal is undefined for geometric entity of type " +
-                         type_name);
+  throw std::logic_error("Normal is undefined for geometric entity of type " + type_name);
 }
 
-Coordinates GeometricEntity::MapLocalToGlobal(
-    const Coordinates &local_coords) const {
-  const auto &N =
-      EvaluateShapeFunctions(local_coords, DerivativeOrder::kZeroth);
+Coordinates GeometricEntity::MapLocalToGlobal(const Coordinates &local_coords) const {
+  const auto &N = EvaluateShapeFunctions(local_coords, DerivativeOrder::kZeroth);
   return MapLocalToGlobal(N);
 }
 
-Coordinates GeometricEntity::MapLocalToGlobal(
-    const Matrix<double> &N_at_point) const {
+Coordinates GeometricEntity::MapLocalToGlobal(const Matrix<double> &N_at_point) const {
   std::array<double, 3> xyz{};
   for (size_t node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
     const auto &node = nodes_[node_idx];
@@ -102,12 +93,10 @@ Coordinates &GeometricEntity::node_coords(size_t node_idx) const {
 
 // Line entities
 
-Line::Line(GeometricEntityType type, size_t dim,
-           const std::vector<Node *> &nodes)
+Line::Line(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
-Vector<double> Line::EvaluateNormalVector(
-    const Coordinates &local_coords) const {
+Vector<double> Line::EvaluateNormalVector(const Coordinates &local_coords) const {
   if (dim() == 3) {
     throw std::runtime_error("Lines are not supported in 3D");
   }
@@ -160,12 +149,10 @@ Matrix<double> TwoNodeLine::EvaluateShapeFunctions2ndDerivative(
 
 // Quad entities
 
-Quad::Quad(GeometricEntityType type, size_t dim,
-           const std::vector<Node *> &nodes)
+Quad::Quad(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
-Vector<double> Quad::EvaluateNormalVector(
-    const Coordinates &local_coords) const {
+Vector<double> Quad::EvaluateNormalVector(const Coordinates &local_coords) const {
   // [2x4] * [4x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
   // For 2D we don't have dz
@@ -193,8 +180,7 @@ FourNodeQuad::FourNodeQuad(size_t dim, const std::vector<Node *> &nodes)
     : Quad(GeometricEntityType::kFourNodeQuad, dim, nodes) {}
 
 std::vector<Coordinates> FourNodeQuad::nodal_local_coords() const {
-  return {
-      {-1.0, -1.0, 0.0}, {1.0, -1.0, 0.0}, {1.0, 1.0, 0.0}, {-1.0, 1.0, 0.0}};
+  return {{-1.0, -1.0, 0.0}, {1.0, -1.0, 0.0}, {1.0, 1.0, 0.0}, {-1.0, 1.0, 0.0}};
 }
 
 Matrix<double> FourNodeQuad::EvaluateShapeFunctions0thDerivative(
@@ -258,9 +244,8 @@ EightNodeHex::EightNodeHex(const std::vector<Node *> &nodes)
     : Hex(GeometricEntityType::kEightNodeHex, 3, nodes) {}
 
 std::vector<Coordinates> EightNodeHex::nodal_local_coords() const {
-  return {{-1.0, -1.0, -1.0}, {1.0, -1.0, -1.0}, {1.0, 1.0, -1.0},
-          {-1.0, 1.0, -1.0},  {-1.0, -1.0, 1.0}, {1.0, -1.0, 1.0},
-          {1.0, 1.0, 1.0},    {-1.0, 1.0, 1.0}};
+  return {{-1.0, -1.0, -1.0}, {1.0, -1.0, -1.0}, {1.0, 1.0, -1.0}, {-1.0, 1.0, -1.0},
+          {-1.0, -1.0, 1.0},  {1.0, -1.0, 1.0},  {1.0, 1.0, 1.0},  {-1.0, 1.0, 1.0}};
 }
 
 Matrix<double> EightNodeHex::EvaluateShapeFunctions0thDerivative(
@@ -358,12 +343,10 @@ Matrix<double> EightNodeHex::EvaluateShapeFunctions2ndDerivative(
 
 // Tria entities
 
-Tria::Tria(GeometricEntityType type, size_t dim,
-           const std::vector<Node *> &nodes)
+Tria::Tria(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
-Vector<double> Tria::EvaluateNormalVector(
-    const Coordinates &local_coords) const {
+Vector<double> Tria::EvaluateNormalVector(const Coordinates &local_coords) const {
   // [2x3] * [3x3] = [2x3] = [dx/dxi, dy/dxi, dz/dxi
   //                          dx/deta, dy/deta, dz/deta]
   const auto &jacobian = EvaluateJacobian(local_coords);
@@ -498,8 +481,7 @@ Matrix<double> SixNodeTria::EvaluateShapeFunctions2ndDerivative(
 
 // Tetra entities
 
-Tetra::Tetra(GeometricEntityType type, size_t dim,
-             const std::vector<Node *> &nodes)
+Tetra::Tetra(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes)
     : GeometricEntity(type, dim, nodes) {}
 
 double Tetra::EvaluateDifferential(const Coordinates &local_coords) const {
@@ -562,9 +544,8 @@ TenNodeTetra::TenNodeTetra(const std::vector<Node *> &nodes)
     : Tetra(GeometricEntityType::kTenNodeTetra, 3, nodes) {}
 
 std::vector<Coordinates> TenNodeTetra::nodal_local_coords() const {
-  return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0},
-          {0.5, 0.0, 0.0}, {0.5, 0.5, 0.0}, {0.0, 0.5, 0.0}, {0.0, 0.0, 0.5},
-          {0.0, 0.5, 0.5}, {0.5, 0.0, 0.5}};
+  return {{0.0, 0.0, 0.0}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {0.0, 0.0, 1.0}, {0.5, 0.0, 0.0},
+          {0.5, 0.5, 0.0}, {0.0, 0.5, 0.0}, {0.0, 0.0, 0.5}, {0.0, 0.5, 0.5}, {0.5, 0.0, 0.5}};
 }
 
 Matrix<double> TenNodeTetra::EvaluateShapeFunctions0thDerivative(

@@ -14,8 +14,7 @@ std::vector<GeometricEntity*>& Geometry::entity_group(const std::string& name) {
   return entity_groups_.at(name);
 }
 
-const std::vector<GeometricEntity*>& Geometry::entity_group(
-    const std::string& name) const {
+const std::vector<GeometricEntity*>& Geometry::entity_group(const std::string& name) const {
   return entity_groups_.at(name);
 }
 
@@ -24,8 +23,7 @@ void Geometry::AddNode(const std::array<double, 3>& xyz) {
   nodes_.emplace_back(tag, xyz);
 }
 
-void Geometry::AddGeometricEntity(GeometricEntityType type,
-                                  const std::vector<size_t>& node_tags,
+void Geometry::AddGeometricEntity(GeometricEntityType type, const std::vector<size_t>& node_tags,
                                   const GeometricEntityFactory& factory) {
   std::vector<Node*> nodes;
   nodes.reserve(node_tags.size());
@@ -37,8 +35,8 @@ void Geometry::AddGeometricEntity(GeometricEntityType type,
   entities_.push_back(std::move(entity));
 }
 
-void Geometry::RegisterGeometricEntityGroup(
-    const std::string& name, const std::vector<size_t>& entity_tags) {
+void Geometry::RegisterGeometricEntityGroup(const std::string& name,
+                                            const std::vector<size_t>& entity_tags) {
   if (entity_groups_.contains(name)) {
     throw std::runtime_error("Entity group already registered");
   };

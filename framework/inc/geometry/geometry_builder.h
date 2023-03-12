@@ -27,8 +27,7 @@ class GeometryBuilder {
 
 class GeometryFromFileBuilder : public GeometryBuilder {
  public:
-  GeometryFromFileBuilder(const std::string &file_path,
-                          const GeometricEntityFactory &factory);
+  GeometryFromFileBuilder(const std::string &file_path, const GeometricEntityFactory &factory);
 
  private:
   virtual void AddNodes(Geometry &geometry) override;

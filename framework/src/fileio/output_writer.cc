@@ -10,8 +10,7 @@ void OutputWriter::RegisterPostProcessor(const PostProcessor& postprocessor) {
   postprocessors_.push_back(&postprocessor);
 }
 
-void OutputWriter::Write(const std::string& filename,
-                         const std::string& group_name) const {
+void OutputWriter::Write(const std::string& filename, const std::string& group_name) const {
   std::vector<double> points;
   for (const auto& node : mesh_.nodes()) {  // TODO This should only work with
                                             // nodes of the element group
@@ -29,12 +28,10 @@ void OutputWriter::Write(const std::string& filename,
     offsets.push_back(offset);
 
     const auto& entity_type = element.geometric_entity_type();
-    const auto& vtk_cell_type =
-        geometric_entity_to_vtk_cell_map.at(entity_type);
+    const auto& vtk_cell_type = geometric_entity_to_vtk_cell_map.at(entity_type);
     types.push_back(vtk_cell_type);
 
-    for (size_t node_idx = 0; node_idx < element.number_of_nodes();
-         node_idx++) {
+    for (size_t node_idx = 0; node_idx < element.number_of_nodes(); node_idx++) {
       const auto& vtk_node_idx = MapToVtkNodeIdx(entity_type, node_idx);
       connectivity.push_back(element.node_tag(vtk_node_idx));
     }
@@ -50,16 +47,14 @@ void OutputWriter::Write(const std::string& filename,
 
   for (const auto& postprocessor : postprocessors_) {
     data_set_data.push_back(postprocessor->Process(group_name));
-    data_set_info.emplace_back(postprocessor->variable_name(),
-                               vtu11::DataSetType::PointData,
+    data_set_info.emplace_back(postprocessor->variable_name(), vtu11::DataSetType::PointData,
                                postprocessor->values_per_node());
   }
 
   vtu11::writeVtu(filename, vtu_mesh, data_set_info, data_set_data, "Ascii");
 }
 
-vtu11::VtkIndexType MapToVtkNodeIdx(GeometricEntityType entity_type,
-                                    size_t node_idx) {
+vtu11::VtkIndexType MapToVtkNodeIdx(GeometricEntityType entity_type, size_t node_idx) {
   // Map the ffea node index to the vtk node index, since the ordering differs
   if (entity_type == GeometricEntityType::kTenNodeTetra) {
     if (node_idx == 9) {

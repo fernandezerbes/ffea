@@ -7,8 +7,7 @@
 
 namespace ffea {
 
-using DifferentialOperator =
-    std::function<Matrix<double>(const Matrix<double> &)>;
+using DifferentialOperator = std::function<Matrix<double>(const Matrix<double> &)>;
 
 const DifferentialOperator linear_B_operator_2D =
     [](const Matrix<double> &dN_global) -> Matrix<double> {

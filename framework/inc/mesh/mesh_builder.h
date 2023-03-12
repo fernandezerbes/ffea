@@ -17,8 +17,7 @@ class MeshBuilder
   explicit MeshBuilder(Geometry &geometry);
 
   Mesh Build(size_t number_of_fields) const;
-  void RegisterElementFactory(const std::string &group_name,
-                              const ElementFactory &factory);
+  void RegisterElementFactory(const std::string &group_name, const ElementFactory &factory);
 
  private:
   std::unordered_map<std::string, ElementFactory> element_factories_;

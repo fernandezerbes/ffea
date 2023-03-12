@@ -35,95 +35,78 @@ class GeometricEntityFactory2DTest : public ::testing::Test {
 
 TEST_F(GeometricEntityFactory2DTest, GeometricEntityCreation) {
   // kTwoNodeLine
-  auto entity = factory.CreateGeometricEntity(
-      ffea::GeometricEntityType::kTwoNodeLine, {&node0, &node1});
+  auto entity =
+      factory.CreateGeometricEntity(ffea::GeometricEntityType::kTwoNodeLine, {&node0, &node1});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kTwoNodeLine);
   EXPECT_EQ(entity->dim(), dim);
 
   // kThreeNodeTria
-  entity = factory.CreateGeometricEntity(
-      ffea::GeometricEntityType::kThreeNodeTria, {&node0, &node1, &node3});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria,
+                                         {&node0, &node1, &node3});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kThreeNodeTria);
   EXPECT_EQ(entity->dim(), dim);
 
   // kFourNodeQuad
-  entity =
-      factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
-                                    {&node0, &node1, &node3, &node4});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
+                                         {&node0, &node1, &node3, &node4});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kFourNodeQuad);
   EXPECT_EQ(entity->dim(), dim);
 
   // kSixNodeTria
-  entity = factory.CreateGeometricEntity(
-      ffea::GeometricEntityType::kSixNodeTria,
-      {&node0, &node1, &node3, &node4, &node5, &node5});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kSixNodeTria,
+                                         {&node0, &node1, &node3, &node4, &node5, &node5});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kSixNodeTria);
   EXPECT_EQ(entity->dim(), dim);
 }
 
 TEST_F(GeometricEntityFactory2DTest, GeometricEntityNotSupported) {
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFourNodeTetra, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeTetra, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kEightNodeHex, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kEightNodeHex, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kSixNodePrism, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kSixNodePrism, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFiveNodePiramid, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFiveNodePiramid, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kThreeNodeLine, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kThreeNodeLine, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kNineNodeQuad, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kNineNodeQuad, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kTenNodeTetra, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kTenNodeTetra, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kTwentySevenNodeHex, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kTwentySevenNodeHex, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kEighteenNodePrism, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kEighteenNodePrism, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFourteenNodePiramid, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourteenNodePiramid, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kOneNodePoint, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kOneNodePoint, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kEightNodeQuad, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kEightNodeQuad, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kTwentyNodeHex, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kTwentyNodeHex, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFifteenNodePrism, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFifteenNodePrism, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kThirteenNodePiramid, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kThirteenNodePiramid, {}),
                std::runtime_error);
 }
 
@@ -159,31 +142,29 @@ class GeometricEntityFactory3DTest : public ::testing::Test {
 
 TEST_F(GeometricEntityFactory3DTest, GeometricEntityCreation) {
   // kTwoNodeLine
-  auto entity = factory.CreateGeometricEntity(
-      ffea::GeometricEntityType::kTwoNodeLine, {&node0, &node1});
+  auto entity =
+      factory.CreateGeometricEntity(ffea::GeometricEntityType::kTwoNodeLine, {&node0, &node1});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kTwoNodeLine);
   EXPECT_EQ(entity->dim(), dim);
 
   // kThreeNodeTria
-  entity = factory.CreateGeometricEntity(
-      ffea::GeometricEntityType::kThreeNodeTria, {&node0, &node1, &node3});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria,
+                                         {&node0, &node1, &node3});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kThreeNodeTria);
   EXPECT_EQ(entity->dim(), dim);
 
   // kFourNodeQuad
-  entity =
-      factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
-                                    {&node0, &node1, &node3, &node4});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeQuad,
+                                         {&node0, &node1, &node3, &node4});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kFourNodeQuad);
   EXPECT_EQ(entity->dim(), dim);
 
   // kFourNodeTetra
-  entity =
-      factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeTetra,
-                                    {&node0, &node1, &node3, &node4});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourNodeTetra,
+                                         {&node0, &node1, &node3, &node4});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kFourNodeTetra);
   EXPECT_EQ(entity->dim(), dim);
@@ -197,69 +178,55 @@ TEST_F(GeometricEntityFactory3DTest, GeometricEntityCreation) {
   EXPECT_EQ(entity->dim(), dim);
 
   // kSixNodeTria
-  entity = factory.CreateGeometricEntity(
-      ffea::GeometricEntityType::kSixNodeTria,
-      {&node0, &node1, &node3, &node4, &node5, &node5});
+  entity = factory.CreateGeometricEntity(ffea::GeometricEntityType::kSixNodeTria,
+                                         {&node0, &node1, &node3, &node4, &node5, &node5});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kSixNodeTria);
   EXPECT_EQ(entity->dim(), dim);
 
   // kTenNodeTetra
-  entity =
-      factory.CreateGeometricEntity(ffea::GeometricEntityType::kTenNodeTetra,
-                                    {&node0, &node1, &node3, &node4, &node5,
-                                     &node5, &node6, &node7, &node8, &node9});
+  entity = factory.CreateGeometricEntity(
+      ffea::GeometricEntityType::kTenNodeTetra,
+      {&node0, &node1, &node3, &node4, &node5, &node5, &node6, &node7, &node8, &node9});
 
   EXPECT_EQ(entity->type(), ffea::GeometricEntityType::kTenNodeTetra);
   EXPECT_EQ(entity->dim(), dim);
 }
 
 TEST_F(GeometricEntityFactory3DTest, GeometricEntityNotSupported) {
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kSixNodePrism, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kSixNodePrism, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFiveNodePiramid, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFiveNodePiramid, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kThreeNodeLine, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kThreeNodeLine, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kNineNodeQuad, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kNineNodeQuad, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kTwentySevenNodeHex, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kTwentySevenNodeHex, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kEighteenNodePrism, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kEighteenNodePrism, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFourteenNodePiramid, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFourteenNodePiramid, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kOneNodePoint, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kOneNodePoint, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kEightNodeQuad, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kEightNodeQuad, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kTwentyNodeHex, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kTwentyNodeHex, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kFifteenNodePrism, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kFifteenNodePrism, {}),
                std::runtime_error);
 
-  EXPECT_THROW(factory.CreateGeometricEntity(
-                   ffea::GeometricEntityType::kThirteenNodePiramid, {}),
+  EXPECT_THROW(factory.CreateGeometricEntity(ffea::GeometricEntityType::kThirteenNodePiramid, {}),
                std::runtime_error);
 }
