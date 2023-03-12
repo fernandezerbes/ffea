@@ -1,25 +1,31 @@
 #ifndef FFEA_FRAMEWORK_INC_MODEL_COMPUTATIONALDOMAIN_H_
 #define FFEA_FRAMEWORK_INC_MODEL_COMPUTATIONALDOMAIN_H_
 
+#include "../alias.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../alias.h"
 #include "./operator.h"
+#include "./physics_processor.h"
 
 namespace ffea {
 
-class ComputationalDomain {
+class ComputationalDomain : public PhysicsProcessor {
  public:
   ComputationalDomain(const std::vector<Element> &elements,
                       const ConstitutiveModel &constitutive_model,
                       Integrand integrand, VectorialFunction source);
 
-  void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
-  void AddContribution(CSRMatrix<double> &global_stiffness,
-                       Vector<double> &global_rhs) const;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       Vector<double> &system_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       CSRMatrix<double> &system_mass,
+                       Vector<double> &system_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       CSRMatrix<double> &system_mass,
+                       CSRMatrix<double> &system_damping,
+                       Vector<double> &system_rhs) const override;
 
  private:
-  const std::vector<Element> &elements_;
   const ConstitutiveModel &constitutive_model_;
   Integrand integrand_;
   VectorialFunction source_;

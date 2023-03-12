@@ -18,6 +18,7 @@ add_library(ffea
   src/model/computational_domain.cc
   src/model/constitutive_model.cc
   src/model/model.cc
+  src/model/physics_processor.cc
   src/fileio/output_writer.cc
   src/fileio/geometry_parser.cc
   src/postprocessor/postprocessor.cc

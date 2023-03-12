@@ -4,6 +4,7 @@
 #include <unordered_set>
 
 #include "../applications/elasticity/inc/constitutive_model.h"
+#include "../applications/elasticity/inc/postprocessor.h"
 #include "../framework/inc/analysis/analysis.h"
 #include "../framework/inc/fileio/output_writer.h"
 #include "../framework/inc/geometry/coordinates.h"
@@ -47,7 +48,7 @@ int main() {
   // TODO Reuse all possible values of shape functions, jacobians, etc. during
   // system integration
   // TODO See if protected virtual classes can be made private
-  // TODO Add mass matrix contribution
+  // TODO Add system_mass matrix contribution
   // TODO Remove dependency of Eigen
   // TODO Create analysis builders
   // TODO Review function signatures and check constness, encapsulation, etc
@@ -125,12 +126,12 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  // std::shared_ptr<ffea::PostProcessor> displacement_postprocessor =
-  //     std::make_shared<ffea::PrimaryVariablePostProcessor>(mesh);
+  const auto& displacement_postprocessor =
+      ffea::utilities::MakeDisplacementProcessor2D(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
-  // writer.RegisterPostProcessor(*displacement_postprocessor);
+  writer.RegisterPostProcessor(displacement_postprocessor);
   writer.Write("ffea_output_tria_vtu11.vtu", surface_group_name);
 
   auto stop = std::chrono::high_resolution_clock::now();

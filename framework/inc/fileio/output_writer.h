@@ -13,14 +13,14 @@ namespace ffea {
 
 class OutputWriter {
  public:
-  explicit OutputWriter(Mesh& mesh);
+  explicit OutputWriter(Mesh &mesh);
 
-  void RegisterPostProcessor(const PostProcessor& postprocessor);
-  void Write(const std::string& filename, const std::string& group_name) const;
+  void RegisterPostProcessor(const PostProcessor &postprocessor);
+  void Write(const std::string &filename, const std::string &group_name) const;
 
  private:
-  std::vector<const PostProcessor*> postprocessors_;
-  const Mesh& mesh_;
+  std::vector<const PostProcessor *> postprocessors_;
+  const Mesh &mesh_;
 };
 
 vtu11::VtkIndexType MapToVtkNodeIdx(GeometricEntityType entity_type,

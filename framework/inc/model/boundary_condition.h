@@ -4,36 +4,28 @@
 #include <unordered_set>
 #include <vector>
 
+#include "../alias.h"
 #include "../geometry/coordinates.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "../alias.h"
+#include "./physics_processor.h"
 
 namespace ffea {
 
-class BoundaryCondition {
- public:
-  BoundaryCondition(const std::vector<Element> &elements);
-  virtual ~BoundaryCondition() = default;
-  BoundaryCondition(const BoundaryCondition &) = delete;
-  BoundaryCondition &operator=(const BoundaryCondition &) = delete;
-  BoundaryCondition(BoundaryCondition &&) = delete;
-  BoundaryCondition &operator=(BoundaryCondition &&) = delete;
-
-  virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Vector<double> &global_rhs) const = 0;
-
- protected:
-  const std::vector<Element> &elements_;
-};
-
-class NaturalBoundaryCondition : public BoundaryCondition {
+class NaturalBoundaryCondition : public PhysicsProcessor {
  public:
   NaturalBoundaryCondition(const std::vector<Element> &elements,
                            VectorialFunction load, VectorialFunction radiation);
 
-  virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Vector<double> &global_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       Vector<double> &system_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       CSRMatrix<double> &system_mass,
+                       Vector<double> &system_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       CSRMatrix<double> &system_mass,
+                       CSRMatrix<double> &system_damping,
+                       Vector<double> &system_rhs) const override;
 
  private:
   VectorialFunction load_;
@@ -42,8 +34,8 @@ class NaturalBoundaryCondition : public BoundaryCondition {
 
 class EnforcementStrategy {
  public:
-  virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Vector<double> &global_rhs, VectorialFunction condition,
+  virtual void Enforce(CSRMatrix<double> &system_stiffness,
+                       Vector<double> &system_rhs, VectorialFunction condition,
                        const std::vector<Element> &elements,
                        const std::unordered_set<size_t> &components) const = 0;
 };
@@ -51,7 +43,7 @@ class EnforcementStrategy {
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
   virtual void Enforce(
-      CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
+      CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
       VectorialFunction condition, const std::vector<Element> &elements,
       const std::unordered_set<size_t> &components) const override;
 };
@@ -60,7 +52,7 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
   PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(
-      CSRMatrix<double> &global_stiffness, Vector<double> &global_rhs,
+      CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
       VectorialFunction condition, const std::vector<Element> &elements,
       const std::unordered_set<size_t> &components) const override;
 
@@ -68,15 +60,22 @@ class PenaltyEnforcementStrategy : public EnforcementStrategy {
   double penalty_;
 };
 
-class EssentialBoundaryCondition : public BoundaryCondition {
+class EssentialBoundaryCondition : public PhysicsProcessor {
  public:
   EssentialBoundaryCondition(const std::vector<Element> &elements,
                              VectorialFunction condition,
                              const std::unordered_set<size_t> &components,
                              const EnforcementStrategy &strategy);
 
-  virtual void Enforce(CSRMatrix<double> &global_stiffness,
-                       Vector<double> &global_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       Vector<double> &system_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       CSRMatrix<double> &system_mass,
+                       Vector<double> &system_rhs) const override;
+  virtual void Process(CSRMatrix<double> &system_stiffness,
+                       CSRMatrix<double> &system_mass,
+                       CSRMatrix<double> &system_damping,
+                       Vector<double> &system_rhs) const override;
 
  private:
   VectorialFunction condition_;

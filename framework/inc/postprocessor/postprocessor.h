@@ -4,9 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "../alias.h"
 #include "../geometry/coordinates.h"
 #include "../mesh/mesh.h"
-#include "../alias.h"
 #include "../model/constitutive_model.h"
 #include "../model/operator.h"
 

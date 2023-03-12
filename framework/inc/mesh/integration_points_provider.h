@@ -10,7 +10,8 @@ namespace ffea {
 
 class IntegrationPointsProvider {
  public:
-  const IntegrationPointsGroup &integration_points(GeometricEntityType type) const;
+  const IntegrationPointsGroup &integration_points(
+      GeometricEntityType type) const;
 
   void RegisterIntegrationPoints(GeometricEntityType type,
                                  const IntegrationPointsGroup &ips);

@@ -44,6 +44,10 @@ std::vector<size_t> Element::dof_tags() const {
   return dof_tags;
 }
 
+const IntegrationPointsGroup &Element::integration_points() const {
+  return ips_;
+}
+
 void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
   MatrixEntries<double> entries;
   // Number of entries of an upper-triangular element matrix
@@ -65,74 +69,6 @@ void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
     }
   }
   nonzero_entries.insert(nonzero_entries.end(), entries.begin(), entries.end());
-}
-
-void Element::ProcessOverDomain(const ConstitutiveModel &constitutive_model,
-                                Integrand integrand, VectorialFunction source,
-                                CSRMatrix<double> &global_stiffness,
-                                Vector<double> &global_rhs) const {
-  ElementSystem system{};
-  system.stiffness_matrix =
-      Matrix<double>::Zero(number_of_dofs(), number_of_dofs());
-  if (source) {
-    system.rhs_vector = Vector<double>::Zero(number_of_dofs());
-  }
-
-  for (const auto &ip : ips_) {
-    const auto &local_coords = ip.local_coords();
-    const auto &N =
-        EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
-    const auto &global_coords = MapLocalToGlobal(N);
-    const auto &dN_local =
-        EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kFirst);
-    const auto &jacobian = EvaluateJacobian(local_coords, dN_local);
-    const auto &dN_global = jacobian.inverse() * dN_local;
-    const auto &C = constitutive_model.Evaluate(global_coords);
-    const auto &weight = ip.weight();
-    const auto &differential = EvaluateDifferential(local_coords);
-
-    (*system.stiffness_matrix).triangularView<Eigen::Upper>() +=
-        integrand(dN_global, C) * weight * differential;
-
-    if (source) {
-      const auto &load_vector = source(global_coords);
-      AddLoadContribution(load_vector, N, weight, differential, system);
-    }
-  }
-
-  Scatter(system, global_stiffness, global_rhs);
-}
-
-void Element::ProcessOverBoundary(VectorialFunction load,
-                                  VectorialFunction radiation,
-                                  CSRMatrix<double> &global_stiffness,
-                                  Vector<double> &global_rhs) const {
-  ElementSystem system{};
-  system.rhs_vector = Vector<double>::Zero(number_of_dofs());
-  if (radiation) {
-    system.stiffness_matrix =
-        Matrix<double>::Zero(number_of_dofs(), number_of_dofs());
-  }
-
-  for (const auto &ip : ips_) {
-    const auto &local_coords = ip.local_coords();
-    const auto &N =
-        EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
-    const auto &global_coords = MapLocalToGlobal(N);
-    const auto &load_vector = load(global_coords);
-    const auto &weight = ip.weight();
-    const auto &differential = EvaluateDifferential(local_coords);
-
-    AddLoadContribution(load_vector, N, weight, differential, system);
-
-    if (radiation) {
-      const auto radiation_value = radiation(global_coords)[0];
-      AddRadiationContribution(radiation_value, N, weight, differential,
-                               system);
-    }
-  }
-
-  Scatter(system, global_stiffness, global_rhs);
 }
 
 Vector<double> Element::ExtractSolution() const {
@@ -193,58 +129,6 @@ Coordinates Element::MapLocalToGlobal(const Coordinates &local_coords) const {
 
 Coordinates Element::MapLocalToGlobal(const Matrix<double> &N_at_point) const {
   return entity_.MapLocalToGlobal(N_at_point);
-}
-
-void Element::AddLoadContribution(const std::vector<double> &load_vector,
-                                  const Matrix<double> &N, double weight,
-                                  double differential,
-                                  ElementSystem &system) const {
-  for (auto node_idx = 0; node_idx < number_of_nodes(); node_idx++) {
-    for (auto component_idx = 0; component_idx < dofs_per_node();
-         component_idx++) {
-      const auto &dof_idx = node_idx * dofs_per_node() + component_idx;
-      (*system.rhs_vector)(dof_idx) +=
-          N(0, node_idx) * load_vector[component_idx] * weight * differential;
-    }
-  }
-}
-
-void Element::AddRadiationContribution(double radiation,
-                                       const Matrix<double> &N, double weight,
-                                       double differential,
-                                       ElementSystem &system) const {
-  (*system.stiffness_matrix).triangularView<Eigen::Upper>() +=
-      N.transpose() * radiation * N * weight * differential;
-}
-
-void Element::Scatter(const ElementSystem &element_system,
-                      CSRMatrix<double> &global_stiffness,
-                      Vector<double> &global_rhs) const {
-  const auto &tags = dof_tags();
-
-  for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
-    const auto &i_dof_tag = tags[i_dof_idx];
-    for (size_t j_dof_idx = i_dof_idx; j_dof_idx < number_of_dofs();
-         j_dof_idx++) {
-      if (!element_system.stiffness_matrix) {
-        continue;
-      }
-
-      const auto &value =
-          (*element_system.stiffness_matrix)
-              .selfadjointView<Eigen::Upper>()(i_dof_idx, j_dof_idx);
-      const auto &j_dof_tag = tags[j_dof_idx];
-      if (i_dof_tag <= j_dof_tag) {
-        global_stiffness.coeffRef(i_dof_tag, j_dof_tag) += value;
-      } else {
-        global_stiffness.coeffRef(j_dof_tag, i_dof_tag) += value;
-      }
-    }
-
-    if (element_system.rhs_vector) {
-      global_rhs(i_dof_tag) += (*element_system.rhs_vector)(i_dof_idx);
-    }
-  }
 }
 
 }  // namespace ffea

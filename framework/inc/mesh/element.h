@@ -4,10 +4,10 @@
 #include <optional>
 #include <vector>
 
+#include "../alias.h"
 #include "../geometry/coordinates.h"
 #include "../geometry/geometric_entity.h"
 #include "../geometry/node.h"
-#include "../alias.h"
 #include "../model/constitutive_model.h"
 #include "./degree_of_freedom.h"
 #include "./integration_point.h"
@@ -36,37 +36,23 @@ class Element {
   size_t dofs_per_node() const;
   std::vector<DegreeOfFreedom *> dofs() const;
   std::vector<size_t> dof_tags() const;
+  const IntegrationPointsGroup &integration_points() const;
 
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
-  void ProcessOverDomain(const ConstitutiveModel &constitutive_model,
-                         Integrand integrand, VectorialFunction source,
-                         CSRMatrix<double> &global_stiffness,
-                         Vector<double> &global_rhs) const;
-  void ProcessOverBoundary(VectorialFunction load, VectorialFunction radiation,
-                           CSRMatrix<double> &global_stiffness,
-                           Vector<double> &global_rhs) const;
   Vector<double> ExtractSolution() const;
   void AddNodalValues(ValuesProcessor values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
-
- private:
   Matrix<double> EvaluateShapeFunctions(
       const Coordinates &local_coords,
       DerivativeOrder order = DerivativeOrder::kZeroth) const;
-  Matrix<double> EvaluateJacobian(const Coordinates &local_coords,
-                                  const Matrix<double> &dN_local) const;
-  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const;
-  double EvaluateDifferential(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Matrix<double> &N_at_point) const;
-  void AddLoadContribution(const std::vector<double> &load_vector,
-                           const Matrix<double> &N, double weight,
-                           double differential, ElementSystem &system) const;
-  void AddRadiationContribution(double radiation, const Matrix<double> &N,
-                                double weight, double differential,
-                                ElementSystem &system) const;
-  void Scatter(const ElementSystem &system, CSRMatrix<double> &global_stiffness,
-               Vector<double> &global_rhs) const;
+  double EvaluateDifferential(const Coordinates &local_coords) const;
+  Matrix<double> EvaluateJacobian(const Coordinates &local_coords,
+                                  const Matrix<double> &dN_local) const;
+
+ private:
+  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const;
 
   GeometricEntity &entity_;
   std::vector<DegreeOfFreedom *> dofs_;
