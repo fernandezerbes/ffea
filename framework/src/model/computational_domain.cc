@@ -48,7 +48,7 @@ void ComputationalDomain::Process(CSRMatrix<double>& system_stiffness,
     if (source_) {
       Scatter(dof_tags, element_stiffness, element_rhs, system_stiffness, system_rhs);
     } else {
-      Scatter(dof_tags, element_rhs, system_rhs);
+      Scatter(dof_tags, element_stiffness, system_stiffness);
     }
   }
 }

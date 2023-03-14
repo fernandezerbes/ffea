@@ -23,6 +23,8 @@ class PhysicsProcessor {
   void Scatter(const std::vector<size_t> &dofs_tags, const Matrix<double> &element_stiffness,
                const Vector<double> &element_rhs, CSRMatrix<double> &system_stiffness,
                Vector<double> &system_rhs) const;
+  void Scatter(const std::vector<size_t> &dofs_tags, const Matrix<double> &element_stiffness,
+               CSRMatrix<double> &system_stiffness) const;
   void Scatter(const std::vector<size_t> &dofs_tags, const Vector<double> &element_rhs,
                Vector<double> &system_rhs) const;
   const std::vector<Element> &elements_;

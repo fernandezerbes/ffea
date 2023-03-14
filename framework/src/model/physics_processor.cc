@@ -45,6 +45,23 @@ void PhysicsProcessor::Scatter(const std::vector<size_t> &dofs_tags,
 }
 
 void PhysicsProcessor::Scatter(const std::vector<size_t> &dofs_tags,
+                               const Matrix<double> &element_stiffness,
+                               CSRMatrix<double> &system_stiffness) const {
+  for (size_t i_dof_idx = 0; i_dof_idx < dofs_tags.size(); i_dof_idx++) {
+    const auto &i_dof_tag = dofs_tags[i_dof_idx];
+    for (size_t j_dof_idx = i_dof_idx; j_dof_idx < dofs_tags.size(); j_dof_idx++) {
+      const auto &value = element_stiffness.selfadjointView<Eigen::Upper>()(i_dof_idx, j_dof_idx);
+      const auto &j_dof_tag = dofs_tags[j_dof_idx];
+      if (i_dof_tag <= j_dof_tag) {
+        system_stiffness.coeffRef(i_dof_tag, j_dof_tag) += value;
+      } else {
+        system_stiffness.coeffRef(j_dof_tag, i_dof_tag) += value;
+      }
+    }
+  }
+}
+
+void PhysicsProcessor::Scatter(const std::vector<size_t> &dofs_tags,
                                const Vector<double> &element_rhs,
                                Vector<double> &system_rhs) const {
   for (size_t i_dof_idx = 0; i_dof_idx < dofs_tags.size(); i_dof_idx++) {
