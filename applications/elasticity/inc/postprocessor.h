@@ -3,9 +3,7 @@
 
 #include "../../../framework/inc/postprocessor/postprocessor.h"
 
-namespace ffea {
-
-namespace utilities {
+namespace ffea::app {
 
 PrimaryVariablePostProcessor MakeDisplacementProcessor2D(const Mesh &mesh);
 
@@ -28,8 +26,6 @@ DerivedVariableProcessor MakeElasticStressProcessor2D(const Mesh &mesh,
 DerivedVariableProcessor MakeElasticStressProcessor3D(const Mesh &mesh,
                                                       const ConstitutiveModel &constitutive_model);
 
-}  // namespace utilities
-
-}  // namespace ffea
+}  // namespace ffea::app
 
 #endif  // FFEA_APPLICATIONS_ELASTICITY_INC_POSTPROCESSOR_H_

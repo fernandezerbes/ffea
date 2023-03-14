@@ -3,14 +3,10 @@
 
 #include "../../../framework/inc/postprocessor/postprocessor.h"
 
-namespace ffea {
-
-namespace utilities {
+namespace ffea::app {
 
 PrimaryVariablePostProcessor MakeTemperatureProcessor(const Mesh &mesh);
 
-}  // namespace utilities
-
-}  // namespace ffea
+}  // namespace ffea::app
 
 #endif  // FFEA_APPLICATIONS_QUASIHARMONIC_INC_POSTPROCESSOR_H_

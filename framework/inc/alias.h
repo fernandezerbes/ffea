@@ -29,8 +29,6 @@ using ScalarFunction = std::function<double(const Coordinates &)>;
 
 using VectorialFunction = std::function<std::vector<double>(const Coordinates &)>;
 
-using Integrand = std::function<Matrix<double>(const Matrix<double> &, const Matrix<double> &)>;
-
 using ValuesProcessor = std::function<Matrix<double>(const Vector<double> &, const Coordinates &,
                                                      const Matrix<double> &)>;
 

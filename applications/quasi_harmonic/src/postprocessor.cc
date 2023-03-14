@@ -1,13 +1,9 @@
 #include "../inc/postprocessor.h"
 
-namespace ffea {
-
-namespace utilities {
+namespace ffea::app {
 
 PrimaryVariablePostProcessor MakeTemperatureProcessor(const Mesh &mesh) {
   return PrimaryVariablePostProcessor("Temperature", 1, mesh);
 }
 
-}  // namespace utilities
-
-}  // namespace ffea
+}  // namespace ffea::app

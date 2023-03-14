@@ -3,7 +3,9 @@
 #include <memory>
 #include <unordered_set>
 
+#include "../applications/elasticity/inc/computational_domain.h"
 #include "../applications/elasticity/inc/constitutive_model.h"
+#include "../applications/elasticity/inc/operator.h"
 #include "../applications/elasticity/inc/postprocessor.h"
 #include "../framework/inc/alias.h"
 #include "../framework/inc/analysis/analysis.h"
@@ -88,7 +90,7 @@ int main() {
   // ********************** CONSTITUTIVE MODEL **********************
   double poisson_ratio = 0.3;
   double youngs_modulus = 1;
-  ffea::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus, poisson_ratio);
+  ffea::app::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus, poisson_ratio);
   // ********************** MODEL **********************
   auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
@@ -97,7 +99,7 @@ int main() {
 
   ffea::Model model(mesh);
   model.AddComputationalDomain(surface_group_name, constitutive_model,
-                               ffea::elasticity_integrand_2D, body_load);
+                               ffea::app::elasticity_integrand_2D, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
@@ -120,7 +122,7 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  const auto& displacement_postprocessor = ffea::utilities::MakeDisplacementProcessor2D(mesh);
+  const auto& displacement_postprocessor = ffea::app::MakeDisplacementProcessor2D(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);

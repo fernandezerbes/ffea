@@ -9,6 +9,8 @@
 
 namespace ffea {
 
+using Integrand = std::function<Matrix<double>(const Matrix<double> &, const Matrix<double> &)>;
+
 class ComputationalDomain : public PhysicsProcessor {
  public:
   ComputationalDomain(const std::vector<Element> &elements,
@@ -27,24 +29,6 @@ class ComputationalDomain : public PhysicsProcessor {
   const ConstitutiveModel &constitutive_model_;
   Integrand integrand_;
   VectorialFunction source_;
-};
-
-const Integrand elasticity_integrand_2D = [](const Matrix<double> &dN_global,
-                                             const Matrix<double> &C) -> Matrix<double> {
-  const auto &B = linear_B_operator_2D(dN_global);
-  return B.transpose() * C * B;
-};
-
-const Integrand elasticity_integrand_3D = [](const Matrix<double> &dN_global,
-                                             const Matrix<double> &C) -> Matrix<double> {
-  const auto &B = linear_B_operator_3D(dN_global);
-  return B.transpose() * C * B;
-};
-
-const Integrand quasi_harmonic_integrand = [](const Matrix<double> &dN_global,
-                                              const Matrix<double> &C) -> Matrix<double> {
-  const auto &B = gradient_operator(dN_global);
-  return B.transpose() * C * B;
 };
 
 }  // namespace ffea

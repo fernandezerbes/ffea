@@ -1,6 +1,6 @@
 #include "../inc/constitutive_model.h"
 
-namespace ffea {
+namespace ffea::app {
 
 IsotropicConductivityConstitutiveModel2D::IsotropicConductivityConstitutiveModel2D(double k)
     : ConstitutiveModel(2, 2) {
@@ -23,4 +23,4 @@ Matrix<double> IsotropicConductivityConstitutiveModel3D::Evaluate(const Coordina
   return constitutive_matrix_;
 }
 
-}  // namespace ffea
+}  // namespace ffea::app

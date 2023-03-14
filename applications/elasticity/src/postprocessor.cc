@@ -1,8 +1,9 @@
+
 #include "../inc/postprocessor.h"
 
-namespace ffea {
+#include "../inc/operator.h"
 
-namespace utilities {
+namespace ffea::app {
 
 PrimaryVariablePostProcessor MakeDisplacementProcessor2D(const Mesh &mesh) {
   return PrimaryVariablePostProcessor("Displacement", 2, mesh);
@@ -57,6 +58,4 @@ DerivedVariableProcessor MakeElasticStressProcessor3D(const Mesh &mesh,
   return MakeElasticStressProcessor(6, mesh, constitutive_model, linear_B_operator_2D);
 }
 
-}  // namespace utilities
-
-}  // namespace ffea
+}  // namespace ffea::app

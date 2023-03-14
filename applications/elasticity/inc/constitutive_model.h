@@ -3,7 +3,7 @@
 
 #include "../../../framework/inc/model/constitutive_model.h"
 
-namespace ffea {
+namespace ffea::app {
 
 class LinearElasticConstitutiveModel2D : public ConstitutiveModel {
  public:
@@ -19,6 +19,6 @@ class LinearElasticConstitutiveModel3D : public ConstitutiveModel {
   virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
-}  // namespace ffea
+}  // namespace ffea::app
 
 #endif  // FFEA_APPLICATIONS_ELASTICITY_INC_CONSTITUTIVEMODEL_H_

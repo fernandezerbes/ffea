@@ -3,7 +3,7 @@
 
 #include "../../../framework/inc/model/constitutive_model.h"
 
-namespace ffea {
+namespace ffea::app {
 
 class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
  public:
@@ -19,6 +19,6 @@ class IsotropicConductivityConstitutiveModel3D : public ConstitutiveModel {
   virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
-}  // namespace ffea
+}  // namespace ffea::app
 
 #endif  // FFEA_APPLICATIONS_QUASIHARMONIC_INC_CONSTITUTIVEMODEL_H_

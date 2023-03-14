@@ -1,13 +1,10 @@
 add_executable(runner runner.cc)
 add_executable(runner_3d runner_3d.cc)
-add_executable(two_holes two_holes.cc)
 add_executable(thermal_3d thermal_3d.cc)
 
 target_link_libraries(runner PUBLIC ffea)
 target_link_libraries(runner_3d PUBLIC ffea)
-target_link_libraries(two_holes PUBLIC ffea)
 target_link_libraries(thermal_3d PUBLIC ffea)
 target_link_libraries(runner PUBLIC ffea_elasticity)
 target_link_libraries(runner_3d PUBLIC ffea_elasticity)
-target_link_libraries(two_holes PUBLIC ffea_elasticity)
 target_link_libraries(thermal_3d PUBLIC ffea_quasi_harmonic)

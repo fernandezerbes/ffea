@@ -1,6 +1,6 @@
 #include "../inc/constitutive_model.h"
 
-namespace ffea {
+namespace ffea::app {
 
 LinearElasticConstitutiveModel2D::LinearElasticConstitutiveModel2D(double youngs_modulus,
                                                                    double poisson_ratio)
@@ -39,4 +39,4 @@ Matrix<double> LinearElasticConstitutiveModel3D::Evaluate(const Coordinates& coo
   return constitutive_matrix_;
 }
 
-}  // namespace ffea
+}  // namespace ffea::app

@@ -3,6 +3,7 @@
 #include <memory>
 #include <unordered_set>
 
+#include "../applications/quasi_harmonic/inc/computational_domain.h"
 #include "../applications/quasi_harmonic/inc/constitutive_model.h"
 #include "../applications/quasi_harmonic/inc/postprocessor.h"
 #include "../framework/inc/alias.h"
@@ -52,7 +53,7 @@ int main() {
   auto mesh = mesh_builder.Build(number_of_fields);
 
   // ********************** CONSTITUTIVE MODEL **********************
-  ffea::IsotropicConductivityConstitutiveModel3D constitutive_model(1.0);
+  ffea::app::IsotropicConductivityConstitutiveModel3D constitutive_model(1.0);
 
   // ********************** MODEL **********************
   auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
@@ -66,8 +67,8 @@ int main() {
   };
 
   ffea::Model model(mesh);
-  model.AddComputationalDomain(body_group_name, constitutive_model, ffea::quasi_harmonic_integrand,
-                               body_load);
+  model.AddComputationalDomain(body_group_name, constitutive_model,
+                               ffea::app::quasi_harmonic_integrand, body_load);
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto radiation = [](const ffea::Coordinates& coords) -> std::vector<double> {
@@ -97,7 +98,7 @@ int main() {
   analysis.Solve();
 
   // ********************** POSTPROCESSING **********************
-  const auto temperature_processor = ffea::utilities::MakeTemperatureProcessor(mesh);
+  const auto temperature_processor = ffea::app::MakeTemperatureProcessor(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
