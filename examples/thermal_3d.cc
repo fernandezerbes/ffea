@@ -14,7 +14,7 @@
 #include "../framework/inc/math/utils.h"
 #include "../framework/inc/mesh/degree_of_freedom.h"
 #include "../framework/inc/mesh/element.h"
-#include "../framework/inc/mesh/integration_points_provider.h"
+#include "../framework/inc/mesh/integration_point.h"
 #include "../framework/inc/mesh/mesh.h"
 #include "../framework/inc/mesh/mesh_builder.h"
 #include "../framework/inc/model/boundary_condition.h"
@@ -43,8 +43,7 @@ int main() {
 
   auto geometry = geometry_builder.Build();
 
-  auto integration_points_provider = ffea::utilities::MakeFullIntegrationPointsProvider();
-  ffea::ElementFactory element_factory(integration_points_provider);
+  ffea::ElementFactory element_factory(ffea::full_integration_points);
 
   ffea::MeshBuilder mesh_builder(geometry);
   mesh_builder.RegisterElementFactory(body_group_name, element_factory);

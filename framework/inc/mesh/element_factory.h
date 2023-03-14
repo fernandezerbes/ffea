@@ -5,18 +5,17 @@
 
 #include "./degree_of_freedom.h"
 #include "./element.h"
-#include "./integration_points_provider.h"
 
 namespace ffea {
 
 class ElementFactory {
  public:
-  explicit ElementFactory(const IntegrationPointsProvider &ip_provider);
+  explicit ElementFactory(const IntegrationPointsTable &ip_table);
 
   Element CreateElement(GeometricEntity &entity, const std::vector<DegreeOfFreedom *> &dofs) const;
 
  private:
-  const IntegrationPointsProvider &ip_provider_;
+  const IntegrationPointsTable &ip_table_;
 };
 
 }  // namespace ffea

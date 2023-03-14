@@ -19,6 +19,8 @@ class IntegrationPoint {
 };
 
 using IntegrationPointsGroup = std::vector<IntegrationPoint>;
+using IntegrationPointsTable = std::vector<IntegrationPointsGroup>;
+const IntegrationPointsGroup dummy_rule = {};
 
 // Lines
 
@@ -72,6 +74,52 @@ const IntegrationPointsGroup rule_hex_8 = {
     {0.5773502691896257, -0.5773502691896257, 0.5773502691896257, 1.0},
     {-0.5773502691896257, 0.5773502691896257, 0.5773502691896257, 1.0},
     {0.5773502691896257, 0.5773502691896257, 0.5773502691896257, 1.0}};
+
+// Lookup tables {GeometricEntityType --> IntegrationPointsGroup}
+
+const IntegrationPointsTable full_integration_points = {
+    /* kTwoNodeLine */ rule_line_1,
+    /* kThreeNodeTria */ rule_tria_1,
+    /* kFourNodeQuad */ rule_quad_4,
+    /* kFourNodeTetra */ rule_tetra_1,
+    /* kEightNodeHex */ rule_hex_8,
+    /* kSixNodePrism */ dummy_rule,
+    /* kFiveNodePiramid */ dummy_rule,
+    /* kThreeNodeLine */ dummy_rule,
+    /* kSixNodeTria */ rule_tria_3,
+    /* kNineNodeQuad */ dummy_rule,
+    /* kTenNodeTetra */ rule_tetra_4,
+    /* kTwentySevenNodeHex */ dummy_rule,
+    /* kEighteenNodePrism */ dummy_rule,
+    /* kFourteenNodePiramid */ dummy_rule,
+    /* kOneNodePoint */ dummy_rule,
+    /* kEightNodeQuad */ dummy_rule,
+    /* kTwentyNodeHex */ dummy_rule,
+    /* kFifteenNodePrism */ dummy_rule,
+    /* kThirteenNodePiramid */ dummy_rule,
+};
+
+const IntegrationPointsTable reduced_integration_points = {
+    /* kTwoNodeLine */ rule_line_1,
+    /* kThreeNodeTria */ rule_tria_1,
+    /* kFourNodeQuad */ rule_quad_1,
+    /* kFourNodeTetra */ rule_tetra_1,
+    /* kEightNodeHex */ rule_hex_8,
+    /* kSixNodePrism */ dummy_rule,
+    /* kFiveNodePiramid */ dummy_rule,
+    /* kThreeNodeLine */ dummy_rule,
+    /* kSixNodeTria */ rule_tria_1,
+    /* kNineNodeQuad */ dummy_rule,
+    /* kTenNodeTetra */ rule_tetra_1,
+    /* kTwentySevenNodeHex */ dummy_rule,
+    /* kEighteenNodePrism */ dummy_rule,
+    /* kFourteenNodePiramid */ dummy_rule,
+    /* kOneNodePoint */ dummy_rule,
+    /* kEightNodeQuad */ dummy_rule,
+    /* kTwentyNodeHex */ dummy_rule,
+    /* kFifteenNodePrism */ dummy_rule,
+    /* kThirteenNodePiramid */ dummy_rule,
+};
 
 }  // namespace ffea
 

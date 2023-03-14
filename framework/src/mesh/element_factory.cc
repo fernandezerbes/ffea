@@ -2,13 +2,12 @@
 
 namespace ffea {
 
-ElementFactory::ElementFactory(const IntegrationPointsProvider &ip_provider)
-    : ip_provider_(ip_provider) {}
+ElementFactory::ElementFactory(const IntegrationPointsTable &ip_table)
+    : ip_table_(ip_table) {}
 
 Element ElementFactory::CreateElement(GeometricEntity &entity,
                                       const std::vector<DegreeOfFreedom *> &dofs) const {
-  auto type = entity.type();
-  const auto &ips = ip_provider_.integration_points(type);
+  const auto &ips = ip_table_[static_cast<int>(entity.type())];
   return Element(entity, dofs, ips);
 }
 
