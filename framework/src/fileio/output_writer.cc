@@ -28,11 +28,19 @@ void OutputWriter::Write(const std::string& filename, const std::string& group_n
     offsets.push_back(offset);
 
     const auto& entity_type = element.geometric_entity_type();
-    const auto& vtk_cell_type = geometric_entity_to_vtk_cell_map.at(entity_type);
+    const auto& vtk_cell_type = entity_type_to_vtk_cell_map.at(entity_type);
     types.push_back(vtk_cell_type);
 
+    const std::vector<size_t>* map = nullptr;
+    if (ffea_nodes_to_vtk_nodes_maps.contains(entity_type)) {
+      map = &(ffea_nodes_to_vtk_nodes_maps.at(entity_type));
+    }
+
     for (size_t node_idx = 0; node_idx < element.number_of_nodes(); node_idx++) {
-      const auto& vtk_node_idx = MapToVtkNodeIdx(entity_type, node_idx);
+      auto vtk_node_idx = node_idx;
+      if (map != nullptr) {
+        vtk_node_idx = map->at(node_idx);
+      }
       connectivity.push_back(element.node_tag(vtk_node_idx));
     }
   }
@@ -52,19 +60,6 @@ void OutputWriter::Write(const std::string& filename, const std::string& group_n
   }
 
   vtu11::writeVtu(filename, vtu_mesh, data_set_info, data_set_data, "Ascii");
-}
-
-vtu11::VtkIndexType MapToVtkNodeIdx(GeometricEntityType entity_type, size_t node_idx) {
-  // Map the ffea node index to the vtk node index, since the ordering differs
-  if (entity_type == GeometricEntityType::kTenNodeTetra) {
-    if (node_idx == 9) {
-      return 8;
-    } else if (node_idx == 8) {
-      return 9;
-    }
-  }
-
-  return node_idx;
 }
 
 }  // namespace ffea
