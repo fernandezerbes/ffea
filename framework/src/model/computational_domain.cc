@@ -40,7 +40,8 @@ void ComputationalDomain::Process(CSRMatrix<double>& system_stiffness,
 
       if (source_) {
         const auto& load_vector = source_(global_coords);
-        AddLoadContribution(load_vector, N, weight, differential, element_rhs);
+        const auto& number_of_nodes = element.number_of_nodes();
+        AddLoadContribution(number_of_nodes, load_vector, N, weight, differential, element_rhs);
       }
     }
 

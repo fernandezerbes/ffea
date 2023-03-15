@@ -26,8 +26,9 @@ void NaturalBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
       const auto &load_vector = load_(global_coords);
       const auto &weight = ip.weight();
       const auto &differential = element.EvaluateDifferential(local_coords);
+      const auto &number_of_nodes = element.number_of_nodes();
 
-      AddLoadContribution(load_vector, N, weight, differential, element_rhs);
+      AddLoadContribution(number_of_nodes, load_vector, N, weight, differential, element_rhs);
 
       if (radiation_) {
         const auto radiation_value = radiation_(global_coords)[0];

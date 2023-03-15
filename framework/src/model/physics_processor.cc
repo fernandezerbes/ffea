@@ -10,10 +10,10 @@ void PhysicsProcessor::SetSparsity(MatrixEntries<double> &nonzero_entries) const
   }
 }
 
-void PhysicsProcessor::AddLoadContribution(const std::vector<double> &load_vector,
+void PhysicsProcessor::AddLoadContribution(size_t number_of_nodes,
+                                           const std::vector<double> &load_vector,
                                            const Matrix<double> &N, double weight,
                                            double differential, Vector<double> &element_rhs) const {
-  const auto number_of_nodes = N.rows();
   const auto number_of_components = load_vector.size();
   for (auto node_idx = 0; node_idx < number_of_nodes; node_idx++) {
     for (auto component_idx = 0; component_idx < number_of_components; component_idx++) {

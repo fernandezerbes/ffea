@@ -18,8 +18,9 @@ class PhysicsProcessor {
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
 
  protected:
-  void AddLoadContribution(const std::vector<double> &load_vector, const Matrix<double> &N,
-                           double weight, double differential, Vector<double> &element_rhs) const;
+  void AddLoadContribution(size_t number_of_nodes, const std::vector<double> &load_vector,
+                           const Matrix<double> &N, double weight, double differential,
+                           Vector<double> &element_rhs) const;
   void Scatter(const std::vector<size_t> &dofs_tags, const Matrix<double> &element_stiffness,
                const Vector<double> &element_rhs, CSRMatrix<double> &system_stiffness,
                Vector<double> &system_rhs) const;
