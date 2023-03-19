@@ -51,10 +51,11 @@ void Domain::Contribute(StiffnessTerm& term, Element& element, size_t integratio
   const auto& global_coords = element.global_coords(integration_point_idx);
   const auto& C = constitutive_model_.Evaluate(global_coords);
   const auto& dN_global = element.EvaluateGlobalShapeFunctionsDerivatives(integration_point_idx);
-  const auto& B_matrix = differential_operator_(dN_global);
+  const auto& operator_value = differential_operator_(dN_global);
   const auto& weight = element.integration_point_weight(integration_point_idx);
   const auto& differential = element.EvaluateDifferential(integration_point_idx);
-  const auto& contribution = B_matrix.transpose() * C * B_matrix * weight * differential;
+  const auto& contribution =
+      operator_value.transpose() * C * operator_value * weight * differential;
   term.element_matrix() += contribution;
 }
 
