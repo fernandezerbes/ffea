@@ -85,17 +85,16 @@ int main() {
 
   model.AddEssentialBoundaryCondition(fixed_boundary);
 
-  // ********************** ANALYSIS **********************
-  ffea::Analysis analysis(model);
-  analysis.Solve();
-
   // ********************** POSTPROCESSING **********************
   const auto& displacement_postprocessor = ffea::app::MakeDisplacementProcessor2D(mesh);
 
   std::cout << "Postprocessing..." << std::endl;
   ffea::OutputWriter writer(mesh);
   writer.RegisterPostProcessor(displacement_postprocessor);
-  writer.Write("beam2d.vtu", body);
+
+  // ********************** ANALYSIS **********************
+  ffea::Analysis analysis(model, writer);
+  analysis.Solve("beam2d.vtu", body);
 
   auto stop = std::chrono::high_resolution_clock::now();
   auto duration = stop - start;

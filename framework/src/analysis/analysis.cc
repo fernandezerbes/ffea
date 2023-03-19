@@ -8,9 +8,9 @@
 
 namespace ffea {
 
-Analysis::Analysis(Model& model) : model_(model) {}
+Analysis::Analysis(Model& model, const OutputWriter& writer) : model_(model), writer_(writer) {}
 
-void Analysis::Solve() {
+void Analysis::Solve(const std::string& filename, const std::string& group_name) {
   auto number_of_dofs = model_.number_of_dofs();
   double t = 0.0;
   auto equation = model_.GetEquations(t);
@@ -32,6 +32,7 @@ void Analysis::Solve() {
             << " iterations with an estimated error of " << cg_solver.error() << "." << std::endl;
 
   model_.ProjectSolutionOnMesh(solution);
+  writer_.Write(filename, group_name);
 }
 
 }  // namespace ffea
