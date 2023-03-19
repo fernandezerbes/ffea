@@ -1,5 +1,6 @@
 add_library(ffea_elasticity
   src/constitutive_model.cc
+  src/elastic_region.cc
   src/postprocessor.cc
 )
 

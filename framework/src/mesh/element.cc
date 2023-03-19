@@ -24,6 +24,8 @@ size_t Element::number_of_dofs() const { return dofs_.size(); }
 
 size_t Element::dofs_per_node() const { return number_of_dofs() / number_of_nodes(); }
 
+size_t Element::number_of_integration_points() const { return ips_.size(); }
+
 std::vector<DegreeOfFreedom *> Element::dofs() const { return dofs_; }
 
 std::vector<size_t> Element::dof_tags() const {
@@ -36,6 +38,25 @@ std::vector<size_t> Element::dof_tags() const {
 }
 
 const IntegrationPointsGroup &Element::integration_points() const { return ips_; }
+
+double Element::integration_point_weight(size_t integration_point_idx) const {
+  return ips_[integration_point_idx].weight();
+}
+
+Coordinates Element::global_coords(size_t integration_point_idx) const {
+  const auto &local_coords = ips_[integration_point_idx].local_coords();
+  const auto &N = EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kZeroth);
+  const auto &global_coords = MapLocalToGlobal(N);
+  return global_coords;
+}
+
+Matrix<double> Element::EvaluateGlobalShapeFunctionsDerivatives(
+    size_t integration_point_idx) const {
+  const auto &local_coords = ips_[integration_point_idx].local_coords();
+  const auto &dN_local = EvaluateShapeFunctions(local_coords, ffea::DerivativeOrder::kFirst);
+  const auto &jacobian = EvaluateJacobian(local_coords, dN_local);
+  return jacobian.inverse() * dN_local;
+}
 
 void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
   MatrixEntries<double> entries;
@@ -87,6 +108,12 @@ void Element::AddNodalValues(ValuesProcessor values_processor,
   }
 }
 
+Matrix<double> Element::EvaluateShapeFunctions(size_t integration_point_idx,
+                                               DerivativeOrder order) const {
+  const auto &local_coords = ips_[integration_point_idx].local_coords();
+  return entity_.EvaluateShapeFunctions(local_coords, order);
+}
+
 Matrix<double> Element::EvaluateShapeFunctions(const Coordinates &local_coords,
                                                DerivativeOrder order) const {
   return entity_.EvaluateShapeFunctions(local_coords, order);
@@ -101,8 +128,9 @@ Vector<double> Element::EvaluateNormalVector(const Coordinates &local_coords) co
   return entity_.EvaluateNormalVector(local_coords);
 }
 
-double Element::EvaluateDifferential(const Coordinates &local_coords) const {
-  return entity_.EvaluateDifferential(local_coords);
+double Element::EvaluateDifferential(size_t integration_point_idx) const {
+  const auto &ip = ips_[integration_point_idx];
+  return entity_.EvaluateDifferential(ip.local_coords());
 }
 
 Coordinates Element::MapLocalToGlobal(const Coordinates &local_coords) const {
@@ -111,6 +139,10 @@ Coordinates Element::MapLocalToGlobal(const Coordinates &local_coords) const {
 
 Coordinates Element::MapLocalToGlobal(const Matrix<double> &N_at_point) const {
   return entity_.MapLocalToGlobal(N_at_point);
+}
+
+void Element::ResetCache() {
+  // TODO: reset element cache
 }
 
 }  // namespace ffea

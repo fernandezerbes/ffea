@@ -8,71 +8,49 @@
 #include "../geometry/coordinates.h"
 #include "../mesh/element.h"
 #include "../mesh/mesh.h"
-#include "./physics_processor.h"
 
 namespace ffea {
 
-class NaturalBoundaryCondition : public PhysicsProcessor {
- public:
-  NaturalBoundaryCondition(const std::vector<Element> &elements, VectorialFunction load,
-                           VectorialFunction radiation);
+class EnforcementStrategy;
 
-  virtual void Process(CSRMatrix<double> &system_stiffness,
-                       Vector<double> &system_rhs) const override;
-  virtual void Process(CSRMatrix<double> &system_stiffness, CSRMatrix<double> &system_mass,
-                       Vector<double> &system_rhs) const override;
-  virtual void Process(CSRMatrix<double> &system_stiffness, CSRMatrix<double> &system_mass,
-                       CSRMatrix<double> &system_damping,
-                       Vector<double> &system_rhs) const override;
+class EssentialBoundaryCondition {
+ public:
+  EssentialBoundaryCondition(std::vector<Element> &elements, VectorialFunction condition,
+                             const std::unordered_set<size_t> &components,
+                             EnforcementStrategy &strategy);
+
+  void Process(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs);
 
  private:
-  VectorialFunction load_;
-  VectorialFunction radiation_;
+  std::vector<Element> &elements_;
+  VectorialFunction condition_;
+  const std::unordered_set<size_t> &directions_to_consider_;
+  EnforcementStrategy &strategy_;
 };
 
 class EnforcementStrategy {
  public:
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       VectorialFunction condition, const std::vector<Element> &elements,
-                       const std::unordered_set<size_t> &components) const = 0;
+                       VectorialFunction condition, std::vector<Element> &elements,
+                       const std::unordered_set<size_t> &components) = 0;
 };
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       VectorialFunction condition, const std::vector<Element> &elements,
-                       const std::unordered_set<size_t> &components) const override;
+                       VectorialFunction condition, std::vector<Element> &elements,
+                       const std::unordered_set<size_t> &components) override;
 };
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
   PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       VectorialFunction condition, const std::vector<Element> &elements,
-                       const std::unordered_set<size_t> &components) const override;
+                       VectorialFunction condition, std::vector<Element> &elements,
+                       const std::unordered_set<size_t> &components) override;
 
  private:
   double penalty_;
-};
-
-class EssentialBoundaryCondition : public PhysicsProcessor {
- public:
-  EssentialBoundaryCondition(const std::vector<Element> &elements, VectorialFunction condition,
-                             const std::unordered_set<size_t> &components,
-                             const EnforcementStrategy &strategy);
-
-  virtual void Process(CSRMatrix<double> &system_stiffness,
-                       Vector<double> &system_rhs) const override;
-  virtual void Process(CSRMatrix<double> &system_stiffness, CSRMatrix<double> &system_mass,
-                       Vector<double> &system_rhs) const override;
-  virtual void Process(CSRMatrix<double> &system_stiffness, CSRMatrix<double> &system_mass,
-                       CSRMatrix<double> &system_damping,
-                       Vector<double> &system_rhs) const override;
-
- private:
-  VectorialFunction condition_;
-  const std::unordered_set<size_t> &directions_to_consider_;
-  const EnforcementStrategy &strategy_;
 };
 
 }  // namespace ffea

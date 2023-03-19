@@ -33,21 +33,28 @@ class Element {
   size_t node_tag(size_t local_node_idx) const;
   size_t number_of_dofs() const;
   size_t dofs_per_node() const;
+  size_t number_of_integration_points() const;
+
   std::vector<DegreeOfFreedom *> dofs() const;
   std::vector<size_t> dof_tags() const;
   const IntegrationPointsGroup &integration_points() const;
-
+  double integration_point_weight(size_t integration_point_idx) const;
+  Coordinates global_coords(size_t integration_point_idx) const;
+  Matrix<double> EvaluateGlobalShapeFunctionsDerivatives(size_t integration_point_idx) const;
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
   Vector<double> ExtractSolution() const;
   void AddNodalValues(ValuesProcessor values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
+  Matrix<double> EvaluateShapeFunctions(size_t integration_point_idx,
+                                        DerivativeOrder order = DerivativeOrder::kZeroth) const;
   Matrix<double> EvaluateShapeFunctions(const Coordinates &local_coords,
                                         DerivativeOrder order = DerivativeOrder::kZeroth) const;
   Coordinates MapLocalToGlobal(const Coordinates &local_coords) const;
   Coordinates MapLocalToGlobal(const Matrix<double> &N_at_point) const;
-  double EvaluateDifferential(const Coordinates &local_coords) const;
+  double EvaluateDifferential(size_t integration_point_idx) const;
   Matrix<double> EvaluateJacobian(const Coordinates &local_coords,
                                   const Matrix<double> &dN_local) const;
+  void ResetCache();
 
  private:
   Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const;

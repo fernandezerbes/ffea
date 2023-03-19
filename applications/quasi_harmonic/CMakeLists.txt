@@ -1,5 +1,6 @@
 add_library(ffea_quasi_harmonic
   src/constitutive_model.cc
+  src/quasi_harmonic_region.cc
   src/postprocessor.cc
 )
 

@@ -14,10 +14,10 @@ add_library(ffea
   src/mesh/mesh.cc
   src/mesh/mesh_builder.cc
   src/model/boundary_condition.cc
-  src/model/computational_domain.cc
   src/model/constitutive_model.cc
+  src/model/equation.cc
   src/model/model.cc
-  src/model/physics_processor.cc
+  src/model/physical_region.cc
   src/fileio/output_writer.cc
   src/fileio/geometry_parser.cc
   src/postprocessor/postprocessor.cc
