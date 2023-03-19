@@ -43,11 +43,7 @@ int main() {
   auto geometry = geometry_builder.Build();
 
   ffea::ElementFactory element_factory(ffea::full_integration_points);
-
-  ffea::MeshBuilder mesh_builder(geometry);
-  mesh_builder.RegisterElementFactory(body, element_factory);
-  mesh_builder.RegisterElementFactory(fixed_end, element_factory);
-  mesh_builder.RegisterElementFactory(free_end, element_factory);
+  ffea::MeshBuilder mesh_builder(geometry, element_factory);
   auto mesh = mesh_builder.Build(number_of_fields);
 
   // ********************** CONSTITUTIVE MODEL **********************
@@ -56,7 +52,7 @@ int main() {
   ffea::app::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus, poisson_ratio);
   // ********************** MODEL **********************
   auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
-    std::vector<double> load{0.0, -1.0};
+    std::vector<double> load{0.0, 0.0};
     return load;
   };
   auto& body_elements = mesh.element_group(body);
@@ -68,7 +64,7 @@ int main() {
 
   // ********************** BOUNDARY CONDITIONS **********************
   auto load_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
-    std::vector<double> load{0.0, 0.0};
+    std::vector<double> load{0.0, -1.0};
     return load;
   };
 

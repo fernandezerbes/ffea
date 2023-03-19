@@ -7,6 +7,13 @@ namespace ffea {
 
 MeshBuilder::MeshBuilder(Geometry &geometry) : geometry_(geometry), element_factories_() {}
 
+MeshBuilder::MeshBuilder(Geometry &geometry, const ElementFactory &factory)
+    : MeshBuilder(geometry) {
+  for (const auto &[group_name, entities] : geometry_.entity_groups()) {
+    RegisterElementFactory(group_name, factory);
+  }
+}
+
 Mesh MeshBuilder::Build(size_t number_of_fields) const {
   Mesh mesh(geometry_, number_of_fields);
 

@@ -15,6 +15,7 @@ class MeshBuilder
 {
  public:
   explicit MeshBuilder(Geometry &geometry);
+  MeshBuilder(Geometry &geometry, const ElementFactory &factory);
 
   Mesh Build(size_t number_of_fields) const;
   void RegisterElementFactory(const std::string &group_name, const ElementFactory &factory);
