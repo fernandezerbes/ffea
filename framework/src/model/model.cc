@@ -20,7 +20,7 @@ Equation Model::GetEquations(double t) {
   for (auto& region : regions_) {
     equation.Process(*region, t);
   }
-  EnforceBoundaryConditions(equation);
+  EnforceBoundaryConditions(equation, t);
   return equation;
 }
 
@@ -35,15 +35,13 @@ void Model::SetSparsity(Equation& equation) const {
   equation.SetSparsity(nonzero_entries);
 }
 
-void Model::EnforceBoundaryConditions(Equation& equation) {
+void Model::EnforceBoundaryConditions(Equation& equation, double t) {
   std::cout << "Enforcing boundary conditions..." << std::endl;
   // TODO move this to the term functions
   auto& stiffness_term = equation.GetTerm<StiffnessTerm>();
   auto& rhs_term = equation.GetTerm<RhsTerm>();
-  // auto& stiffness_matrix = stiffness_term.matrix();
-  // auto& rhs_vector = rhs_term.vector();
   for (auto& bc : bcs_) {
-    bc->Process(stiffness_term.matrix(), rhs_term.vector());
+    bc->Process(stiffness_term.matrix(), rhs_term.vector(), t);
   }
 }
 

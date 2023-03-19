@@ -51,7 +51,7 @@ int main() {
   double youngs_modulus = 1;
   ffea::app::LinearElasticConstitutiveModel2D constitutive_model(youngs_modulus, poisson_ratio);
   // ********************** MODEL **********************
-  auto body_load = [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto body_load = [](const ffea::Coordinates& coords, double t) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };
@@ -63,7 +63,7 @@ int main() {
   model.AddPhysicalRegion(elastic_domain);
 
   // ********************** BOUNDARY CONDITIONS **********************
-  auto load_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto load_function = [](const ffea::Coordinates& coords, double t) -> std::vector<double> {
     std::vector<double> load{0.0, -1.0};
     return load;
   };
@@ -72,7 +72,7 @@ int main() {
   auto loaded_boundary = ffea::DomainBoundary(free_edge_elements, load_function);
   model.AddPhysicalRegion(loaded_boundary);
 
-  auto boundary_function = [](const ffea::Coordinates& coords) -> std::vector<double> {
+  auto boundary_function = [](const ffea::Coordinates& coords, double t) -> std::vector<double> {
     std::vector<double> load{0.0, 0.0};
     return load;
   };

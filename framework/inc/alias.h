@@ -25,9 +25,8 @@ using Matrix = Eigen::Matrix<ScalarType, Eigen::Dynamic, Eigen::Dynamic>;
 template <typename ScalarType>
 using Vector = Eigen::Vector<ScalarType, Eigen::Dynamic>;
 
-using ScalarFunction = std::function<double(const Coordinates &)>;
-
-using VectorialFunction = std::function<std::vector<double>(const Coordinates &)>;
+template <typename T>
+using SpatioTemporalFunction = std::function<T(const Coordinates &, double)>;
 
 using ValuesProcessor = std::function<Matrix<double>(const Vector<double> &, const Coordinates &,
                                                      const Matrix<double> &)>;

@@ -15,15 +15,16 @@ class EnforcementStrategy;
 
 class EssentialBoundaryCondition {
  public:
-  EssentialBoundaryCondition(std::vector<Element> &elements, VectorialFunction condition,
+  EssentialBoundaryCondition(std::vector<Element> &elements,
+                             SpatioTemporalFunction<std::vector<double>> condition,
                              const std::unordered_set<size_t> &components,
                              EnforcementStrategy &strategy);
 
-  void Process(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs);
+  void Process(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs, double t);
 
  private:
   std::vector<Element> &elements_;
-  VectorialFunction condition_;
+  SpatioTemporalFunction<std::vector<double>> condition_;
   const std::unordered_set<size_t> &directions_to_consider_;
   EnforcementStrategy &strategy_;
 };
@@ -31,23 +32,26 @@ class EssentialBoundaryCondition {
 class EnforcementStrategy {
  public:
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       VectorialFunction condition, std::vector<Element> &elements,
-                       const std::unordered_set<size_t> &components) = 0;
+                       SpatioTemporalFunction<std::vector<double>> condition,
+                       std::vector<Element> &elements, const std::unordered_set<size_t> &components,
+                       double t) = 0;
 };
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       VectorialFunction condition, std::vector<Element> &elements,
-                       const std::unordered_set<size_t> &components) override;
+                       SpatioTemporalFunction<std::vector<double>> condition,
+                       std::vector<Element> &elements, const std::unordered_set<size_t> &components,
+                       double t) override;
 };
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
   PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       VectorialFunction condition, std::vector<Element> &elements,
-                       const std::unordered_set<size_t> &components) override;
+                       SpatioTemporalFunction<std::vector<double>> condition,
+                       std::vector<Element> &elements, const std::unordered_set<size_t> &components,
+                       double t) override;
 
  private:
   double penalty_;

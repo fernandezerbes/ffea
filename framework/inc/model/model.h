@@ -26,7 +26,7 @@ class Model {
   void ProjectSolutionOnMesh(const Vector<double> &solution);
 
  private:
-  void EnforceBoundaryConditions(Equation &equation);
+  void EnforceBoundaryConditions(Equation &equation, double t);
   void SetSparsity(Equation &equation) const;
   Mesh &mesh_;
   std::vector<PhysicalRegion *> regions_;

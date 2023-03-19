@@ -9,14 +9,15 @@ namespace ffea::app {
 
 class QuasiHarmonicDomainBoundary : DomainBoundary {
  public:
-  QuasiHarmonicDomainBoundary(std::vector<Element>& elements, VectorialFunction load,
-                              ScalarFunction radiation);
+  QuasiHarmonicDomainBoundary(std::vector<Element>& elements,
+                              SpatioTemporalFunction<std::vector<double>> load,
+                              SpatioTemporalFunction<double> radiation);
 
-  virtual void Contribute(StiffnessTerm& term, Element& element,
-                          size_t integration_point_idx) const override;
+  virtual void Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
+                          double t) const override;
 
  private:
-  const ScalarFunction radiation_;
+  const SpatioTemporalFunction<double> radiation_;
 };
 
 }  // namespace ffea::app

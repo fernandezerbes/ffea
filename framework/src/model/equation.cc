@@ -18,7 +18,7 @@ void Equation::SetSparsity(MatrixEntries<double> nonzero_entries) const {
 void Equation::Process(PhysicalRegion& region, double t) {
   for (auto& element : region.elements()) {
     PrepareElementMatrices(element);
-    Integrate(region, element);
+    Integrate(region, element, t);
     Scatter(element);
   }
 }
@@ -39,10 +39,10 @@ void Equation::AddMassTerm() {
   terms_.push_back(std::make_unique<MassTerm>(number_of_dofs_));
 }
 
-void Equation::Integrate(PhysicalRegion& region, Element& element) {
+void Equation::Integrate(PhysicalRegion& region, Element& element, double t) {
   for (size_t ip_idx = 0; ip_idx < element.number_of_integration_points(); ip_idx++) {
     for (auto& term : terms_) {
-      term->Process(region, element, ip_idx);
+      term->Process(region, element, ip_idx, t);
     }
   }
 }
@@ -123,27 +123,30 @@ Vector<double>& VectorialEquationTerm::vector() { return vector_; }
 
 StiffnessTerm::StiffnessTerm(size_t number_of_dofs) : MatricialEquationTerm(number_of_dofs) {}
 
-void StiffnessTerm::Process(PhysicalRegion& region, Element& element,
-                            size_t integration_point_idx) {
-  region.Contribute(*this, element, integration_point_idx);
+void StiffnessTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+                            double t) {
+  region.Contribute(*this, element, integration_point_idx, t);
 }
 
 DampingTerm::DampingTerm(size_t number_of_dofs) : MatricialEquationTerm(number_of_dofs) {}
 
-void DampingTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx) {
-  region.Contribute(*this, element, integration_point_idx);
+void DampingTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+                          double t) {
+  region.Contribute(*this, element, integration_point_idx, t);
 }
 
 MassTerm::MassTerm(size_t number_of_dofs) : MatricialEquationTerm(number_of_dofs) {}
 
-void MassTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx) {
-  region.Contribute(*this, element, integration_point_idx);
+void MassTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+                       double t) {
+  region.Contribute(*this, element, integration_point_idx, t);
 }
 
 RhsTerm::RhsTerm(size_t number_of_dofs) : VectorialEquationTerm(number_of_dofs) {}
 
-void RhsTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx) {
-  region.Contribute(*this, element, integration_point_idx);
+void RhsTerm::Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+                      double t) {
+  region.Contribute(*this, element, integration_point_idx, t);
 }
 
 }  // namespace ffea

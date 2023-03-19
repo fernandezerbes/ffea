@@ -11,10 +11,10 @@ class DynamicUndampedElasticDomain : Domain {
   DynamicUndampedElasticDomain(std::vector<Element>& elements,
                                const DifferentialOperator B_operator,
                                const ConstitutiveModel& constitutive_model, double density,
-                               VectorialFunction source = nullptr);
+                               SpatioTemporalFunction<std::vector<double>> source = nullptr);
 
-  virtual void Contribute(MassTerm& term, Element& element,
-                          size_t integration_point_idx) const override;
+  virtual void Contribute(MassTerm& term, Element& element, size_t integration_point_idx,
+                          double t) const override;
 
  protected:
   double density_;
