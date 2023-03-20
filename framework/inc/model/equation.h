@@ -43,7 +43,7 @@ template <typename T>
 T& Equation::GetTerm() const {
   for (const auto& term : terms_) {
     if (typeid(*term) == typeid(T)) {
-      return dynamic_cast<T&>(*term);
+      return static_cast<T&>(*term);
     }
   }
 
