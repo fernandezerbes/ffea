@@ -21,18 +21,18 @@ class PhysicalRegion {
 
   std::vector<Element>& elements() const;
   virtual void Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const;
+                          Time t) const;
   virtual void Contribute(MassTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const;
+                          Time t) const;
   virtual void Contribute(DampingTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const;
+                          Time t) const;
   virtual void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const;
+                          Time t) const;
 
  protected:
   void ComputeLoadContribution(Element& element, SpatioTemporalFunction<std::vector<double>> load,
                                size_t integration_point_idx, Vector<double>& contribution,
-                               double t) const;
+                               Time t) const;
 
  private:
   std::vector<Element>& elements_;
@@ -45,9 +45,9 @@ class Domain : public PhysicalRegion {
          SpatioTemporalFunction<std::vector<double>> source);
 
   virtual void Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const override;
+                          Time t) const override;
   virtual void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const override;
+                          Time t) const override;
 
  protected:
   const DifferentialOperator differential_operator_;
@@ -60,7 +60,7 @@ class DomainBoundary : public PhysicalRegion {
   DomainBoundary(std::vector<Element>& elements, SpatioTemporalFunction<std::vector<double>> load);
 
   virtual void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const override;
+                          Time t) const override;
 
  protected:
   const SpatioTemporalFunction<std::vector<double>> load_;

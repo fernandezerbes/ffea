@@ -22,11 +22,11 @@ class Model {
 
   void AddPhysicalRegion(PhysicalRegion &region);
   void AddEssentialBoundaryCondition(EssentialBoundaryCondition &boundary_condition);
-  Equation GetEquations(double t);
+  Equation GetEquations(Time t);
   void ProjectSolutionOnMesh(const Vector<double> &solution);
 
  private:
-  void EnforceBoundaryConditions(Equation &equation, double t);
+  void EnforceBoundaryConditions(Equation &equation, Time t);
   void SetSparsity(Equation &equation) const;
   Mesh &mesh_;
   std::vector<PhysicalRegion *> regions_;

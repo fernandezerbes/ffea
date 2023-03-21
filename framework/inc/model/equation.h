@@ -18,7 +18,7 @@ class Equation {
  public:
   explicit Equation(size_t number_of_dofs);
   void SetSparsity(MatrixEntries<double> nonzero_entries) const;
-  void Process(PhysicalRegion& regions, double t);
+  void Process(PhysicalRegion& regions, Time t);
   void AddDampingTerm();
   void AddMassTerm();
 
@@ -29,7 +29,7 @@ class Equation {
   template <typename T>
   bool HasTerm() const;
 
-  void Integrate(PhysicalRegion& region, Element& element, double t);
+  void Integrate(PhysicalRegion& region, Element& element, Time t);
   void Scatter(Element& element);
   void PrepareElementMatrices(Element& element);
   void ResetGlobalData();
@@ -64,7 +64,7 @@ class EquationTerm {
  public:
   virtual void SetSparsity(MatrixEntries<double> nonzero_entries);
   virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       double t) = 0;
+                       Time t) = 0;
   virtual void Scatter(size_t i_dof_idx, const std::vector<size_t>& dof_tags) = 0;
   virtual void PrepareElementMatrices(size_t number_of_dofs) = 0;
   virtual void ResetGlobalData() = 0;
@@ -103,28 +103,28 @@ class StiffnessTerm : public MatricialEquationTerm {
  public:
   explicit StiffnessTerm(size_t number_of_dofs);
   virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       double t) override;
+                       Time t) override;
 };
 
 class DampingTerm : public MatricialEquationTerm {
  public:
   explicit DampingTerm(size_t number_of_dofs);
   virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       double t) override;
+                       Time t) override;
 };
 
 class MassTerm : public MatricialEquationTerm {
  public:
   explicit MassTerm(size_t number_of_dofs);
   virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       double t) override;
+                       Time t) override;
 };
 
 class RhsTerm : public VectorialEquationTerm {
  public:
   explicit RhsTerm(size_t number_of_dofs);
   virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       double t) override;
+                       Time t) override;
 };
 
 }  // namespace ffea

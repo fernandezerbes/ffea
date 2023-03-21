@@ -14,7 +14,7 @@ class DynamicUndampedElasticDomain : Domain {
                                SpatioTemporalFunction<std::vector<double>> source = nullptr);
 
   virtual void Contribute(MassTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const override;
+                          Time t) const override;
 
  protected:
   double density_;

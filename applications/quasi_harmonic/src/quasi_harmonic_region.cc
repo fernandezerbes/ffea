@@ -10,7 +10,7 @@ QuasiHarmonicDomainBoundary::QuasiHarmonicDomainBoundary(
     : DomainBoundary(elements, load), radiation_(radiation) {}
 
 void QuasiHarmonicDomainBoundary::Contribute(StiffnessTerm& term, Element& element,
-                                             size_t integration_point_idx, double t) const {
+                                             size_t integration_point_idx, Time t) const {
   const auto& global_coords = element.global_coords(integration_point_idx);
   const auto& radiation_value = radiation_(global_coords, t);
   const auto weight = element.integration_point_weight(integration_point_idx);

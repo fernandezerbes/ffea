@@ -11,7 +11,7 @@ DynamicUndampedElasticDomain::DynamicUndampedElasticDomain(
     : Domain(elements, B_operator, constitutive_model, source), density_(density) {}
 
 void DynamicUndampedElasticDomain::Contribute(MassTerm& term, Element& element,
-                                              size_t integration_point_idx, double t) const {}
+                                              size_t integration_point_idx, Time t) const {}
 
 // TODO: add DynamicDampedElasticDomain
 

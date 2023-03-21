@@ -14,7 +14,7 @@ class QuasiHarmonicDomainBoundary : DomainBoundary {
                               SpatioTemporalFunction<double> radiation);
 
   virtual void Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
-                          double t) const override;
+                          Time t) const override;
 
  private:
   const SpatioTemporalFunction<double> radiation_;

@@ -14,7 +14,7 @@ void Model::AddEssentialBoundaryCondition(EssentialBoundaryCondition& boundary_c
   bcs_.push_back(&boundary_condition);
 }
 
-Equation Model::GetEquations(double t) {
+Equation Model::GetEquations(Time t) {
   auto equation = Equation(number_of_dofs());
   SetSparsity(equation);
   for (auto& region : regions_) {
@@ -35,7 +35,7 @@ void Model::SetSparsity(Equation& equation) const {
   equation.SetSparsity(nonzero_entries);
 }
 
-void Model::EnforceBoundaryConditions(Equation& equation, double t) {
+void Model::EnforceBoundaryConditions(Equation& equation, Time t) {
   std::cout << "Enforcing boundary conditions..." << std::endl;
   // TODO move this to the term functions
   auto& stiffness_term = equation.GetTerm<StiffnessTerm>();

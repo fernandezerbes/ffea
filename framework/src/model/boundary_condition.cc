@@ -13,7 +13,7 @@ EssentialBoundaryCondition::EssentialBoundaryCondition(
       strategy_(strategy) {}
 
 void EssentialBoundaryCondition::Process(CSRMatrix<double> &system_stiffness,
-                                         Vector<double> &system_rhs, double t) {
+                                         Vector<double> &system_rhs, Time t) {
   strategy_.Enforce(system_stiffness, system_rhs, condition_, elements_, directions_to_consider_,
                     t);
 }
@@ -25,7 +25,7 @@ void PenaltyEnforcementStrategy::Enforce(CSRMatrix<double> &system_stiffness,
                                          SpatioTemporalFunction<std::vector<double>> condition,
                                          std::vector<Element> &elements,
                                          const std::unordered_set<size_t> &components_to_consider,
-                                         double t) {
+                                         Time t) {
   for (auto &element : elements) {
     const auto &dof_tags = element.dof_tags();
     for (size_t i_dof_idx = 0; i_dof_idx < dof_tags.size(); i_dof_idx++) {

@@ -12,7 +12,7 @@ Analysis::Analysis(Model& model, const OutputWriter& writer) : model_(model), wr
 
 void Analysis::Solve(const std::string& filename, const std::string& group_name) {
   auto number_of_dofs = model_.number_of_dofs();
-  double t = 0.0;
+  Time t = 0.0;
   auto equation = model_.GetEquations(t);
 
   auto& stiffness_term = equation.GetTerm<StiffnessTerm>();
