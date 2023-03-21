@@ -19,7 +19,6 @@ class Equation {
   explicit Equation(size_t number_of_dofs);
   void SetSparsity(MatrixEntries<double> nonzero_entries) const;
   void Process(PhysicalRegion& regions, double t);
-  void AddStiffnessTerm();
   void AddDampingTerm();
   void AddMassTerm();
 
