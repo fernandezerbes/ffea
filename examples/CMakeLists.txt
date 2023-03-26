@@ -1,13 +1,8 @@
-add_executable(runner runner.cc)
+add_executable(cantilever_beam cantilever_beam.cc)
+add_executable(heat_sink heat_sink.cc)
 
-# add_executable(runner_3d runner_3d.cc)
-# add_executable(thermal_3d thermal_3d.cc)
-target_link_libraries(runner PUBLIC ffea)
+target_link_libraries(cantilever_beam PUBLIC ffea)
+target_link_libraries(heat_sink PUBLIC ffea)
 
-# target_link_libraries(runner_3d PUBLIC ffea)
-# target_link_libraries(thermal_3d PUBLIC ffea)
-target_link_libraries(runner PUBLIC ffea_elasticity)
-
-# target_link_libraries(runner_3d PUBLIC ffea_elasticity)
-
-# target_link_libraries(thermal_3d PUBLIC ffea_quasi_harmonic)
+target_link_libraries(cantilever_beam PUBLIC ffea_elasticity)
+target_link_libraries(heat_sink PUBLIC ffea_quasi_harmonic)
