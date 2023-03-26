@@ -11,6 +11,7 @@ namespace ffea {
 Analysis::Analysis(Model& model, const OutputWriter& writer) : model_(model), writer_(writer) {}
 
 void Analysis::Solve(const std::string& filename, const std::string& group_name) {
+  writer_.Write(filename + "_0.vtu", group_name);
   auto number_of_dofs = model_.number_of_dofs();
   Time t = 0.0;
   auto equation = model_.GetEquations(t);
@@ -32,7 +33,9 @@ void Analysis::Solve(const std::string& filename, const std::string& group_name)
             << " iterations with an estimated error of " << cg_solver.error() << "." << std::endl;
 
   model_.ProjectSolutionOnMesh(solution);
-  writer_.Write(filename, group_name);
+  writer_.Write(filename + "_1.vtu", group_name);
+
+  std::cout << "Finished analysis!" << std::endl;
 }
 
 }  // namespace ffea
