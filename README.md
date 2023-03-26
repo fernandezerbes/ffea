@@ -4,7 +4,7 @@
 
 # Capabilities
 ## Elasticity equations
-`ffea` can solve the elasticity equations
+`ffea` can solve the elasticity equations<sup>1</sup>
 $$\frac{\partial{\sigma_x}}{\partial{x}} + \frac{\partial{\tau_{yx}}}{\partial{y}} + \frac{\partial{\tau_{zx}}}{\partial{z}} + b_x = \rho \frac{\partial^2{u}}{\partial{t}^2}$$
 $$\frac{\partial{\tau_{xy}}}{\partial{x}} + \frac{\partial{\sigma_{y}}}{\partial{y}} + \frac{\partial{\tau_{zy}}}{\partial{z}} + b_y = \rho \frac{\partial^2{v}}{\partial{t}^2}$$
 $$\frac{\partial{\tau_{xz}}}{\partial{x}} + \frac{\partial{\tau_{yz}}}{\partial{y}} + \frac{\partial{\sigma_{z}}}{\partial{z}} + b_y = \rho \frac{\partial^2{w}}{\partial{t}^2}$$
@@ -19,7 +19,7 @@ subject to
 _Quasi-static structural problem modeled with `ffea`_.
 
 ## Quasi-harmonic equations
-`ffea` can solve quasi-harmonic equations of the form
+`ffea` can solve quasi-harmonic equations of the form<sup>1</sup>
 
 $$-\left(\frac{\partial{q}}{\partial{x}} + \frac{\partial{q}}{\partial{x}} + \frac{\partial{q}}{\partial{x}}\right) + Q = c \frac{\partial{\phi}}{\partial{t}}$$
 
@@ -41,12 +41,14 @@ and [physical regions](https://github.com/fernandezerbes/ffea/blob/main/framewor
 in the [elasticity](https://github.com/fernandezerbes/ffea/tree/main/applications/elasticity)
 and [quasi-harmonic](https://github.com/fernandezerbes/ffea/tree/main/applications/quasi_harmonic) applications.
 
+## Notes
+<sup>1</sup>_The transient terms are not supported yet, but the user can easily define them since the architecture is prepared for that. See more [here](https://github.com/fernandezerbes/ffea/blob/main/framework/inc/model/equation.h)._
+
 # How to use
 Prerequisite: `ffea` uses the [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) lirbary for linear algebra. Follow the instructions for installation [here](https://eigen.tuxfamily.org/dox/GettingStarted.html).
-1. Clone the repository and submodules with `git clone --recurse-submodules https://github.com/fernandezerbes/ffea`
-Note that this will download [`vtu11`](https://github.com/phmkopp/vtu11) and [`googletest`](https://github.com/google/googletest).
-2. Use CMake to build the project
-3. Create your driver by following the existing [examples](https://github.com/fernandezerbes/ffea/tree/main/examples).
+1. Clone the repository and submodules with `git clone --recurse-submodules https://github.com/fernandezerbes/ffea`. Note that this will download [`vtu11`](https://github.com/phmkopp/vtu11) and [`googletest`](https://github.com/google/googletest).
+1. Use CMake to build the project
+2. Create your driver by following the existing [examples](https://github.com/fernandezerbes/ffea/tree/main/examples).
 
 # Known issues
 Refer to [issues](https://github.com/fernandezerbes/ffea/issues).
