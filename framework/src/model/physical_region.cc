@@ -62,7 +62,9 @@ void Domain::Contribute(StiffnessTerm& term, Element& element, size_t integratio
 void Domain::Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
                         Time t) const {
   Vector<double> contribution = Vector<double>::Zero(element.number_of_dofs());
-  ComputeLoadContribution(element, source_, integration_point_idx, contribution, t);
+  if (source_ != nullptr) {
+    ComputeLoadContribution(element, source_, integration_point_idx, contribution, t);
+  }
   term.element_vector() += contribution;
 }
 
