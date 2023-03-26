@@ -22,6 +22,10 @@ using IntegrationPointsGroup = std::vector<IntegrationPoint>;
 using IntegrationPointsTable = std::vector<IntegrationPointsGroup>;
 const IntegrationPointsGroup dummy_rule = {};
 
+// Points
+
+const IntegrationPointsGroup rule_point_1 = {{0.0, 0.0, 0.0, 1.0}};
+
 // Lines
 
 const IntegrationPointsGroup rule_line_1 = {{0.0, 0.0, 0.0, 2.0}};
@@ -92,7 +96,7 @@ const IntegrationPointsTable full_integration_points = {
     /* kTwentySevenNodeHex */ dummy_rule,
     /* kEighteenNodePrism */ dummy_rule,
     /* kFourteenNodePiramid */ dummy_rule,
-    /* kOneNodePoint */ dummy_rule,
+    /* kOneNodePoint */ rule_point_1,
     /* kEightNodeQuad */ dummy_rule,
     /* kTwentyNodeHex */ dummy_rule,
     /* kFifteenNodePrism */ dummy_rule,
@@ -114,7 +118,7 @@ const IntegrationPointsTable reduced_integration_points = {
     /* kTwentySevenNodeHex */ dummy_rule,
     /* kEighteenNodePrism */ dummy_rule,
     /* kFourteenNodePiramid */ dummy_rule,
-    /* kOneNodePoint */ dummy_rule,
+    /* kOneNodePoint */ rule_point_1,
     /* kEightNodeQuad */ dummy_rule,
     /* kTwentyNodeHex */ dummy_rule,
     /* kFifteenNodePrism */ dummy_rule,

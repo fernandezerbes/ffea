@@ -71,6 +71,25 @@ class GeometricEntity {
   std::vector<Node *> nodes_;
 };
 
+// Point entities
+class Point : public GeometricEntity {
+ public:
+  Point(size_t dim, const std::vector<Node *> &nodes);
+
+  virtual std::vector<Coordinates> nodal_local_coords() const override;
+
+  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+
+ private:
+  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+      const Coordinates &local_coords) const override;
+  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+      const Coordinates &local_coords) const override;
+  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+      const Coordinates &local_coords) const override;
+};
+
 // Line entities
 
 class Line : public GeometricEntity {

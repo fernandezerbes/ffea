@@ -7,6 +7,8 @@ namespace ffea {
 std::unique_ptr<GeometricEntity> GeometricEntityFactory2D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
   switch (type) {
+    case GeometricEntityType::kOneNodePoint:
+      return std::make_unique<Point>(2, nodes);
     case GeometricEntityType::kTwoNodeLine:
       return std::make_unique<TwoNodeLine>(2, nodes);
     case GeometricEntityType::kThreeNodeTria:
@@ -23,6 +25,8 @@ std::unique_ptr<GeometricEntity> GeometricEntityFactory2D::CreateGeometricEntity
 std::unique_ptr<GeometricEntity> GeometricEntityFactory3D::CreateGeometricEntity(
     GeometricEntityType type, const std::vector<Node *> &nodes) const {
   switch (type) {
+    case GeometricEntityType::kOneNodePoint:
+      return std::make_unique<Point>(3, nodes);
     case GeometricEntityType::kTwoNodeLine:
       return std::make_unique<TwoNodeLine>(3, nodes);
     case GeometricEntityType::kThreeNodeTria:

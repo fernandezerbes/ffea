@@ -91,6 +91,32 @@ Coordinates &GeometricEntity::node_coords(size_t node_idx) const {
   return nodes_[node_idx]->coords();
 }
 
+// Point entities
+
+Point::Point(size_t dim, const std::vector<Node *> &nodes)
+    : GeometricEntity(GeometricEntityType::kOneNodePoint, dim, nodes) {}
+
+std::vector<Coordinates> Point::nodal_local_coords() const { return {{0.0, 0.0, 0.0}}; }
+
+Vector<double> Point::EvaluateNormalVector(const Coordinates &local_coords) const {
+  throw std::logic_error("Points don't have a normal vector");
+}
+
+double Point::EvaluateDifferential(const Coordinates &local_coords) const {
+  throw std::logic_error("Points don't have a differential");
+}
+
+Matrix<double> Point::EvaluateShapeFunctions0thDerivative(const Coordinates &local_coords) const {
+  throw std::logic_error("Points don't have shape functions");
+}
+Matrix<double> Point::EvaluateShapeFunctions1stDerivative(const Coordinates &local_coords) const {
+  throw std::logic_error("Points don't have shape functions");
+}
+
+Matrix<double> Point::EvaluateShapeFunctions2ndDerivative(const Coordinates &local_coords) const {
+  throw std::logic_error("Points don't have shape functions");
+}
+
 // Line entities
 
 Line::Line(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes)
