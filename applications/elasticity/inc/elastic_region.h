@@ -6,7 +6,7 @@
 
 namespace ffea::app {
 
-class DynamicUndampedElasticDomain : Domain {
+class DynamicUndampedElasticDomain : public Domain {
  public:
   DynamicUndampedElasticDomain(std::vector<Element>& elements,
                                const DifferentialOperator B_operator,
