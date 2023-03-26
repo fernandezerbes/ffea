@@ -7,7 +7,7 @@
 
 namespace ffea::app {
 
-class QuasiHarmonicDomainBoundary : DomainBoundary {
+class QuasiHarmonicDomainBoundary : public DomainBoundary {
  public:
   QuasiHarmonicDomainBoundary(std::vector<Element>& elements,
                               SpatioTemporalFunction<std::vector<double>> load,
