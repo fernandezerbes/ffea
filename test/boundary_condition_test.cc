@@ -16,7 +16,7 @@ using namespace testing;
 
 class DirectEnforcementStrategyTest : public ::testing::Test {
  protected:
-  virtual void SetUp() override {
+  void SetUp() override {
     // Set up stiffness matrix
     stiffness = ffea::CSRMatrix<double>(6, 6);
     ffea::MatrixEntries<double> nonzero_entries(36);

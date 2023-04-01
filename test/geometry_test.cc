@@ -11,7 +11,7 @@ using namespace testing;
 
 class GeometryTest : public ::testing::Test {
  protected:
-  virtual void SetUp() override {
+  void SetUp() override {
     geometry.AddNode({0.0, 0.0, 0.0});  // Node 0
     geometry.AddNode({1.0, 0.0, 0.0});  // Node 1
     geometry.AddNode({2.0, 0.0, 0.0});  // Node 2

@@ -45,10 +45,10 @@ class Domain : public PhysicalRegion {
          const ConstitutiveModel& constitutive_model,
          SpatioTemporalFunction<std::vector<double>> source);
 
-  virtual void Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
-                          Time t) const override;
-  virtual void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
-                          Time t) const override;
+  void Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
+                  Time t) const override;
+  void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
+                  Time t) const override;
 
  protected:
   const DifferentialOperator differential_operator_;
@@ -60,8 +60,8 @@ class DomainBoundary : public PhysicalRegion {
  public:
   DomainBoundary(std::vector<Element>& elements, SpatioTemporalFunction<std::vector<double>> load);
 
-  virtual void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
-                          Time t) const override;
+  void Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
+                  Time t) const override;
 
  protected:
   const SpatioTemporalFunction<std::vector<double>> load_;

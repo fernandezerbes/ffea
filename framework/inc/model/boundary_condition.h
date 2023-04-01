@@ -39,19 +39,19 @@ class EnforcementStrategy {
 
 class DirectEnforcementStrategy : public EnforcementStrategy {
  public:
-  virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       SpatioTemporalFunction<std::vector<double>> condition,
-                       std::vector<Element> &elements, const std::unordered_set<size_t> &components,
-                       Time t) override;
+  void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
+               SpatioTemporalFunction<std::vector<double>> condition,
+               std::vector<Element> &elements, const std::unordered_set<size_t> &components,
+               Time t) override;
 };
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
   explicit PenaltyEnforcementStrategy(double penalty = 1.0e12);
-  virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
-                       SpatioTemporalFunction<std::vector<double>> condition,
-                       std::vector<Element> &elements, const std::unordered_set<size_t> &components,
-                       Time t) override;
+  void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
+               SpatioTemporalFunction<std::vector<double>> condition,
+               std::vector<Element> &elements, const std::unordered_set<size_t> &components,
+               Time t) override;
 
  private:
   double penalty_;

@@ -17,13 +17,13 @@ class GeometricEntityFactory {
 
 class GeometricEntityFactory2D : public GeometricEntityFactory {
  public:
-  virtual std::unique_ptr<GeometricEntity> CreateGeometricEntity(
+  std::unique_ptr<GeometricEntity> CreateGeometricEntity(
       GeometricEntityType type, const std::vector<Node *> &nodes) const override;
 };
 
 class GeometricEntityFactory3D : public GeometricEntityFactory {
  public:
-  virtual std::unique_ptr<GeometricEntity> CreateGeometricEntity(
+  std::unique_ptr<GeometricEntity> CreateGeometricEntity(
       GeometricEntityType type, const std::vector<Node *> &nodes) const override;
 };
 

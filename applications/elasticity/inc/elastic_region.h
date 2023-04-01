@@ -13,8 +13,8 @@ class DynamicUndampedElasticDomain : public Domain {
                                const ConstitutiveModel& constitutive_model, double density,
                                SpatioTemporalFunction<std::vector<double>> source = nullptr);
 
-  virtual void Contribute(MassTerm& term, Element& element, size_t integration_point_idx,
-                          Time t) const override;
+  void Contribute(MassTerm& term, Element& element, size_t integration_point_idx,
+                  Time t) const override;
 
  protected:
   double density_;

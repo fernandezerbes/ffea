@@ -74,10 +74,10 @@ class EquationTerm {
 class MatricialEquationTerm : public EquationTerm {
  public:
   explicit MatricialEquationTerm(size_t number_of_dofs);
-  virtual void SetSparsity(MatrixEntries<double> nonzero_entries) override;
-  virtual void Scatter(size_t i_dof_idx, const std::vector<size_t>& dofs_tags) override;
-  virtual void PrepareElementMatrices(size_t number_of_dofs) override;
-  virtual void ResetGlobalData() override;
+  void SetSparsity(MatrixEntries<double> nonzero_entries) override;
+  void Scatter(size_t i_dof_idx, const std::vector<size_t>& dofs_tags) override;
+  void PrepareElementMatrices(size_t number_of_dofs) override;
+  void ResetGlobalData() override;
   Matrix<double>& element_matrix();
   CSRMatrix<double>& matrix();
 
@@ -89,9 +89,9 @@ class MatricialEquationTerm : public EquationTerm {
 class VectorialEquationTerm : public EquationTerm {
  public:
   explicit VectorialEquationTerm(size_t number_of_dofs);
-  virtual void Scatter(size_t i_dof_idx, const std::vector<size_t>& dofs_tags) override;
-  virtual void PrepareElementMatrices(size_t number_of_dofs) override;
-  virtual void ResetGlobalData() override;
+  void Scatter(size_t i_dof_idx, const std::vector<size_t>& dofs_tags) override;
+  void PrepareElementMatrices(size_t number_of_dofs) override;
+  void ResetGlobalData() override;
   Vector<double>& element_vector();
   Vector<double>& vector();
 
@@ -103,29 +103,29 @@ class VectorialEquationTerm : public EquationTerm {
 class StiffnessTerm : public MatricialEquationTerm {
  public:
   explicit StiffnessTerm(size_t number_of_dofs);
-  virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       Time t) override;
+  void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+               Time t) override;
 };
 
 class DampingTerm : public MatricialEquationTerm {
  public:
   explicit DampingTerm(size_t number_of_dofs);
-  virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       Time t) override;
+  void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+               Time t) override;
 };
 
 class MassTerm : public MatricialEquationTerm {
  public:
   explicit MassTerm(size_t number_of_dofs);
-  virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       Time t) override;
+  void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+               Time t) override;
 };
 
 class RhsTerm : public VectorialEquationTerm {
  public:
   explicit RhsTerm(size_t number_of_dofs);
-  virtual void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
-                       Time t) override;
+  void Process(PhysicalRegion& region, Element& element, size_t integration_point_idx,
+               Time t) override;
 };
 
 }  // namespace ffea

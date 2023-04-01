@@ -1,5 +1,7 @@
 #include "../../inc/fileio/geometry_parser.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <array>
 #include <iostream>
@@ -96,11 +98,11 @@ void GeometryParser::Parse(std::ifstream &file, GeometryData &data) const {
 }
 
 void GroupNamesParser::Parse(std::ifstream &file, GeometryData &data) const {
-  size_t number_of_groups;
+  size_t number_of_groups = 0;
   file >> number_of_groups;
 
-  size_t dim;
-  int tag;
+  size_t dim = 0;
+  int tag = 0;
   std::string name;
   for (size_t group_idx = 0; group_idx < number_of_groups; group_idx++) {
     file >> dim >> tag >> name;
@@ -111,37 +113,37 @@ void GroupNamesParser::Parse(std::ifstream &file, GeometryData &data) const {
 }
 
 void ShapesParser::Parse(std::ifstream &file, GeometryData &data) const {
-  std::array<size_t, 4> shapes_per_dim;
+  std::array<size_t, 4> shapes_per_dim{};
   for (size_t dim = 0; dim < shapes_per_dim.size(); dim++) {
     file >> shapes_per_dim[dim];
   }
 
   for (size_t dim = 0; dim < shapes_per_dim.size(); dim++) {
     for (size_t shape_idx = 0; shape_idx < shapes_per_dim[dim]; shape_idx++) {
-      int shape_tag;
+      int shape_tag = 0;
       file >> shape_tag;  // column = 0
       utilities::ConvertOneToZeroBased(shape_tag);
 
       const size_t end_coords_column = (dim == 0) ? 4 : 7;
-      double coords;
+      double coords = NAN;
       for (size_t column = 1; column < end_coords_column; column++) {
         file >> coords;
       }
 
-      size_t number_of_entity_groups;
+      size_t number_of_entity_groups = 0;
       file >> number_of_entity_groups;
       for (size_t column = end_coords_column; column < end_coords_column + number_of_entity_groups;
            column++) {
-        int entity_group_tag;
+        int entity_group_tag = 0;
         file >> entity_group_tag;
         utilities::ConvertOneToZeroBased(entity_group_tag);
         data.RegisterShapeTag(dim, shape_tag, entity_group_tag);
       }
 
       if (dim > 0) {
-        size_t number_of_bounding_shapes;
+        size_t number_of_bounding_shapes = 0;
         file >> number_of_bounding_shapes;
-        int bounding_shape_tag;
+        int bounding_shape_tag = 0;
         for (size_t bounding_shape_idx = 0; bounding_shape_idx < number_of_bounding_shapes;
              bounding_shape_idx++) {
           file >> bounding_shape_tag;
@@ -152,20 +154,20 @@ void ShapesParser::Parse(std::ifstream &file, GeometryData &data) const {
 }
 
 void NodesParser::Parse(std::ifstream &file, GeometryData &data) const {
-  size_t number_of_entity_blocks;
-  size_t number_of_nodes;
-  size_t min_node_tag;
-  size_t max_node_tag;
+  size_t number_of_entity_blocks = 0;
+  size_t number_of_nodes = 0;
+  size_t min_node_tag = 0;
+  size_t max_node_tag = 0;
   file >> number_of_entity_blocks >> number_of_nodes >> min_node_tag >> max_node_tag;
 
-  size_t owner_shape_dim;
-  int owner_shape_tag;
-  size_t parametric;
-  size_t number_of_nodes_in_block;
+  size_t owner_shape_dim = 0;
+  int owner_shape_tag = 0;
+  size_t parametric = 0;
+  size_t number_of_nodes_in_block = 0;
   for (size_t block_idx = 0; block_idx < number_of_entity_blocks; block_idx++) {
     file >> owner_shape_dim >> owner_shape_tag >> parametric >> number_of_nodes_in_block;
 
-    size_t node_tag;
+    size_t node_tag = 0;
     std::vector<size_t> node_tags;
     node_tags.reserve(number_of_nodes_in_block);
     for (size_t node_idx = 0; node_idx < number_of_nodes_in_block; node_idx++) {
@@ -174,9 +176,9 @@ void NodesParser::Parse(std::ifstream &file, GeometryData &data) const {
       node_tags.push_back(node_tag);
     }
 
-    double x;
-    double y;
-    double z;
+    double x = NAN;
+    double y = NAN;
+    double z = NAN;
     for (size_t node_idx = 0; node_idx < number_of_nodes_in_block; node_idx++) {
       file >> x >> y >> z;
       data.AddNode(node_tags[node_idx], {x, y, z});
@@ -185,10 +187,10 @@ void NodesParser::Parse(std::ifstream &file, GeometryData &data) const {
 }
 
 void GeometricEntitiesParser::Parse(std::ifstream &file, GeometryData &data) const {
-  size_t number_of_entity_blocks;
-  size_t number_of_entities;
-  size_t min_entity_tag;
-  size_t max_entity_tag;
+  size_t number_of_entity_blocks = 0;
+  size_t number_of_entities = 0;
+  size_t min_entity_tag = 0;
+  size_t max_entity_tag = 0;
   file >> number_of_entity_blocks >> number_of_entities >> min_entity_tag >> max_entity_tag;
 
   const size_t total_number_of_entities = max_entity_tag - min_entity_tag + 1;
@@ -196,16 +198,16 @@ void GeometricEntitiesParser::Parse(std::ifstream &file, GeometryData &data) con
     throw std::runtime_error("Partitioned meshes are not supported");
   }
 
-  size_t owner_shape_dim;
-  int owner_shape_tag;
-  size_t entity_type;
-  size_t number_of_entities_in_block;
+  size_t owner_shape_dim = 0;
+  int owner_shape_tag = 0;
+  size_t entity_type = 0;
+  size_t number_of_entities_in_block = 0;
   for (size_t block_idx = 0; block_idx < number_of_entity_blocks; block_idx++) {
     file >> owner_shape_dim >> owner_shape_tag >> entity_type >> number_of_entities_in_block;
     utilities::ConvertOneToZeroBased(owner_shape_tag);
 
-    size_t node_tag;
-    size_t entity_tag;
+    size_t node_tag = 0;
+    size_t entity_tag = 0;
     std::vector<size_t> node_tags;
     std::string line;
     for (size_t entity_idx = 0; entity_idx < number_of_entities_in_block; entity_idx++) {

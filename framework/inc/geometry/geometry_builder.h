@@ -30,9 +30,9 @@ class GeometryFromFileBuilder : public GeometryBuilder {
   GeometryFromFileBuilder(const std::string &file_path, const GeometricEntityFactory &factory);
 
  private:
-  virtual void AddNodes(Geometry &geometry) override;
-  virtual void AddEntities(Geometry &geometry) override;
-  virtual void AddEntitiesGroups(Geometry &geometry) override;
+  void AddNodes(Geometry &geometry) override;
+  void AddEntities(Geometry &geometry) override;
+  void AddEntitiesGroups(Geometry &geometry) override;
 
   std::ifstream file_stream_;
   GeometryParser parser_;

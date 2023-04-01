@@ -80,27 +80,27 @@ class Parser {
 
 class GeometryParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &data) const override;
+  void Parse(std::ifstream &file, GeometryData &data) const override;
 };
 
 class GroupNamesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &data) const override;
+  void Parse(std::ifstream &file, GeometryData &data) const override;
 };
 
 class ShapesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &data) const override;
+  void Parse(std::ifstream &file, GeometryData &data) const override;
 };
 
 class NodesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &data) const override;
+  void Parse(std::ifstream &file, GeometryData &data) const override;
 };
 
 class GeometricEntitiesParser : public Parser {
  public:
-  virtual void Parse(std::ifstream &file, GeometryData &data) const override;
+  void Parse(std::ifstream &file, GeometryData &data) const override;
 };
 
 class SectionParserFactory {

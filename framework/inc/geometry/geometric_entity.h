@@ -76,17 +76,17 @@ class Point : public GeometricEntity {
  public:
   Point(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
-  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  double EvaluateDifferential(const Coordinates &local_coords) const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -96,22 +96,22 @@ class Line : public GeometricEntity {
  public:
   Line(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class TwoNodeLine : public Line {
  public:
   TwoNodeLine(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -121,22 +121,22 @@ class Quad : public GeometricEntity {
  public:
   Quad(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class FourNodeQuad : public Quad {
  public:
   FourNodeQuad(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -146,21 +146,21 @@ class Hex : public GeometricEntity {
  public:
   Hex(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+  double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class EightNodeHex : public Hex {
  public:
   explicit EightNodeHex(const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -169,22 +169,22 @@ class Tria : public GeometricEntity {
  public:
   Tria(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
-  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+  Vector<double> EvaluateNormalVector(const Coordinates &local_coords) const override;
+  double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class ThreeNodeTria : public Tria {
  public:
   ThreeNodeTria(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -192,14 +192,14 @@ class SixNodeTria : public Tria {
  public:
   SixNodeTria(size_t dim, const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -209,21 +209,21 @@ class Tetra : public GeometricEntity {
  public:
   Tetra(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
 
-  virtual double EvaluateDifferential(const Coordinates &local_coords) const override;
+  double EvaluateDifferential(const Coordinates &local_coords) const override;
 };
 
 class FourNodeTetra : public Tetra {
  public:
   explicit FourNodeTetra(const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
@@ -231,14 +231,14 @@ class TenNodeTetra : public Tetra {
  public:
   explicit TenNodeTetra(const std::vector<Node *> &nodes);
 
-  virtual std::vector<Coordinates> nodal_local_coords() const override;
+  std::vector<Coordinates> nodal_local_coords() const override;
 
  private:
-  virtual Matrix<double> EvaluateShapeFunctions0thDerivative(
+  Matrix<double> EvaluateShapeFunctions0thDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions1stDerivative(
+  Matrix<double> EvaluateShapeFunctions1stDerivative(
       const Coordinates &local_coords) const override;
-  virtual Matrix<double> EvaluateShapeFunctions2ndDerivative(
+  Matrix<double> EvaluateShapeFunctions2ndDerivative(
       const Coordinates &local_coords) const override;
 };
 
