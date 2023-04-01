@@ -7,14 +7,14 @@ namespace ffea::app {
 
 class IsotropicConductivityConstitutiveModel2D : public ConstitutiveModel {
  public:
-  IsotropicConductivityConstitutiveModel2D(double k);
+  explicit IsotropicConductivityConstitutiveModel2D(double k);
 
   virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };
 
 class IsotropicConductivityConstitutiveModel3D : public ConstitutiveModel {
  public:
-  IsotropicConductivityConstitutiveModel3D(double k);
+  explicit IsotropicConductivityConstitutiveModel3D(double k);
 
   virtual Matrix<double> Evaluate(const Coordinates& coords) const override;
 };

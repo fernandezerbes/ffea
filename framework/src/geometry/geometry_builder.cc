@@ -31,7 +31,8 @@ void GeometryFromFileBuilder::AddEntities(Geometry &geometry) {
     // TODO Use mapping for gmsh elements instead of doing
     // ElementType(element.type
     // - 1)
-    geometry.AddGeometricEntity(GeometricEntityType(entity.type - 1), entity.node_tags, factory_);
+    geometry.AddGeometricEntity(static_cast<GeometricEntityType>(entity.type - 1), entity.node_tags,
+                                factory_);
   }
 }
 

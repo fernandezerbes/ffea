@@ -47,7 +47,7 @@ class DirectEnforcementStrategy : public EnforcementStrategy {
 
 class PenaltyEnforcementStrategy : public EnforcementStrategy {
  public:
-  PenaltyEnforcementStrategy(double penalty = 1.0e12);
+  explicit PenaltyEnforcementStrategy(double penalty = 1.0e12);
   virtual void Enforce(CSRMatrix<double> &system_stiffness, Vector<double> &system_rhs,
                        SpatioTemporalFunction<std::vector<double>> condition,
                        std::vector<Element> &elements, const std::unordered_set<size_t> &components,

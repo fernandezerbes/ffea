@@ -45,7 +45,7 @@ std::vector<ffea::NodalValuesGroup> DerivedVariableProcessor::ExtractValuesOfAll
 
 std::vector<double> DerivedVariableProcessor::AverageNodalValues(
     const std::vector<ffea::NodalValuesGroup> &raw_values) const {
-  size_t const number_of_values = values_per_node() * raw_values.size();
+  const size_t number_of_values = values_per_node() * raw_values.size();
   std::vector<double> avg_values(number_of_values, 0.0);
 
   for (size_t node_idx = 0; node_idx < raw_values.size(); node_idx++) {

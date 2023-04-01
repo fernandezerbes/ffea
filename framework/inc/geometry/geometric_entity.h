@@ -151,7 +151,7 @@ class Hex : public GeometricEntity {
 
 class EightNodeHex : public Hex {
  public:
-  EightNodeHex(const std::vector<Node *> &nodes);
+  explicit EightNodeHex(const std::vector<Node *> &nodes);
 
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
@@ -214,7 +214,7 @@ class Tetra : public GeometricEntity {
 
 class FourNodeTetra : public Tetra {
  public:
-  FourNodeTetra(const std::vector<Node *> &nodes);
+  explicit FourNodeTetra(const std::vector<Node *> &nodes);
 
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
@@ -229,7 +229,7 @@ class FourNodeTetra : public Tetra {
 
 class TenNodeTetra : public Tetra {
  public:
-  TenNodeTetra(const std::vector<Node *> &nodes);
+  explicit TenNodeTetra(const std::vector<Node *> &nodes);
 
   virtual std::vector<Coordinates> nodal_local_coords() const override;
 
