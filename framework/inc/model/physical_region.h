@@ -30,10 +30,10 @@ class PhysicalRegion {
                           Time t) const;
 
  protected:
-  void ComputeLoadContribution(Element& element,
-                               const SpatioTemporalFunction<std::vector<double>>& load,
-                               size_t integration_point_idx, Vector<double>& contribution,
-                               Time t) const;
+  static void ComputeLoadContribution(Element& element,
+                                      const SpatioTemporalFunction<std::vector<double>>& load,
+                                      size_t integration_point_idx, Vector<double>& contribution,
+                                      Time t);
 
  private:
   std::vector<Element>& elements_;

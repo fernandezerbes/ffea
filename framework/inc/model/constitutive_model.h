@@ -8,7 +8,7 @@ namespace ffea {
 
 class ConstitutiveModel {
  public:
-  ConstitutiveModel(size_t n_cols, size_t n_rows);
+  ConstitutiveModel(size_t n_rows, size_t n_cols);
 
   virtual Matrix<double> Evaluate(const Coordinates &coords) const = 0;
 

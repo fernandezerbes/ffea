@@ -3,7 +3,7 @@
 namespace ffea {
 
 Mesh::Mesh(Geometry& geometry, size_t dofs_per_node)
-    : geometry_(geometry), dofs_per_node_(dofs_per_node), dofs_(), element_groups_() {
+    : geometry_(geometry), dofs_per_node_(dofs_per_node) {
   AddDofs();
 }
 
@@ -82,7 +82,7 @@ size_t Mesh::dof_tag(size_t node_idx, size_t component_idx) const {
   return node_idx * dofs_per_node_ + component_idx;
 }
 
-const std::unordered_set<const DegreeOfFreedom*> Mesh::element_group_dofs(
+std::unordered_set<const DegreeOfFreedom*> Mesh::element_group_dofs(
     const std::string& group_name) const {
   std::unordered_set<const DegreeOfFreedom*> group_dofs;
   for (const auto& element : element_group(group_name)) {

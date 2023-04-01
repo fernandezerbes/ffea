@@ -9,7 +9,7 @@ namespace ffea {
 
 class DegreeOfFreedom {
  public:
-  explicit DegreeOfFreedom(size_t tag, size_t number_of_axiliary_values = 0);
+  explicit DegreeOfFreedom(size_t tag, size_t number_of_auxiliary_values = 0);
 
   size_t tag() const;
   size_t parallel_tag() const;

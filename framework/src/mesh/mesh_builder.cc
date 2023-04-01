@@ -5,7 +5,7 @@
 
 namespace ffea {
 
-MeshBuilder::MeshBuilder(Geometry &geometry) : geometry_(geometry), element_factories_() {}
+MeshBuilder::MeshBuilder(Geometry &geometry) : geometry_(geometry) {}
 
 MeshBuilder::MeshBuilder(Geometry &geometry, const ElementFactory &factory)
     : MeshBuilder(geometry) {
@@ -19,7 +19,7 @@ Mesh MeshBuilder::Build(size_t number_of_fields) const {
 
   for (const auto &[group_name, entities] : geometry_.entity_groups()) {
     const auto &element_factory = element_factories_.at(group_name);
-    for (auto &entity : entities) {
+    for (const auto &entity : entities) {
       mesh.AddElement(group_name, *entity, element_factory);
     }
   }

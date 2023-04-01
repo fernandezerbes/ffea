@@ -4,13 +4,13 @@
 
 namespace ffea {
 
-Equation::Equation(size_t number_of_dofs) : number_of_dofs_(number_of_dofs), terms_() {
+Equation::Equation(size_t number_of_dofs) : number_of_dofs_(number_of_dofs) {
   terms_.push_back(std::make_unique<StiffnessTerm>(number_of_dofs));
   terms_.push_back(std::make_unique<RhsTerm>(number_of_dofs));
 }
 
 void Equation::SetSparsity(const MatrixEntries<double>& nonzero_entries) const {
-  for (auto& term : terms_) {
+  for (const auto& term : terms_) {
     term->SetSparsity(nonzero_entries);
   }
 }

@@ -36,8 +36,8 @@ class Mesh {
   void SetSolutionOnDofs(const Vector<double> &solution);
 
  private:
-  size_t dof_tag(size_t node_tag, size_t component_idx) const;
-  const std::unordered_set<const DegreeOfFreedom *> element_group_dofs(
+  size_t dof_tag(size_t node_idx, size_t component_idx) const;
+  std::unordered_set<const DegreeOfFreedom *> element_group_dofs(
       const std::string &group_name) const;
 
   void AddDofs();

@@ -1,6 +1,7 @@
 #ifndef FFEA_FRAMEWORK_MODEL_EQUATION_H_
 #define FFEA_FRAMEWORK_MODEL_EQUATION_H_
 
+#include <algorithm>
 #include <memory>
 #include <stdexcept>
 #include <vector>
@@ -52,12 +53,11 @@ T& Equation::GetTerm() const {
 
 template <typename T>
 bool Equation::HasTerm() const {
-  for (const auto& term : terms_) {
-    if (dynamic_cast<T*>(term.get()) != nullptr) {
-      return true;
-    }
-  }
-  return false;
+  auto TermIsOfType = [](const std::unique_ptr<EquationTerm>& term) {
+    return dynamic_cast<T*>(term.get()) != nullptr;
+  };
+
+  return std::ranges::any_of(terms_, TermIsOfType);
 }
 
 class EquationTerm {
@@ -89,7 +89,7 @@ class MatricialEquationTerm : public EquationTerm {
 class VectorialEquationTerm : public EquationTerm {
  public:
   explicit VectorialEquationTerm(size_t number_of_dofs);
-  virtual void Scatter(size_t i_dof_idx, const std::vector<size_t>& dof_tags) override;
+  virtual void Scatter(size_t i_dof_idx, const std::vector<size_t>& dofs_tags) override;
   virtual void PrepareElementMatrices(size_t number_of_dofs) override;
   virtual void ResetGlobalData() override;
   Vector<double>& element_vector();

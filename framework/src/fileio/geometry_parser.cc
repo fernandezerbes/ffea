@@ -24,7 +24,7 @@ GeometricEntityData::GeometricEntityData(size_t tag, size_t type,
     : tag(tag), type(type), node_tags(node_tags) {}
 
 GeometricEntityDataGroup::GeometricEntityDataGroup(size_t tag, const std::string &name)
-    : tag_(tag), name_(name), entity_tags_() {}
+    : tag_(tag), name_(name) {}
 
 size_t GeometricEntityDataGroup::tag() const { return tag_; }
 
@@ -213,7 +213,7 @@ void GeometricEntitiesParser::Parse(std::ifstream &file, GeometryData &data) con
       std::getline(file, line);
       // TODO Make this better, don't know why getline is returning an empty
       // string
-      if (line == "") {
+      if (line.empty()) {
         std::getline(file, line);
       }
       std::istringstream ss(line);
@@ -232,13 +232,20 @@ void GeometricEntitiesParser::Parse(std::ifstream &file, GeometryData &data) con
 std::unique_ptr<Parser> SectionParserFactory::CreateSectionParser(const std::string &section_name) {
   if (section_name == "$PhysicalNames") {
     return std::make_unique<GroupNamesParser>();
-  } else if (section_name == "$Entities") {
+  }
+
+  if (section_name == "$Entities") {
     return std::make_unique<ShapesParser>();
-  } else if (section_name == "$Nodes") {
+  }
+
+  if (section_name == "$Nodes") {
     return std::make_unique<NodesParser>();
-  } else if (section_name == "$Elements") {
+  }
+
+  if (section_name == "$Elements") {
     return std::make_unique<GeometricEntitiesParser>();
   }
+
   return nullptr;
 }
 

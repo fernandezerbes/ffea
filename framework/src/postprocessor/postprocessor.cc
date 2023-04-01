@@ -15,7 +15,7 @@ PrimaryVariablePostProcessor::PrimaryVariablePostProcessor(std::string variable_
                                                            size_t values_per_node, const Mesh &mesh)
     : PostProcessor(std::move(variable_name), values_per_node, mesh) {}
 
-const NodalValues PrimaryVariablePostProcessor::Process(const std::string &group_name) const {
+NodalValues PrimaryVariablePostProcessor::Process(const std::string &group_name) const {
   return mesh_.nodal_values(group_name);
 }
 
@@ -25,9 +25,9 @@ DerivedVariableProcessor::DerivedVariableProcessor(std::string variable_name,
     : PostProcessor(std::move(variable_name), values_per_node, mesh),
       processor_(std::move(processor)) {}
 
-const NodalValues DerivedVariableProcessor::Process(const std::string &group_name) const {
+NodalValues DerivedVariableProcessor::Process(const std::string &group_name) const {
   const auto raw_values = ExtractValuesOfAllElementsPerNode(group_name);
-  const auto avg_values = AverageNodalValues(raw_values);
+  auto avg_values = AverageNodalValues(raw_values);
   return avg_values;
 }
 

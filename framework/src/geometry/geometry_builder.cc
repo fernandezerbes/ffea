@@ -14,7 +14,7 @@ Geometry GeometryBuilder::Build() {
 
 GeometryFromFileBuilder::GeometryFromFileBuilder(const std::string &file_path,
                                                  const GeometricEntityFactory &factory)
-    : GeometryBuilder::GeometryBuilder(factory), file_stream_(), parser_(), data_() {
+    : GeometryBuilder::GeometryBuilder(factory), parser_(), data_() {
   file_stream_.open(file_path);
   parser_.Parse(file_stream_, data_);
   file_stream_.close();

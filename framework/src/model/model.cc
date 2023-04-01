@@ -4,7 +4,7 @@
 
 namespace ffea {
 
-Model::Model(Mesh& mesh) : mesh_(mesh), regions_(), bcs_() {}
+Model::Model(Mesh& mesh) : mesh_(mesh) {}
 
 size_t Model::number_of_dofs() const { return mesh_.number_of_dofs(); }
 

@@ -22,7 +22,7 @@ void PhysicalRegion::Contribute(RhsTerm& term, Element& element, size_t integrat
 
 void PhysicalRegion::ComputeLoadContribution(
     Element& element, const SpatioTemporalFunction<std::vector<double>>& load,
-    size_t integration_point_idx, Vector<double>& contribution, Time t) const {
+    size_t integration_point_idx, Vector<double>& contribution, Time t) {
   const auto& global_coords = element.global_coords(integration_point_idx);
   const auto& load_vector = load(global_coords, t);
   const auto weight = element.integration_point_weight(integration_point_idx);

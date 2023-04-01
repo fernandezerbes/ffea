@@ -85,14 +85,14 @@ TEST_F(GeometryTest, NodeAddition) {
 TEST_F(GeometryTest, GeometricEntityAddition) {
   geometry.AddGeometricEntity(ffea::GeometricEntityType::kThreeNodeTria, {0, 4, 3}, factory);
   geometry.RegisterGeometricEntityGroup("triangle", {7});
-  auto triangle = geometry.entity_group("triangle")[0];
+  auto *triangle = geometry.entity_group("triangle")[0];
 
   ASSERT_THAT(triangle->type(), ffea::GeometricEntityType::kThreeNodeTria);
 }
 
 TEST_F(GeometryTest, GeometricEntityGroupRegistration) {
   geometry.RegisterGeometricEntityGroup("top_left", {5});
-  auto entity = geometry.entity_group("top_left")[0];
+  auto *entity = geometry.entity_group("top_left")[0];
 
   ASSERT_THAT(entity->type(), ffea::GeometricEntityType::kTwoNodeLine);
 
