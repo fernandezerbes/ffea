@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 namespace ffea {
 
@@ -10,7 +11,7 @@ EssentialBoundaryCondition::EssentialBoundaryCondition(
     std::vector<Element> &elements, SpatioTemporalFunction<std::vector<double>> condition,
     const std::unordered_set<size_t> &components_to_consider, EnforcementStrategy &strategy)
     : elements_(elements),
-      condition_(condition),
+      condition_(std::move(condition)),
       directions_to_consider_(components_to_consider),
       strategy_(strategy) {}
 

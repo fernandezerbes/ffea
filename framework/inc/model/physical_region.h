@@ -30,7 +30,8 @@ class PhysicalRegion {
                           Time t) const;
 
  protected:
-  void ComputeLoadContribution(Element& element, SpatioTemporalFunction<std::vector<double>> load,
+  void ComputeLoadContribution(Element& element,
+                               const SpatioTemporalFunction<std::vector<double>>& load,
                                size_t integration_point_idx, Vector<double>& contribution,
                                Time t) const;
 
@@ -40,7 +41,7 @@ class PhysicalRegion {
 
 class Domain : public PhysicalRegion {
  public:
-  Domain(std::vector<Element>& elements, const DifferentialOperator differential_operator,
+  Domain(std::vector<Element>& elements, const DifferentialOperator& differential_operator,
          const ConstitutiveModel& constitutive_model,
          SpatioTemporalFunction<std::vector<double>> source);
 

@@ -17,7 +17,7 @@ class EquationTerm;
 class Equation {
  public:
   explicit Equation(size_t number_of_dofs);
-  void SetSparsity(MatrixEntries<double> nonzero_entries) const;
+  void SetSparsity(const MatrixEntries<double>& nonzero_entries) const;
   void Process(PhysicalRegion& regions, Time t);
   void AddDampingTerm();
   void AddMassTerm();

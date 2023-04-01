@@ -1,5 +1,7 @@
 #include "../../inc/model/physical_region.h"
 
+#include <utility>
+
 namespace ffea {
 
 PhysicalRegion::PhysicalRegion(std::vector<Element>& elements) : elements_(elements) {}
@@ -18,10 +20,9 @@ void PhysicalRegion::Contribute(DampingTerm& term, Element& element, size_t inte
 void PhysicalRegion::Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
                                 Time t) const {}
 
-void PhysicalRegion::ComputeLoadContribution(Element& element,
-                                             SpatioTemporalFunction<std::vector<double>> load,
-                                             size_t integration_point_idx,
-                                             Vector<double>& contribution, Time t) const {
+void PhysicalRegion::ComputeLoadContribution(
+    Element& element, const SpatioTemporalFunction<std::vector<double>>& load,
+    size_t integration_point_idx, Vector<double>& contribution, Time t) const {
   const auto& global_coords = element.global_coords(integration_point_idx);
   const auto& load_vector = load(global_coords, t);
   const auto weight = element.integration_point_weight(integration_point_idx);
@@ -38,13 +39,13 @@ void PhysicalRegion::ComputeLoadContribution(Element& element,
   }
 }
 
-Domain::Domain(std::vector<Element>& elements, const DifferentialOperator differential_operator,
+Domain::Domain(std::vector<Element>& elements, const DifferentialOperator& differential_operator,
                const ConstitutiveModel& constitutive_model,
                SpatioTemporalFunction<std::vector<double>> source)
     : PhysicalRegion(elements),
       differential_operator_(differential_operator),
       constitutive_model_(constitutive_model),
-      source_(source) {}
+      source_(std::move(source)) {}
 
 void Domain::Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
                         Time t) const {
@@ -70,7 +71,7 @@ void Domain::Contribute(RhsTerm& term, Element& element, size_t integration_poin
 
 DomainBoundary::DomainBoundary(std::vector<Element>& elements,
                                SpatioTemporalFunction<std::vector<double>> load)
-    : PhysicalRegion(elements), load_(load) {}
+    : PhysicalRegion(elements), load_(std::move(load)) {}
 
 void DomainBoundary::Contribute(RhsTerm& term, Element& element, size_t integration_point_idx,
                                 Time t) const {

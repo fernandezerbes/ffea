@@ -9,7 +9,7 @@ namespace ffea::app {
 class DynamicUndampedElasticDomain : public Domain {
  public:
   DynamicUndampedElasticDomain(std::vector<Element>& elements,
-                               const DifferentialOperator B_operator,
+                               const DifferentialOperator& B_operator,
                                const ConstitutiveModel& constitutive_model, double density,
                                SpatioTemporalFunction<std::vector<double>> source = nullptr);
 

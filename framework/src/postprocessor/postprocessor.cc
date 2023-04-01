@@ -1,9 +1,11 @@
 #include "../../inc/postprocessor/postprocessor.h"
 
+#include <utility>
+
 namespace ffea {
 
 PostProcessor::PostProcessor(std::string variable_name, size_t values_per_node, const Mesh &mesh)
-    : mesh_(mesh), variable_name_(variable_name), values_per_node_(values_per_node) {}
+    : mesh_(mesh), variable_name_(std::move(variable_name)), values_per_node_(values_per_node) {}
 
 std::string PostProcessor::variable_name() const { return variable_name_; }
 
@@ -11,7 +13,7 @@ size_t PostProcessor::values_per_node() const { return values_per_node_; }
 
 PrimaryVariablePostProcessor::PrimaryVariablePostProcessor(std::string variable_name,
                                                            size_t values_per_node, const Mesh &mesh)
-    : PostProcessor(variable_name, values_per_node, mesh) {}
+    : PostProcessor(std::move(variable_name), values_per_node, mesh) {}
 
 std::vector<double> PrimaryVariablePostProcessor::Process(const std::string &group_name) const {
   return mesh_.nodal_values(group_name);
@@ -20,7 +22,8 @@ std::vector<double> PrimaryVariablePostProcessor::Process(const std::string &gro
 DerivedVariableProcessor::DerivedVariableProcessor(std::string variable_name,
                                                    size_t values_per_node, const Mesh &mesh,
                                                    ValuesProcessor processor)
-    : PostProcessor(variable_name, values_per_node, mesh), processor_(processor) {}
+    : PostProcessor(std::move(variable_name), values_per_node, mesh),
+      processor_(std::move(processor)) {}
 
 std::vector<double> DerivedVariableProcessor::Process(const std::string &group_name) const {
   const auto raw_values = ExtractValuesOfAllElementsPerNode(group_name);

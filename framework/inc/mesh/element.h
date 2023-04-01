@@ -35,7 +35,7 @@ class Element {
   Matrix<double> EvaluateGlobalShapeFunctionsDerivatives(size_t integration_point_idx) const;
   void SetSparsity(MatrixEntries<double> &nonzero_entries) const;
   Vector<double> ExtractSolution() const;
-  void AddNodalValues(ValuesProcessor values_processor,
+  void AddNodalValues(const ValuesProcessor &values_processor,
                       std::vector<ffea::NodalValuesGroup> &raw_values) const;
   Matrix<double> EvaluateShapeFunctions(size_t integration_point_idx,
                                         DerivativeOrder order = DerivativeOrder::kZeroth) const;

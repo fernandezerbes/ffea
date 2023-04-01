@@ -1,5 +1,7 @@
 #include "../inc/quasi_harmonic_region.h"
 
+#include <utility>
+
 #include "../../../framework/inc/model/operator.h"
 
 namespace ffea::app {
@@ -7,7 +9,7 @@ namespace ffea::app {
 QuasiHarmonicDomainBoundary::QuasiHarmonicDomainBoundary(
     std::vector<Element>& elements, SpatioTemporalFunction<std::vector<double>> load,
     SpatioTemporalFunction<double> radiation)
-    : DomainBoundary(elements, load), radiation_(radiation) {}
+    : DomainBoundary(elements, std::move(load)), radiation_(std::move(radiation)) {}
 
 void QuasiHarmonicDomainBoundary::Contribute(StiffnessTerm& term, Element& element,
                                              size_t integration_point_idx, Time t) const {

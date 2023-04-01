@@ -9,7 +9,7 @@ Equation::Equation(size_t number_of_dofs) : number_of_dofs_(number_of_dofs), ter
   terms_.push_back(std::make_unique<RhsTerm>(number_of_dofs));
 }
 
-void Equation::SetSparsity(MatrixEntries<double> nonzero_entries) const {
+void Equation::SetSparsity(const MatrixEntries<double>& nonzero_entries) const {
   for (auto& term : terms_) {
     term->SetSparsity(nonzero_entries);
   }
