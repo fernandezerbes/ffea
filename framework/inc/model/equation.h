@@ -46,7 +46,7 @@ T& Equation::GetTerm() const {
     }
   }
 
-  std::string type_name = typeid(T).name();
+  const std::string type_name = typeid(T).name();
   throw std::runtime_error("The equation doesnt have a term of type " + type_name);
 }
 

@@ -51,7 +51,7 @@ void Mesh::AddElement(const std::string& group_name, GeometricEntity& geometric_
   std::vector<DegreeOfFreedom*> element_dofs;
   element_dofs.reserve(geometric_entity.number_of_nodes() * dofs_per_node_);
 
-  for (size_t node_idx : geometric_entity.node_tags()) {
+  for (size_t const node_idx : geometric_entity.node_tags()) {
     for (size_t component_idx = 0; component_idx < dofs_per_node_; component_idx++) {
       auto& dof = dofs_[dof_tag(node_idx, component_idx)];
       element_dofs.push_back(&dof);
@@ -63,7 +63,7 @@ void Mesh::AddElement(const std::string& group_name, GeometricEntity& geometric_
   if (element_groups_.contains(group_name)) {
     element_groups_.at(group_name).push_back(element);
   } else {
-    std::vector<Element> elements{element};
+    std::vector<Element> const elements{element};
     element_groups_.insert({group_name, elements});
   }
 }

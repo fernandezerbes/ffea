@@ -97,7 +97,7 @@ void Element::AddNodalValues(const ValuesProcessor &values_processor,
     const auto &jacobian = EvaluateJacobian(local_coords, dN_local);
     const auto &dN_global = jacobian.inverse() * dN_local;
     const auto &values = values_processor(solution, global_coords, dN_global);
-    std::vector<double> values_as_vector(values.data(), values.data() + values.size());
+    std::vector<double> const values_as_vector(values.data(), values.data() + values.size());
     const auto &node_tag = entity_.node_tag(node_idx);
     raw_values[node_tag].emplace_back(values.data(), values.data() + values.size());
   }

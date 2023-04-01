@@ -122,7 +122,7 @@ void ShapesParser::Parse(std::ifstream &file, GeometryData &data) const {
       file >> shape_tag;  // column = 0
       utilities::ConvertOneToZeroBased(shape_tag);
 
-      size_t end_coords_column = (dim == 0) ? 4 : 7;
+      const size_t end_coords_column = (dim == 0) ? 4 : 7;
       double coords;
       for (size_t column = 1; column < end_coords_column; column++) {
         file >> coords;
@@ -191,7 +191,7 @@ void GeometricEntitiesParser::Parse(std::ifstream &file, GeometryData &data) con
   size_t max_entity_tag;
   file >> number_of_entity_blocks >> number_of_entities >> min_entity_tag >> max_entity_tag;
 
-  size_t total_number_of_entities = max_entity_tag - min_entity_tag + 1;
+  const size_t total_number_of_entities = max_entity_tag - min_entity_tag + 1;
   if (number_of_entities != total_number_of_entities) {
     throw std::runtime_error("Partitioned meshes are not supported");
   }

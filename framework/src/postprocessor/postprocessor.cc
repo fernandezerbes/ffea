@@ -15,7 +15,7 @@ PrimaryVariablePostProcessor::PrimaryVariablePostProcessor(std::string variable_
                                                            size_t values_per_node, const Mesh &mesh)
     : PostProcessor(std::move(variable_name), values_per_node, mesh) {}
 
-std::vector<double> PrimaryVariablePostProcessor::Process(const std::string &group_name) const {
+const NodalValues PrimaryVariablePostProcessor::Process(const std::string &group_name) const {
   return mesh_.nodal_values(group_name);
 }
 
@@ -25,7 +25,7 @@ DerivedVariableProcessor::DerivedVariableProcessor(std::string variable_name,
     : PostProcessor(std::move(variable_name), values_per_node, mesh),
       processor_(std::move(processor)) {}
 
-std::vector<double> DerivedVariableProcessor::Process(const std::string &group_name) const {
+const NodalValues DerivedVariableProcessor::Process(const std::string &group_name) const {
   const auto raw_values = ExtractValuesOfAllElementsPerNode(group_name);
   const auto avg_values = AverageNodalValues(raw_values);
   return avg_values;
@@ -45,7 +45,7 @@ std::vector<ffea::NodalValuesGroup> DerivedVariableProcessor::ExtractValuesOfAll
 
 std::vector<double> DerivedVariableProcessor::AverageNodalValues(
     const std::vector<ffea::NodalValuesGroup> &raw_values) const {
-  size_t number_of_values = values_per_node() * raw_values.size();
+  size_t const number_of_values = values_per_node() * raw_values.size();
   std::vector<double> avg_values(number_of_values, 0.0);
 
   for (size_t node_idx = 0; node_idx < raw_values.size(); node_idx++) {

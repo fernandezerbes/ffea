@@ -23,19 +23,19 @@ int main() {
   const std::string exposed_surface = "exposed";
   const std::string bottom_face = "bottom";
 
-  ffea::GeometricEntityFactory3D geometric_entity_factory;
+  const ffea::GeometricEntityFactory3D geometric_entity_factory;
   ffea::GeometryFromFileBuilder geometry_builder("heat_sink.msh", geometric_entity_factory);
   auto geometry = geometry_builder.Build();
 
   // Crete a finite element mesh with one field (temperature)
-  ffea::ElementFactory element_factory(ffea::full_integration_points);
-  ffea::MeshBuilder mesh_builder(geometry, element_factory);
+  const ffea::ElementFactory element_factory(ffea::full_integration_points);
+  const ffea::MeshBuilder mesh_builder(geometry, element_factory);
   const size_t number_of_fields = 1;
   auto mesh = mesh_builder.Build(number_of_fields);
 
   // Use an isotropic constitutive model
-  double conductivity = 0.200;  // W / (mm * C)
-  ffea::app::IsotropicConductivityConstitutiveModel3D constitutive_model(conductivity);
+  const double conductivity = 0.200;  // W / (mm * C)
+  ffea::app::IsotropicConductivityConstitutiveModel3D const constitutive_model(conductivity);
 
   // Set up the physics in the domain
   auto heat_source = nullptr;
@@ -44,7 +44,9 @@ int main() {
       ffea::Domain(body_elements, ffea::gradient_operator, constitutive_model, heat_source);
 
   // Set up the Neumann boundary conditions ()
-  auto radiation = [](const ffea::Coordinates& coords, ffea::Time t) -> double { return 0.0; };
+  auto radiation = [](const ffea::Coordinates& /*coords*/, ffea::Time /*t*/) -> double {
+    return 0.0;
+  };
 
   auto load_function = [radiation](const ffea::Coordinates& coords,
                                    ffea::Time t) -> std::vector<double> {
@@ -59,12 +61,12 @@ int main() {
 
   // Set up Dirichlet boundary conditions (Fixed displacements in all directions)
   auto enforcement_strategy = ffea::DirectEnforcementStrategy();
-  auto constraint_function = [](const ffea::Coordinates& coords,
-                                ffea::Time t) -> std::vector<double> {
+  auto constraint_function = [](const ffea::Coordinates& /*coords*/,
+                                ffea::Time /*t*/) -> std::vector<double> {
     auto base_temperature = 0.0;  // C
     return {base_temperature};
   };
-  std::unordered_set<size_t> constrained_components = {0};
+  const std::unordered_set<size_t> constrained_components = {0};
   auto& fixed_temp_elements = mesh.element_group(bottom_face);
   auto fixed_boundary = ffea::EssentialBoundaryCondition(
       fixed_temp_elements, constraint_function, constrained_components, enforcement_strategy);

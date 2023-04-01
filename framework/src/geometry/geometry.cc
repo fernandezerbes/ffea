@@ -19,7 +19,7 @@ const std::vector<GeometricEntity*>& Geometry::entity_group(const std::string& n
 }
 
 void Geometry::AddNode(const std::array<double, 3>& xyz) {
-  size_t tag = number_of_nodes();
+  size_t const tag = number_of_nodes();
   nodes_.emplace_back(tag, xyz);
 }
 
@@ -27,7 +27,7 @@ void Geometry::AddGeometricEntity(GeometricEntityType type, const std::vector<si
                                   const GeometricEntityFactory& factory) {
   std::vector<Node*> nodes;
   nodes.reserve(node_tags.size());
-  for (size_t tag : node_tags) {
+  for (size_t const tag : node_tags) {
     nodes.push_back(&nodes_[tag]);
   }
 

@@ -94,13 +94,13 @@ class DirectEnforcementStrategyTest : public ::testing::Test {
 
     // Set up elements (points)
     entity_factory = ffea::GeometricEntityFactory2D();
-    ffea::ElementFactory element_factory(ffea::full_integration_points);
+    ffea::ElementFactory const element_factory(ffea::full_integration_points);
     elements.push_back(element_factory.CreateElement(*points[0], {&dofs[0], &dofs[1]}));
     elements.push_back(element_factory.CreateElement(*points[1], {&dofs[2], &dofs[3]}));
 
     // Set up
     displacement_function = [](const ffea::Coordinates& coords,
-                               ffea::Time t) -> std::vector<double> {
+                               ffea::Time /*t*/) -> std::vector<double> {
       if (coords.get(0) == 0.0 && coords.get(1) == 0.0) {
         return {0, -0.5};
       }

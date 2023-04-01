@@ -5,7 +5,7 @@ namespace ffea::app {
 LinearElasticConstitutiveModel2D::LinearElasticConstitutiveModel2D(double youngs_modulus,
                                                                    double poisson_ratio)
     : ConstitutiveModel(3, 3) {
-  double factor = youngs_modulus / (1.0 - poisson_ratio * poisson_ratio);
+  const double factor = youngs_modulus / (1.0 - poisson_ratio * poisson_ratio);
   constitutive_matrix_(0, 0) = factor;
   constitutive_matrix_(0, 1) = factor * poisson_ratio;
   constitutive_matrix_(1, 0) = constitutive_matrix_(0, 1);
@@ -13,7 +13,7 @@ LinearElasticConstitutiveModel2D::LinearElasticConstitutiveModel2D(double youngs
   constitutive_matrix_(2, 2) = (1.0 - poisson_ratio) * factor;
 }
 
-Matrix<double> LinearElasticConstitutiveModel2D::Evaluate(const Coordinates& coords) const {
+Matrix<double> LinearElasticConstitutiveModel2D::Evaluate(const Coordinates& /*coords*/) const {
   return constitutive_matrix_;
 }
 
@@ -35,7 +35,7 @@ LinearElasticConstitutiveModel3D::LinearElasticConstitutiveModel3D(double youngs
   constitutive_matrix_(2, 1) = constitutive_matrix_(1, 2);
 }
 
-Matrix<double> LinearElasticConstitutiveModel3D::Evaluate(const Coordinates& coords) const {
+Matrix<double> LinearElasticConstitutiveModel3D::Evaluate(const Coordinates& /*coords*/) const {
   return constitutive_matrix_;
 }
 

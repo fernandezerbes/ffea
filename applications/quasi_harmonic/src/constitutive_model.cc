@@ -8,7 +8,8 @@ IsotropicConductivityConstitutiveModel2D::IsotropicConductivityConstitutiveModel
   constitutive_matrix_(1, 1) = k;
 }
 
-Matrix<double> IsotropicConductivityConstitutiveModel2D::Evaluate(const Coordinates& coords) const {
+Matrix<double> IsotropicConductivityConstitutiveModel2D::Evaluate(
+    const Coordinates& /*coords*/) const {
   return constitutive_matrix_;
 }
 
@@ -19,7 +20,8 @@ IsotropicConductivityConstitutiveModel3D::IsotropicConductivityConstitutiveModel
   constitutive_matrix_(2, 2) = k;
 }
 
-Matrix<double> IsotropicConductivityConstitutiveModel3D::Evaluate(const Coordinates& coords) const {
+Matrix<double> IsotropicConductivityConstitutiveModel3D::Evaluate(
+    const Coordinates& /*coords*/) const {
   return constitutive_matrix_;
 }
 

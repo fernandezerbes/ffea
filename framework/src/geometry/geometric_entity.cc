@@ -55,7 +55,7 @@ Matrix<double> GeometricEntity::EvaluateShapeFunctions(const Coordinates &local_
   }
 }
 
-Matrix<double> GeometricEntity::EvaluateJacobian(const Coordinates &local_coords,
+Matrix<double> GeometricEntity::EvaluateJacobian(const Coordinates & /*local_coords*/,
                                                  const Matrix<double> &dN_local) const {
   return dN_local * nodal_coords();
 }
@@ -65,8 +65,8 @@ Matrix<double> GeometricEntity::EvaluateJacobian(const Coordinates &local_coords
   return EvaluateJacobian(local_coords, dN_local);
 }
 
-Vector<double> GeometricEntity::EvaluateNormalVector(const Coordinates &local_coords) const {
-  std::string type_name = typeid(*this).name();
+Vector<double> GeometricEntity::EvaluateNormalVector(const Coordinates & /*local_coords*/) const {
+  const std::string type_name = typeid(*this).name();
   throw std::logic_error("Normal is undefined for geometric entity of type " + type_name);
 }
 
@@ -98,22 +98,25 @@ Point::Point(size_t dim, const std::vector<Node *> &nodes)
 
 std::vector<Coordinates> Point::nodal_local_coords() const { return {{0.0, 0.0, 0.0}}; }
 
-Vector<double> Point::EvaluateNormalVector(const Coordinates &local_coords) const {
+Vector<double> Point::EvaluateNormalVector(const Coordinates & /*local_coords*/) const {
   throw std::logic_error("Points don't have a normal vector");
 }
 
-double Point::EvaluateDifferential(const Coordinates &local_coords) const {
+double Point::EvaluateDifferential(const Coordinates & /*local_coords*/) const {
   throw std::logic_error("Points don't have a differential");
 }
 
-Matrix<double> Point::EvaluateShapeFunctions0thDerivative(const Coordinates &local_coords) const {
+Matrix<double> Point::EvaluateShapeFunctions0thDerivative(
+    const Coordinates & /*local_coords*/) const {
   throw std::logic_error("Points don't have shape functions");
 }
-Matrix<double> Point::EvaluateShapeFunctions1stDerivative(const Coordinates &local_coords) const {
+Matrix<double> Point::EvaluateShapeFunctions1stDerivative(
+    const Coordinates & /*local_coords*/) const {
   throw std::logic_error("Points don't have shape functions");
 }
 
-Matrix<double> Point::EvaluateShapeFunctions2ndDerivative(const Coordinates &local_coords) const {
+Matrix<double> Point::EvaluateShapeFunctions2ndDerivative(
+    const Coordinates & /*local_coords*/) const {
   throw std::logic_error("Points don't have shape functions");
 }
 
@@ -149,7 +152,7 @@ std::vector<Coordinates> TwoNodeLine::nodal_local_coords() const {
 
 Matrix<double> TwoNodeLine::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
+  const double r = local_coords.get(0);
   Matrix<double> result = Matrix<double>::Zero(1, 2);
 
   result(0, 0) = 0.5 * (1.0 - r);
@@ -159,7 +162,7 @@ Matrix<double> TwoNodeLine::EvaluateShapeFunctions0thDerivative(
 }
 
 Matrix<double> TwoNodeLine::EvaluateShapeFunctions1stDerivative(
-    const Coordinates &local_coords) const {
+    const Coordinates & /*local_coords*/) const {
   Matrix<double> result = Matrix<double>::Zero(1, 2);
 
   result(0, 0) = -0.5;
@@ -169,7 +172,7 @@ Matrix<double> TwoNodeLine::EvaluateShapeFunctions1stDerivative(
 }
 
 Matrix<double> TwoNodeLine::EvaluateShapeFunctions2ndDerivative(
-    const Coordinates &local_coords) const {
+    const Coordinates & /*local_coords*/) const {
   return Matrix<double>::Zero(1, 2);
 }
 
@@ -198,7 +201,7 @@ Vector<double> Quad::EvaluateNormalVector(const Coordinates &local_coords) const
 }
 
 double Quad::EvaluateDifferential(const Coordinates &local_coords) const {
-  Vector<double> normal = EvaluateNormalVector(local_coords);
+  const Vector<double> normal = EvaluateNormalVector(local_coords);
   return normal.norm();
 }
 
@@ -211,8 +214,8 @@ std::vector<Coordinates> FourNodeQuad::nodal_local_coords() const {
 
 Matrix<double> FourNodeQuad::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
   Matrix<double> result = Matrix<double>::Zero(1, 4);
 
   result(0, 0) = 0.25 * (1 - r) * (1 - s);
@@ -225,8 +228,8 @@ Matrix<double> FourNodeQuad::EvaluateShapeFunctions0thDerivative(
 
 Matrix<double> FourNodeQuad::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
   Matrix<double> result = Matrix<double>::Zero(2, 4);
 
   result(0, 0) = -0.25 * (1 - s);
@@ -244,8 +247,8 @@ Matrix<double> FourNodeQuad::EvaluateShapeFunctions1stDerivative(
 
 Matrix<double> FourNodeQuad::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
   Matrix<double> result = Matrix<double>::Zero(3, 4);
 
   result(2, 0) = 0.25;
@@ -276,9 +279,9 @@ std::vector<Coordinates> EightNodeHex::nodal_local_coords() const {
 
 Matrix<double> EightNodeHex::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
   Matrix<double> result = Matrix<double>::Zero(1, 8);
 
   result(0, 0) = 0.125 * (1 - r) * (1 - s) * (1 - t);
@@ -295,9 +298,9 @@ Matrix<double> EightNodeHex::EvaluateShapeFunctions0thDerivative(
 
 Matrix<double> EightNodeHex::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
   Matrix<double> result = Matrix<double>::Zero(3, 8);
 
   result(0, 0) = -0.125 * (1 - s) * (1 - t);
@@ -332,9 +335,9 @@ Matrix<double> EightNodeHex::EvaluateShapeFunctions1stDerivative(
 
 Matrix<double> EightNodeHex::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
   Matrix<double> result = Matrix<double>::Zero(6, 8);
 
   result(3, 0) = 0.125 * (1 - t);
@@ -391,7 +394,7 @@ Vector<double> Tria::EvaluateNormalVector(const Coordinates &local_coords) const
 }
 
 double Tria::EvaluateDifferential(const Coordinates &local_coords) const {
-  Vector<double> normal = EvaluateNormalVector(local_coords);
+  const Vector<double> normal = EvaluateNormalVector(local_coords);
   return normal.norm();
 }
 
@@ -404,8 +407,8 @@ std::vector<Coordinates> ThreeNodeTria::nodal_local_coords() const {
 
 Matrix<double> ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
   Matrix<double> result = Matrix<double>::Zero(1, 3);
 
   result(0, 0) = 1.0 - r - s;
@@ -417,8 +420,8 @@ Matrix<double> ThreeNodeTria::EvaluateShapeFunctions0thDerivative(
 
 Matrix<double> ThreeNodeTria::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
   Matrix<double> result = Matrix<double>::Zero(2, 3);
 
   result(0, 0) = -1.0;
@@ -431,7 +434,7 @@ Matrix<double> ThreeNodeTria::EvaluateShapeFunctions1stDerivative(
 }
 
 Matrix<double> ThreeNodeTria::EvaluateShapeFunctions2ndDerivative(
-    const Coordinates &local_coords) const {
+    const Coordinates & /*local_coords*/) const {
   return Matrix<double>::Zero(3, 3);
 }
 
@@ -445,9 +448,9 @@ std::vector<Coordinates> SixNodeTria::nodal_local_coords() const {
 
 Matrix<double> SixNodeTria::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = 1 - r - s;
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = 1 - r - s;
   Matrix<double> result = Matrix<double>::Zero(1, 6);
 
   result(0, 0) = (2.0 * t - 1.0) * t;
@@ -462,9 +465,9 @@ Matrix<double> SixNodeTria::EvaluateShapeFunctions0thDerivative(
 
 Matrix<double> SixNodeTria::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = 1 - r - s;
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = 1 - r - s;
   Matrix<double> result = Matrix<double>::Zero(2, 6);
 
   result(0, 0) = -3.0 + 4.0 * (r + s);
@@ -484,9 +487,9 @@ Matrix<double> SixNodeTria::EvaluateShapeFunctions1stDerivative(
 
 Matrix<double> SixNodeTria::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = 1 - r - s;
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = 1 - r - s;
   Matrix<double> result = Matrix<double>::Zero(3, 6);
 
   result(0, 0) = 4.0;
@@ -529,9 +532,9 @@ std::vector<Coordinates> FourNodeTetra::nodal_local_coords() const {
 
 Matrix<double> FourNodeTetra::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
   Matrix<double> result = Matrix<double>::Zero(1, 4);
 
   result(0, 0) = 1.0 - r - s - t;
@@ -544,9 +547,9 @@ Matrix<double> FourNodeTetra::EvaluateShapeFunctions0thDerivative(
 
 Matrix<double> FourNodeTetra::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
   Matrix<double> result = Matrix<double>::Zero(3, 4);
 
   result(0, 0) = -1.0;
@@ -562,7 +565,7 @@ Matrix<double> FourNodeTetra::EvaluateShapeFunctions1stDerivative(
 }
 
 Matrix<double> FourNodeTetra::EvaluateShapeFunctions2ndDerivative(
-    const Coordinates &local_coords) const {
+    const Coordinates & /*local_coords*/) const {
   return Matrix<double>::Zero(6, 4);
 }
 
@@ -576,10 +579,10 @@ std::vector<Coordinates> TenNodeTetra::nodal_local_coords() const {
 
 Matrix<double> TenNodeTetra::EvaluateShapeFunctions0thDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
-  double u = 1.0 - r - s - t;
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
+  const double u = 1.0 - r - s - t;
   Matrix<double> result = Matrix<double>::Zero(1, 10);
 
   result(0, 0) = (2.0 * u - 1.0) * u;
@@ -598,10 +601,10 @@ Matrix<double> TenNodeTetra::EvaluateShapeFunctions0thDerivative(
 
 Matrix<double> TenNodeTetra::EvaluateShapeFunctions1stDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
-  double u = 1.0 - r - s - t;
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
+  const double u = 1.0 - r - s - t;
   Matrix<double> result = Matrix<double>::Zero(3, 10);
 
   result(0, 0) = 4.0 * (r + s + t) - 3.0;
@@ -633,10 +636,10 @@ Matrix<double> TenNodeTetra::EvaluateShapeFunctions1stDerivative(
 
 Matrix<double> TenNodeTetra::EvaluateShapeFunctions2ndDerivative(
     const Coordinates &local_coords) const {
-  double r = local_coords.get(0);
-  double s = local_coords.get(1);
-  double t = local_coords.get(2);
-  double u = 1.0 - r - s - t;
+  const double r = local_coords.get(0);
+  const double s = local_coords.get(1);
+  const double t = local_coords.get(2);
+  const double u = 1.0 - r - s - t;
   Matrix<double> result = Matrix<double>::Zero(6, 10);
 
   result(0, 0) = 4.0;

@@ -41,11 +41,11 @@ void DirectEnforcementStrategy::Enforce(CSRMatrix<double> &system_stiffness,
   for (auto &element : elements) {
     const auto &dof_tags = element.dof_tags();
     for (size_t i_dof_idx = 0; i_dof_idx < dof_tags.size(); i_dof_idx++) {
-      size_t component = i_dof_idx % element.dofs_per_node();
+      size_t const component = i_dof_idx % element.dofs_per_node();
       if (!components_to_consider.contains(component)) {
         continue;
       }
-      size_t node_idx = i_dof_idx / element.dofs_per_node();
+      size_t const node_idx = i_dof_idx / element.dofs_per_node();
       const auto &i_dof_tag = dof_tags[i_dof_idx];
       if (constrained_dof_tag_to_values_map.contains(i_dof_tag)) {
         continue;
@@ -108,11 +108,11 @@ void PenaltyEnforcementStrategy::Enforce(CSRMatrix<double> &system_stiffness,
   for (auto &element : elements) {
     const auto &dof_tags = element.dof_tags();
     for (size_t i_dof_idx = 0; i_dof_idx < dof_tags.size(); i_dof_idx++) {
-      size_t component = i_dof_idx % element.dofs_per_node();
+      size_t const component = i_dof_idx % element.dofs_per_node();
       if (!components_to_consider.contains(component)) {
         continue;
       }
-      size_t node_idx = i_dof_idx / element.dofs_per_node();
+      size_t const node_idx = i_dof_idx / element.dofs_per_node();
       const auto &coords = element.node_coords(node_idx);
       auto boundary_values = condition(coords, t);
       const auto &i_dof_tag = dof_tags[i_dof_idx];

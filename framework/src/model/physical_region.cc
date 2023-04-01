@@ -48,7 +48,7 @@ Domain::Domain(std::vector<Element>& elements, const DifferentialOperator& diffe
       source_(std::move(source)) {}
 
 void Domain::Contribute(StiffnessTerm& term, Element& element, size_t integration_point_idx,
-                        Time t) const {
+                        Time /*t*/) const {
   const auto& global_coords = element.global_coords(integration_point_idx);
   const auto& C = constitutive_model_.Evaluate(global_coords);
   const auto& dN_global = element.EvaluateGlobalShapeFunctionsDerivatives(integration_point_idx);

@@ -23,20 +23,21 @@ int main() {
   const std::string fixed_face = "fixed";
   const std::string loaded_face = "load";
 
-  ffea::GeometricEntityFactory3D geometric_entity_factory;
+  const ffea::GeometricEntityFactory3D geometric_entity_factory;
   ffea::GeometryFromFileBuilder geometry_builder("ipb200.msh", geometric_entity_factory);
   auto geometry = geometry_builder.Build();
 
   // Crete a finite element mesh with 3 displacement fields (u, v, w)
-  ffea::ElementFactory element_factory(ffea::full_integration_points);
-  ffea::MeshBuilder mesh_builder(geometry, element_factory);
+  const ffea::ElementFactory element_factory(ffea::full_integration_points);
+  const ffea::MeshBuilder mesh_builder(geometry, element_factory);
   const size_t number_of_fields = 3;
   auto mesh = mesh_builder.Build(number_of_fields);
 
   // Use a linear-elastic constitutive model
-  double poisson_ratio = 0.3;
-  double youngs_modulus = 2.1e5;
-  ffea::app::LinearElasticConstitutiveModel3D constitutive_model(youngs_modulus, poisson_ratio);
+  const double poisson_ratio = 0.3;
+  const double youngs_modulus = 2.1e5;
+  const ffea::app::LinearElasticConstitutiveModel3D constitutive_model(youngs_modulus,
+                                                                       poisson_ratio);
 
   // Set up the physics in the domain
   auto body_load = nullptr;  // No body load (gravity)
@@ -45,7 +46,8 @@ int main() {
       ffea::Domain(body_elements, ffea::app::linear_B_operator_3D, constitutive_model, body_load);
 
   // Set up the Neumann boundary conditions (Load F = 1000 in -y direction)
-  auto load_function = [](const ffea::Coordinates& coords, ffea::Time t) -> std::vector<double> {
+  auto load_function = [](const ffea::Coordinates& /*coords*/,
+                          ffea::Time /*t*/) -> std::vector<double> {
     return {0.0, -1000.0, 0.0};
   };
 
@@ -54,11 +56,11 @@ int main() {
 
   // Set up Dirichlet boundary conditions (Fixed displacements in all directions)
   auto enforcement_strategy = ffea::DirectEnforcementStrategy();
-  auto constraint_function = [](const ffea::Coordinates& coords,
-                                ffea::Time t) -> std::vector<double> {
+  auto constraint_function = [](const ffea::Coordinates& /*coords*/,
+                                ffea::Time /*t*/) -> std::vector<double> {
     return {0.0, 0.0, 0.0};
   };
-  std::unordered_set<size_t> constrained_directions = {0, 1, 2};
+  const std::unordered_set<size_t> constrained_directions = {0, 1, 2};
   auto& fixed_face_elements = mesh.element_group(fixed_face);
   auto fixed_boundary = ffea::EssentialBoundaryCondition(
       fixed_face_elements, constraint_function, constrained_directions, enforcement_strategy);
