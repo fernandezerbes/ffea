@@ -1,7 +1,6 @@
 #ifndef FFEA_FRAMEWORK_INC_MESH_ELEMENT_H_
 #define FFEA_FRAMEWORK_INC_MESH_ELEMENT_H_
 
-#include <optional>
 #include <vector>
 
 #include "../alias.h"
@@ -13,13 +12,6 @@
 #include "./integration_point.h"
 
 namespace ffea {
-
-struct ElementSystem {
-  std::optional<Matrix<double>> mass_matrix;
-  std::optional<Matrix<double>> damping_matrix;
-  std::optional<Matrix<double>> stiffness_matrix;
-  std::optional<Vector<double>> rhs_vector;
-};
 
 class Element {
  public:
