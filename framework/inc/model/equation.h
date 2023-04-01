@@ -41,8 +41,8 @@ class Equation {
 template <typename T>
 T& Equation::GetTerm() const {
   for (const auto& term : terms_) {
-    if (typeid(*term) == typeid(T)) {
-      return static_cast<T&>(*term);
+    if (dynamic_cast<T*>(term.get()) != nullptr) {
+      return dynamic_cast<T&>(*term);
     }
   }
 
@@ -53,7 +53,7 @@ T& Equation::GetTerm() const {
 template <typename T>
 bool Equation::HasTerm() const {
   for (const auto& term : terms_) {
-    if (typeid(*term) == typeid(T)) {
+    if (dynamic_cast<T*>(term.get()) != nullptr) {
       return true;
     }
   }
@@ -68,6 +68,7 @@ class EquationTerm {
   virtual void Scatter(size_t i_dof_idx, const std::vector<size_t>& dof_tags) = 0;
   virtual void PrepareElementMatrices(size_t number_of_dofs) = 0;
   virtual void ResetGlobalData() = 0;
+  virtual ~EquationTerm() = default;
 };
 
 class MatricialEquationTerm : public EquationTerm {
