@@ -1,10 +1,6 @@
 #include "../../inc/mesh/element.h"
 
-#include "omp.h"
-
 namespace ffea {
-
-#pragma omp declare reduction (merge: MatrixEntries<double> : omp_out.insert(omp_out.end(), omp_in.begin(), omp_in.end()))
 
 Element::Element(GeometricEntity &entity, const std::vector<DegreeOfFreedom *> &dofs,
                  const IntegrationPointsGroup &ips)
@@ -65,7 +61,6 @@ void Element::SetSparsity(MatrixEntries<double> &nonzero_entries) const {
   entries.reserve(number_of_entries);
   const auto &tags = dof_tags();
 
-#pragma opm parallel for schedule(dynamic) reduction(merge : entries)
   for (size_t i_dof_idx = 0; i_dof_idx < number_of_dofs(); i_dof_idx++) {
     const auto &i_dof_tag = tags[i_dof_idx];
     for (size_t j_dof_idx = i_dof_idx; j_dof_idx < number_of_dofs(); j_dof_idx++) {
@@ -90,7 +85,7 @@ Vector<double> Element::ExtractSolution() const {
   return solution;
 }
 
-void Element::AddNodalValues(ValuesProcessor values_processor,
+void Element::AddNodalValues(const ValuesProcessor &values_processor,
                              std::vector<ffea::NodalValuesGroup> &raw_values) const {
   const auto &nodal_local_coords = entity_.nodal_local_coords();
   const auto &solution = ExtractSolution();
