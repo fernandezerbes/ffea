@@ -2,13 +2,14 @@
 #include "../../inc/analysis/analysis.h"
 
 #include <iostream>
+#include <utility>
 
 #include "../../inc/alias.h"
 #include "../../inc/model/equation.h"
 
 namespace ffea {
 
-Analysis::Analysis(Model& model, const OutputWriter& writer) : model_(model), writer_(writer) {}
+Analysis::Analysis(Model& model, OutputWriter writer) : model_(model), writer_(std::move(writer)) {}
 
 void Analysis::Solve(const std::string& filename, const std::string& group_name) {
   writer_.Write(filename + "_0.vtu", group_name);

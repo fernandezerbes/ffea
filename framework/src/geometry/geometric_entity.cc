@@ -2,12 +2,12 @@
 
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace ffea {
 
-GeometricEntity::GeometricEntity(GeometricEntityType type, size_t dim,
-                                 const std::vector<Node *> &nodes)
-    : type_(type), dim_(dim), nodes_(nodes) {}
+GeometricEntity::GeometricEntity(GeometricEntityType type, size_t dim, std::vector<Node *> nodes)
+    : type_(type), dim_(dim), nodes_(std::move(nodes)) {}
 
 GeometricEntityType GeometricEntity::type() const { return type_; }
 
@@ -84,7 +84,7 @@ Coordinates GeometricEntity::MapLocalToGlobal(const Matrix<double> &N_at_point) 
       xyz[dim_idx] += N_at_point(0, node_idx) * coords.get(dim_idx);
     }
   }
-  return Coordinates(xyz);
+  return {xyz};
 }
 
 Coordinates &GeometricEntity::node_coords(size_t node_idx) const {

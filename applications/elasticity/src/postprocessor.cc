@@ -6,11 +6,11 @@
 namespace ffea::app {
 
 PrimaryVariablePostProcessor MakeDisplacementProcessor2D(const Mesh &mesh) {
-  return PrimaryVariablePostProcessor("Displacement", 2, mesh);
+  return {"Displacement", 2, mesh};
 }
 
 PrimaryVariablePostProcessor MakeDisplacementProcessor3D(const Mesh &mesh) {
-  return PrimaryVariablePostProcessor("Displacement", 3, mesh);
+  return {"Displacement", 3, mesh};
 }
 
 DerivedVariableProcessor MakeElasticStrainProcessor(size_t values_per_node, const Mesh &mesh,
@@ -22,7 +22,7 @@ DerivedVariableProcessor MakeElasticStrainProcessor(size_t values_per_node, cons
     return B * solution;
   };
 
-  return DerivedVariableProcessor("Strain", values_per_node, mesh, strain_processor);
+  return {"Strain", values_per_node, mesh, strain_processor};
 }
 
 DerivedVariableProcessor MakeElasticStrainProcessor2D(const Mesh &mesh) {
@@ -45,7 +45,7 @@ DerivedVariableProcessor MakeElasticStressProcessor(size_t values_per_node, cons
     return C * B * solution;
   };
 
-  return DerivedVariableProcessor("Stress", values_per_node, mesh, stress_processor);
+  return {"Stress", values_per_node, mesh, stress_processor};
 }
 
 DerivedVariableProcessor MakeElasticStressProcessor2D(const Mesh &mesh,

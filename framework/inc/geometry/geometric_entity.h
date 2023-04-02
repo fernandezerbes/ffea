@@ -36,7 +36,7 @@ enum class DerivativeOrder { kZeroth, kFirst, kSecond };
 
 class GeometricEntity {
  public:
-  GeometricEntity(GeometricEntityType type, size_t dim, const std::vector<Node *> &nodes);
+  GeometricEntity(GeometricEntityType type, size_t dim, std::vector<Node *> nodes);
   virtual ~GeometricEntity() = default;
 
   GeometricEntityType type() const;

@@ -8,7 +8,7 @@ namespace ffea {
 
 class Analysis {
  public:
-  explicit Analysis(Model &model, const OutputWriter &writer);
+  explicit Analysis(Model &model, OutputWriter writer);
 
   void Solve(const std::string &filename, const std::string &group_name);
 
