@@ -3,15 +3,11 @@
 
 #include <array>
 
-namespace ffea {
-
-namespace utilities {
+namespace ffea::utilities {
 
 double DistanceBetweenPoints(const std::array<double, 3> &first,
                              const std::array<double, 3> &second);
 
-}  // namespace utilities
-
-}  // namespace ffea
+}  // namespace ffea::utilities
 
 #endif  // FFEA_FRAMEWORK_MATH_UTILS_H_

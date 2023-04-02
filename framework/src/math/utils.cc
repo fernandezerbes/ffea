@@ -3,9 +3,7 @@
 #include <cmath>
 #include <numeric>
 
-namespace ffea {
-
-namespace utilities {
+namespace ffea::utilities {
 
 double DistanceBetweenPoints(const std::array<double, 3>& first,
                              const std::array<double, 3>& second) {
@@ -17,6 +15,4 @@ double DistanceBetweenPoints(const std::array<double, 3>& first,
   return std::sqrt(inner_product);
 }
 
-}  // namespace utilities
-
-}  // namespace ffea
+}  // namespace ffea::utilities

@@ -41,7 +41,7 @@ class PhysicalRegion {
 
 class Domain : public PhysicalRegion {
  public:
-  Domain(std::vector<Element>& elements, const DifferentialOperator& differential_operator,
+  Domain(std::vector<Element>& elements, DifferentialOperator differential_operator,
          const ConstitutiveModel& constitutive_model,
          SpatioTemporalFunction<std::vector<double>> source);
 

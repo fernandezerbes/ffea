@@ -1,10 +1,12 @@
 #include "../../inc/mesh/element.h"
 
+#include <utility>
+
 namespace ffea {
 
-Element::Element(GeometricEntity &entity, const std::vector<DegreeOfFreedom *> &dofs,
+Element::Element(GeometricEntity &entity, std::vector<DegreeOfFreedom *> dofs,
                  const IntegrationPointsGroup &ips)
-    : entity_(entity), dofs_(dofs), ips_(ips) {}
+    : entity_(entity), dofs_(std::move(dofs)), ips_(ips) {}
 
 GeometricEntityType Element::geometric_entity_type() const { return entity_.type(); }
 

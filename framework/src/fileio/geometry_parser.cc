@@ -1,12 +1,12 @@
 #include "../../inc/fileio/geometry_parser.h"
 
-#include <math.h>
-
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <utility>
 
 namespace ffea {
 
@@ -21,12 +21,11 @@ void ConvertZeroToOneBased(int &idx) { idx++; }
 
 NodeData::NodeData(size_t tag, const std::array<double, 3> &coords) : tag(tag), coords(coords) {}
 
-GeometricEntityData::GeometricEntityData(size_t tag, size_t type,
-                                         const std::vector<size_t> &node_tags)
-    : tag(tag), type(type), node_tags(node_tags) {}
+GeometricEntityData::GeometricEntityData(size_t tag, size_t type, std::vector<size_t> node_tags)
+    : tag(tag), type(type), node_tags(std::move(node_tags)) {}
 
-GeometricEntityDataGroup::GeometricEntityDataGroup(size_t tag, const std::string &name)
-    : tag_(tag), name_(name) {}
+GeometricEntityDataGroup::GeometricEntityDataGroup(size_t tag, std::string name)
+    : tag_(tag), name_(std::move(name)) {}
 
 size_t GeometricEntityDataGroup::tag() const { return tag_; }
 

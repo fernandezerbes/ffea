@@ -27,7 +27,7 @@ struct NodeData {
 };
 
 struct GeometricEntityData {
-  GeometricEntityData(size_t tag, size_t type, const std::vector<size_t> &node_tags);
+  GeometricEntityData(size_t tag, size_t type, std::vector<size_t> node_tags);
 
   const size_t tag;
   const size_t type;
@@ -36,7 +36,7 @@ struct GeometricEntityData {
 
 class GeometricEntityDataGroup {
  public:
-  GeometricEntityDataGroup(size_t tag, const std::string &name);
+  GeometricEntityDataGroup(size_t tag, std::string name);
 
   size_t tag() const;
   const std::string &name() const;

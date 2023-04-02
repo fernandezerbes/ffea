@@ -39,11 +39,11 @@ void PhysicalRegion::ComputeLoadContribution(
   }
 }
 
-Domain::Domain(std::vector<Element>& elements, const DifferentialOperator& differential_operator,
+Domain::Domain(std::vector<Element>& elements, DifferentialOperator differential_operator,
                const ConstitutiveModel& constitutive_model,
                SpatioTemporalFunction<std::vector<double>> source)
     : PhysicalRegion(elements),
-      differential_operator_(differential_operator),
+      differential_operator_(std::move(differential_operator)),
       constitutive_model_(constitutive_model),
       source_(std::move(source)) {}
 

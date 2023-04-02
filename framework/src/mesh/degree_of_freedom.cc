@@ -5,7 +5,7 @@
 namespace ffea {
 
 DegreeOfFreedom::DegreeOfFreedom(size_t tag, size_t number_of_auxiliary_values)
-    : value_(),
+    :,
       auxiliary_values_(number_of_auxiliary_values),
       tag_(tag),
       parallel_tag_(tag)  // TODO: To be set in a parallel environment

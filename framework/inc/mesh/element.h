@@ -15,7 +15,7 @@ namespace ffea {
 
 class Element {
  public:
-  Element(GeometricEntity &geometric_entity, const std::vector<DegreeOfFreedom *> &dofs,
+  Element(GeometricEntity &geometric_entity, std::vector<DegreeOfFreedom *> dofs,
           const IntegrationPointsGroup &ips);
 
   GeometricEntityType geometric_entity_type() const;
